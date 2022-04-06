@@ -1,9 +1,17 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+// import counterReducer from "../features/counter/counterSlice";
+import companyReducer from "./companySlice";
+import commonReducer from "./commonSlice";
+import countrySelectorReducer from "../features/countrySelector/countrySelectorSlice";
+
+// @ts-ignore
+window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    countrySelector: countrySelectorReducer,
+    company: companyReducer,
+    common: commonReducer,
   },
 });
 

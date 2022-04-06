@@ -1,24 +1,40 @@
-// import styles from "./CountrySelector.module.css";
-import { useEffect, useState } from "react";
-import { fetchCountryList } from "../../app/endpoint";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  add,
+  setChosenCountryId,
+} from "../countrySelector/countrySelectorSlice";
 import type { Country } from "../../types";
+import { useEffect } from "react";
+import { fetchCountryList } from "../../app/endpoint";
 
 function CountrySelector() {
-  const [countries, setCountries] = useState<Country[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    (async function () {
+    (async () => {
       const countries = await fetchCountryList();
-      setCountries(countries);
+      dispatch(add(countries));
     })();
   }, []);
 
+  const countries = useSelector<unknown, Country[]>(
+    (state: any) => state.countrySelector.countries
+  );
+
   return (
     <div className="control has-icons-left is-disabled">
-      <div className="select is-loading">
-        <select>
+      <div className={`select ${countries.length ? "" : "is-loading"}`}>
+        <select
+          onChange={({ target }) => {
+            dispatch(setChosenCountryId(target.value));
+          }}
+        >
           {countries.map(({ value, id }) => {
-            return <option>{value}</option>;
+            return (
+              <option key={id} value={id}>
+                {value}
+              </option>
+            );
           })}
         </select>
       </div>
