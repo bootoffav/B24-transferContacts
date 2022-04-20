@@ -1,8 +1,26 @@
 import { useMemo } from "react";
-import { useTable } from "react-table";
+import { Cell, useTable } from "react-table";
 import { useSelector } from "react-redux";
 
-function getUserNameById(users: any[], id: string) {
+const formLink = (
+  [title, id]: [string, string],
+  type: "company" | "contact"
+) => (
+  <>
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href={`${process.env.REACT_APP_B24_ADDRESS}crm/${type}/details/${id}/`}
+    >
+      {title}
+    </a>
+  </>
+);
+
+function getUserNameById(
+  users: { NAME: string; LAST_NAME: string }[],
+  id: string
+): { NAME: string; LAST_NAME: string } {
   return (
     users.find(({ ID }: any) => ID === id) || { NAME: "unknown", LAST_NAME: "" }
   );
@@ -24,19 +42,40 @@ const List = () => {
 
         return {
           position: index + 1,
-          company: company.TITLE,
+          company: [company.TITLE, company.ID],
           responsibleForCompany: `${responsibleForCompany.NAME} ${responsibleForCompany.LAST_NAME}`,
-          contact: company.CONTACTS.map(
-            (contact: any) => `${contact.NAME} ${contact.LAST_NAME}`
-          ),
-          responsibleForContact: company.CONTACTS.map(
-            (contact: any) =>
-              getUserNameById(users, contact.ASSIGNED_BY_ID).NAME
-          ),
+          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }: any) => [
+            `${NAME} ${LAST_NAME}`,
+            ID,
+          ]),
+          responsibleForContact: company.CONTACTS.map((contact: any) => {
+            const { NAME, LAST_NAME } = getUserNameById(
+              users,
+              contact.ASSIGNED_BY_ID
+            );
+            return `${NAME} ${LAST_NAME}`;
+          }),
         };
       }),
     [companies]
   );
+
+  const getSubRows = ({ value }: Cell) => {
+    return value.map((v: [string, string] | string, index: number) => {
+      return (
+        <table
+          key={index}
+          // style={{ backgroundColor: "#fc906f" }}
+        >
+          <tbody>
+            <tr>
+              <td>{typeof v === "object" ? formLink(v, "contact") : v}</td>
+            </tr>
+          </tbody>
+        </table>
+      );
+    });
+  };
 
   const columns = useMemo(
     () => [
@@ -47,6 +86,7 @@ const List = () => {
       {
         Header: "Company",
         accessor: "company",
+        Cell: ({ value }: Cell) => formLink(value, "company"),
       },
       {
         Header: "Responsible for company",
@@ -55,10 +95,12 @@ const List = () => {
       {
         Header: "Contact",
         accessor: "contact",
+        Cell: getSubRows,
       },
       {
         Header: "Responsible for contact",
         accessor: "responsibleForContact",
+        Cell: getSubRows,
       },
     ],
     []
