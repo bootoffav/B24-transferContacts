@@ -15,7 +15,7 @@ function CountrySelector() {
       const countries = await fetchCountryList();
       dispatch(add(countries));
     })();
-  }, []);
+  }, [dispatch]);
 
   const countries = useSelector<unknown, Country[]>(
     (state: any) => state.countrySelector.countries

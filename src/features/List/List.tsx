@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import styles from "./List.module.css";
 
 const formLink = (
@@ -32,7 +32,6 @@ const List = () => {
   const companies = useSelector((state) => state.company.companiesWithContacts);
   // @ts-ignore
   const users = useSelector((state) => state.common.users);
-  const dispatch = useDispatch();
 
   const data = useMemo(
     () =>
@@ -59,7 +58,7 @@ const List = () => {
           }),
         };
       }),
-    [companies]
+    [companies, users]
   );
 
   const getSubRows = ({
