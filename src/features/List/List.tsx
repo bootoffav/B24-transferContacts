@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import styles from "./List.module.css";
 
 const formLink = (
   [title, id]: [string, string],
@@ -31,6 +32,7 @@ const List = () => {
   const companies = useSelector((state) => state.company.companiesWithContacts);
   // @ts-ignore
   const users = useSelector((state) => state.common.users);
+  const dispatch = useDispatch();
 
   const data = useMemo(
     () =>
@@ -60,16 +62,24 @@ const List = () => {
     [companies]
   );
 
-  const getSubRows = ({ value }: Cell) => {
+  const getSubRows = ({
+    value,
+    row: {
+      values: { responsibleForCompany },
+    },
+  }: Cell) => {
     return value.map((v: [string, string] | string, index: number) => {
       return (
-        <table
-          key={index}
-          // style={{ backgroundColor: "#fc906f" }}
-        >
+        <table key={index}>
           <tbody>
             <tr>
-              <td>{typeof v === "object" ? formLink(v, "contact") : v}</td>
+              <td
+                className={
+                  responsibleForCompany !== v ? styles.otherResponsible : ""
+                }
+              >
+                {typeof v === "object" ? formLink(v, "contact") : v}
+              </td>
             </tr>
           </tbody>
         </table>

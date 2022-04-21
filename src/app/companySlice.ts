@@ -4,13 +4,17 @@ export const companySlice = createSlice({
   name: "companies",
   initialState: {
     companiesWithContacts: [],
+    differentResponsibles: [],
   },
   reducers: {
-    set: (state, action) => {
-      state.companiesWithContacts = action.payload;
+    setCompanies: (state, { payload }) => {
+      state.companiesWithContacts = payload;
+    },
+    setDifferentResponsibles: (state, { payload }) => {
+      state.differentResponsibles = payload;
     },
   },
 });
 
-export const { set } = companySlice.actions;
+export const { setCompanies, setDifferentResponsibles } = companySlice.actions;
 export default companySlice.reducer;

@@ -87,4 +87,30 @@ const getUsers = async () => {
   return users;
 };
 
-export { fetchCountryList, fetchCompanies, fetchCompanyContacts, getUsers };
+const transferContacts = async (transfer: any) => {
+  for (let responsibleId in transfer) {
+    for (let contactId of transfer[responsibleId]) {
+      // console.log(responsible, contactId);
+      await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
+        method: "POST",
+        body: stringify({
+          id: contactId,
+          fields: {
+            ASSIGNED_BY_ID: responsibleId,
+          },
+          params: { REGISTER_SONET_EVENT: "Y" },
+        }),
+      })
+        .then((r) => r.json())
+        .catch(console.log);
+    }
+  }
+};
+
+export {
+  fetchCountryList,
+  fetchCompanies,
+  fetchCompanyContacts,
+  getUsers,
+  transferContacts,
+};

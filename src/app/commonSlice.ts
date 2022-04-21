@@ -1,7 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface CommonInitialState {
-  stage: "initial" | "gettingUsers" | "gettingCompanies" | "scanFinished";
+  stage:
+    | "initial"
+    | "gettingData"
+    | "scanFinished"
+    | "transferring"
+    | "transferred";
   users: any[];
 }
 

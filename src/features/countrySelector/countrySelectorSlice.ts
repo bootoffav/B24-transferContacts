@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { set } from "../../app/companySlice";
+// import { setCompanies } from "../../app/companySlice";
 
 interface CountrySelectorState {
   countries: [];
