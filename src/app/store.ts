@@ -1,5 +1,4 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-// import counterReducer from "../features/counter/counterSlice";
 import companyReducer from "./companySlice";
 import commonReducer from "./commonSlice";
 import countrySelectorReducer from "../features/countrySelector/countrySelectorSlice";

@@ -8,6 +8,13 @@ const InfoBlock = () => {
   const companies = useSelector<unknown, Country[]>(
     (state: any) => state.company.companiesWithContacts
   );
+  const companiesTotalAmount = useSelector(
+    (state: any) => state.company.totalAmount
+  );
+  const companiesProcessedAmount = useSelector(
+    (state: any) => state.company.processedAmount
+  );
+
   const stage = useSelector((state: any) => state.common.stage);
   const differentResponsibles = useSelector(
     (state: any) => state.company.differentResponsibles
@@ -29,11 +36,14 @@ const InfoBlock = () => {
       output = "Choose country, click Get companies to make a list";
       break;
     case "gettingData":
-    case "gettingCompanies":
       output = (
         <>
           <span className="p-2">Getting data</span>
           <ClipLoader loading={true} />
+          <p className="p-2">
+            Processing {companiesProcessedAmount} of {companiesTotalAmount}{" "}
+            found companies
+          </p>
         </>
       );
       break;
@@ -44,16 +54,20 @@ const InfoBlock = () => {
             Found {companies.length} companies, {differentResponsiblesAmount()}{" "}
             different responsibles for contacts
           </p>
-          <button
-            className="button ml-2 is-success is-small is-light"
-            onClick={async () => {
-              dispatch(setStage("transferring"));
-              await transferContacts(differentResponsibles);
-              dispatch(setStage("transferred"));
-            }}
-          >
-            FIX IT BY TRANSFERRING CONTACTS!
-          </button>
+          {companies.length ? (
+            <button
+              className="button ml-2 is-success is-small is-light"
+              onClick={async () => {
+                dispatch(setStage("transferring"));
+                await transferContacts(differentResponsibles);
+                dispatch(setStage("transferred"));
+              }}
+            >
+              FIX IT BY TRANSFERRING CONTACTS!
+            </button>
+          ) : (
+            ""
+          )}
         </>
       );
       break;

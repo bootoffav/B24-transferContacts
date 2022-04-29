@@ -1,14 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { setCompanies } from "../../app/companySlice";
 
 interface CountrySelectorState {
   countries: [];
-  chosenCountryId: string;
 }
 
 const initialState: CountrySelectorState = {
   countries: [],
-  chosenCountryId: "",
 };
 
 export const countrySelectorSlice = createSlice({
@@ -18,11 +15,8 @@ export const countrySelectorSlice = createSlice({
     add: (state, action) => {
       state.countries = action.payload;
     },
-    setChosenCountryId: (state, action) => {
-      state.chosenCountryId = action.payload;
-    },
   },
 });
 
-export const { add, setChosenCountryId } = countrySelectorSlice.actions;
+export const { add } = countrySelectorSlice.actions;
 export default countrySelectorSlice.reducer;

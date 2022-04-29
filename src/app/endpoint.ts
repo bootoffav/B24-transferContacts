@@ -1,4 +1,5 @@
 import { stringify } from "qs";
+import { CommonState } from "./commonSlice";
 
 const {
   REACT_APP_B24_ENDPOINT: endpoint,
@@ -28,8 +29,21 @@ const fetchCountryList = async function () {
     });
 };
 
-const fetchCompanies = async (countryId: string): Promise<any[]> => {
-  if (!countryField) throw new Error("country field ID not specified");
+const fetchCompanies = async (
+  chosenId: string,
+  selectType: CommonState["selectType"]
+): Promise<any[]> => {
+  if (!chosenId) throw new Error("ID not specified");
+
+  let filter;
+  switch (selectType) {
+    case "country":
+      filter = { [countryField as string]: chosenId };
+      break;
+    case "manager":
+      filter = { ASSIGNED_BY_ID: chosenId };
+      break;
+  }
 
   let companies: any[] = [];
   let start = 0;
@@ -39,7 +53,7 @@ const fetchCompanies = async (countryId: string): Promise<any[]> => {
       {
         method: "POST",
         body: stringify({
-          filter: { [countryField as string]: countryId },
+          filter,
           start,
         }),
       }
@@ -65,7 +79,7 @@ const fetchCompanyContacts = async (companyId: string) => {
     .then((r) => r.result);
 };
 
-const getUsers = async () => {
+const fetchUsers = async () => {
   let users: any[] = [];
   let start = 0;
   while (start !== undefined) {
@@ -90,7 +104,6 @@ const getUsers = async () => {
 const transferContacts = async (transfer: any) => {
   for (let responsibleId in transfer) {
     for (let contactId of transfer[responsibleId]) {
-      // console.log(responsible, contactId);
       await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
         method: "POST",
         body: stringify({
@@ -111,6 +124,6 @@ export {
   fetchCountryList,
   fetchCompanies,
   fetchCompanyContacts,
-  getUsers,
+  fetchUsers,
   transferContacts,
 };

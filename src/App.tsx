@@ -1,21 +1,30 @@
-import CountrySelector from "./features/countrySelector/CountrySelector";
-import { fetchCompanies, fetchCompanyContacts, getUsers } from "./app/endpoint";
+import UserSelector from "./features/userSelector/userSelector";
+import { fetchCompanies, fetchCompanyContacts } from "./app/endpoint";
 import { useDispatch, useSelector } from "react-redux";
-import { setCompanies, setDifferentResponsibles } from "./app/companySlice";
-import { setStage, setUsers } from "./app/commonSlice";
+import {
+  setCompanies,
+  setDifferentResponsibles,
+  setTotalAmount,
+  setProcessedAmount,
+} from "./app/companySlice";
+import { setSelectType, setStage, setChosenId } from "./app/commonSlice";
 import InfoBlock from "./features/InfoBlock/InfoBlock";
 import List from "./features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
 import getDifferentContactResponsibles from "./app/differentContactResponsibles";
+import { CommonState } from "./app/commonSlice";
+import CountrySelector from "./features/countrySelector/CountrySelector";
 
 function App() {
   const dispatch = useDispatch();
-  const chosenCountryId = useSelector(
-    (state: any) => state.countrySelector.chosenCountryId
-  );
+  const chosenId = useSelector((state: any) => state.common.chosenId);
 
   // @ts-ignore
   const stage = useSelector((state) => state.common.stage);
+  const selectType: CommonState["selectType"] = useSelector(
+    // @ts-ignore
+    (state) => state.common.selectType
+  );
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -27,24 +36,37 @@ function App() {
     <div className="container mt-2">
       <div className="columns">
         <div className="column has-text-weight-medium is-flex is-justify-content-end is-align-items-center">
-          Choose country:
+          Choose:
+        </div>
+        <div className="column is-2">
+          <div className="select is-fullwidth">
+            <select
+              defaultValue={"manager"}
+              onChange={({ target: { value } }) => {
+                dispatch(setSelectType(value));
+                dispatch(setChosenId(""));
+              }}
+            >
+              <option value="manager">Manager</option>
+              <option value="country">Country</option>
+            </select>
+          </div>
         </div>
         <div className="column is-one-fifth">
-          <CountrySelector />
+          {selectType === "country" ? <CountrySelector /> : <UserSelector />}
         </div>
         <div className="column">
           <button
             className="button is-primary"
             onClick={async () => {
-              if (["5734", ""].includes(chosenCountryId)) {
-                alert("choose country first");
+              if (chosenId === "") {
+                alert(`choose ${selectType} first`);
                 return;
               }
 
               dispatch(setStage("gettingData"));
-              const users = await getUsers();
-              dispatch(setUsers(users));
-              const companies = await fetchCompanies(chosenCountryId);
+              const companies = await fetchCompanies(chosenId, selectType);
+              dispatch(setTotalAmount(companies.length));
               const companiesWithContacts: any[] = [];
               for (let company of companies) {
                 const delay = async (ms = 500) =>
@@ -55,9 +77,11 @@ function App() {
                   CONTACTS: await fetchCompanyContacts(company.ID),
                   ...company,
                 });
+                dispatch(setProcessedAmount(1));
               }
               dispatch(setCompanies(companiesWithContacts));
               dispatch(setStage("scanFinished"));
+              dispatch(setProcessedAmount(0));
               const differentResponsibles = getDifferentContactResponsibles(
                 companiesWithContacts
               );

@@ -1,8 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
-import {
-  add,
-  setChosenCountryId,
-} from "../countrySelector/countrySelectorSlice";
+import { setChosenId } from "../../app/commonSlice";
+import { add } from "./countrySelectorSlice";
 import type { Country } from "../../types";
 import { useEffect } from "react";
 import { fetchCountryList } from "../../app/endpoint";
@@ -26,7 +24,7 @@ function CountrySelector() {
       <div className={`select ${countries.length ? "" : "is-loading"}`}>
         <select
           onChange={({ target }) => {
-            dispatch(setChosenCountryId(target.value));
+            dispatch(setChosenId(target.value));
           }}
         >
           {countries.map(({ value, id }) => {
