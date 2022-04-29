@@ -82,6 +82,7 @@ function App() {
               dispatch(setCompanies(companiesWithContacts));
               dispatch(setStage("scanFinished"));
               dispatch(setProcessedAmount(0));
+              dispatch(setTotalAmount(0));
               const differentResponsibles = getDifferentContactResponsibles(
                 companiesWithContacts
               );
