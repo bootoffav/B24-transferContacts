@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Company, Transfer } from "../types";
 
 interface CompanyState {
@@ -25,10 +25,10 @@ export const companySlice = createSlice({
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;
     },
-    setTotalAmount: (state, { payload }) => {
+    setTotalAmount: (state, { payload }: PayloadAction<number>) => {
       state.totalAmount = payload;
     },
-    setProcessedAmount: (state, { payload }) => {
+    setProcessedAmount: (state, { payload }: PayloadAction<number>) => {
       state.processedAmount =
         payload === 0 ? 0 : state.processedAmount + payload;
     },

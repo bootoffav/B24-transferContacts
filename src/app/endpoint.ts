@@ -102,7 +102,7 @@ const fetchUsers = async (): Promise<User[]> => {
   return users;
 };
 
-const transferContacts = async (differentResponsibles: Transfer) => {
+async function* transferContacts(differentResponsibles: Transfer) {
   for (let responsibleId in differentResponsibles) {
     for (let contactId of differentResponsibles[responsibleId]) {
       await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
@@ -117,9 +117,10 @@ const transferContacts = async (differentResponsibles: Transfer) => {
       })
         .then((r) => r.json())
         .catch(console.log);
+      yield;
     }
   }
-};
+}
 
 export {
   fetchCountryList,

@@ -1,7 +1,7 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
 import { transferContacts } from "../../app/endpoint";
-import { setStage } from "../../app/commonSlice";
+import { setStage, setTransferredAmount } from "../../app/commonSlice";
 
 const InfoBlock = () => {
   const companies = useAppSelector(
@@ -17,6 +17,9 @@ const InfoBlock = () => {
   const stage = useAppSelector((state) => state.common.stage);
   const differentResponsibles = useAppSelector(
     (state) => state.company.differentResponsibles
+  );
+  const transferredAmount = useAppSelector(
+    (state) => state.common.transferredAmount
   );
   const dispatch = useAppDispatch();
 
@@ -58,8 +61,11 @@ const InfoBlock = () => {
               className="button ml-2 is-success is-small is-light"
               onClick={async () => {
                 dispatch(setStage("transferring"));
-                await transferContacts(differentResponsibles);
+                for await (let _ of transferContacts(differentResponsibles)) {
+                  dispatch(setTransferredAmount(1));
+                }
                 dispatch(setStage("transferred"));
+                dispatch(setTransferredAmount(0));
               }}
             >
               FIX IT BY TRANSFERRING CONTACTS!
@@ -74,8 +80,9 @@ const InfoBlock = () => {
       output = (
         <>
           <span className="p-2">
-            Transferring {differentResponsiblesAmount()} contacts to
-            responsibles of their companies
+            Transferring {transferredAmount} of {differentResponsiblesAmount()}{" "}
+            contacts to responsibles of their companies.
+            {}
           </span>
           <ClipLoader loading={true} />
         </>

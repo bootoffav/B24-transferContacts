@@ -9,6 +9,7 @@ export interface CommonState {
     | "transferring"
     | "transferred";
   users: User[];
+  transferredAmount: number;
   selectType: "users" | "countries";
   chosenId: string;
   countries: Country[];
@@ -20,6 +21,7 @@ const initialState: CommonState = {
   selectType: "users",
   chosenId: "",
   countries: [],
+  transferredAmount: 0,
 };
 
 const commonSlice = createSlice({
@@ -28,6 +30,10 @@ const commonSlice = createSlice({
   reducers: {
     setStage: (state, { payload }: PayloadAction<CommonState["stage"]>) => {
       state.stage = payload;
+    },
+    setTransferredAmount: (state, { payload }) => {
+      state.transferredAmount =
+        payload === 0 ? 0 : state.transferredAmount + payload;
     },
     setSelectType: (
       state,
@@ -66,6 +72,12 @@ const commonSlice = createSlice({
   },
 });
 
-export const { setStage, setChosenId, setSelectType, addUsers, addCountries } =
-  commonSlice.actions;
+export const {
+  setStage,
+  setChosenId,
+  setSelectType,
+  addUsers,
+  addCountries,
+  setTransferredAmount,
+} = commonSlice.actions;
 export default commonSlice.reducer;
