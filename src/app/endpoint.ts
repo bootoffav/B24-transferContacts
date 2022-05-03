@@ -1,4 +1,5 @@
 import { stringify } from "qs";
+import { Company, Contact, Country, Transfer, User } from "../types";
 import { CommonState } from "./commonSlice";
 
 const {
@@ -9,7 +10,7 @@ const {
   REACT_APP_B24_COUNTRY_FIELD: countryField,
 } = process.env;
 
-const fetchCountryList = async function () {
+const fetchCountryList = async function (): Promise<Country[]> {
   return await fetch(
     `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
       stringify({ ID: countryFieldId })
@@ -22,7 +23,7 @@ const fetchCountryList = async function () {
       const {
         result: { LIST: countries },
       } = response;
-      return countries.map((country: any) => ({
+      return countries.map((country: { VALUE: string; ID: string }) => ({
         value: country.VALUE,
         id: country.ID,
       }));
@@ -32,20 +33,20 @@ const fetchCountryList = async function () {
 const fetchCompanies = async (
   chosenId: string,
   selectType: CommonState["selectType"]
-): Promise<any[]> => {
+): Promise<Company[]> => {
   if (!chosenId) throw new Error("ID not specified");
 
   let filter;
   switch (selectType) {
-    case "country":
+    case "countries":
       filter = { [countryField as string]: chosenId };
       break;
-    case "manager":
+    case "users":
       filter = { ASSIGNED_BY_ID: chosenId };
       break;
   }
 
-  let companies: any[] = [];
+  let companies: Company[] = [];
   let start = 0;
   while (start !== undefined) {
     const [result, next] = await fetch(
@@ -68,7 +69,7 @@ const fetchCompanies = async (
   return companies;
 };
 
-const fetchCompanyContacts = async (companyId: string) => {
+const fetchCompanyContacts = async (companyId: number): Promise<Contact[]> => {
   return await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.list`, {
     method: "POST",
     body: stringify({
@@ -79,8 +80,8 @@ const fetchCompanyContacts = async (companyId: string) => {
     .then((r) => r.result);
 };
 
-const fetchUsers = async () => {
-  let users: any[] = [];
+const fetchUsers = async (): Promise<User[]> => {
+  let users: User[] = [];
   let start = 0;
   while (start !== undefined) {
     const [result, next] = await fetch(
@@ -101,9 +102,9 @@ const fetchUsers = async () => {
   return users;
 };
 
-const transferContacts = async (transfer: any) => {
-  for (let responsibleId in transfer) {
-    for (let contactId of transfer[responsibleId]) {
+const transferContacts = async (differentResponsibles: Transfer) => {
+  for (let responsibleId in differentResponsibles) {
+    for (let contactId of differentResponsibles[responsibleId]) {
       await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
         method: "POST",
         body: stringify({

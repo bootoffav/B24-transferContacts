@@ -1,13 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Company, Transfer } from "../types";
+
+interface CompanyState {
+  totalAmount: number;
+  processedAmount: number;
+  companiesWithContacts: Company[];
+  differentResponsibles: Transfer;
+}
+
+const initialState: CompanyState = {
+  totalAmount: 0,
+  processedAmount: 0,
+  companiesWithContacts: [],
+  differentResponsibles: [],
+};
 
 export const companySlice = createSlice({
   name: "companies",
-  initialState: {
-    totalAmount: 0,
-    processedAmount: 0,
-    companiesWithContacts: [],
-    differentResponsibles: [],
-  },
+  initialState,
   reducers: {
     setCompanies: (state, { payload }) => {
       state.companiesWithContacts = payload;

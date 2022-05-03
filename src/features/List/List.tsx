@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../app/hooks";
+import { Company, User } from "../../types";
 import styles from "./List.module.css";
 
 const formLink = (
@@ -19,23 +20,26 @@ const formLink = (
 );
 
 function getUserNameById(
-  users: { NAME: string; LAST_NAME: string }[],
-  id: string
+  users: User[],
+  id: number
 ): { NAME: string; LAST_NAME: string } {
   return (
-    users.find(({ ID }: any) => ID === id) || { NAME: "unknown", LAST_NAME: "" }
+    users.find(({ ID }: User) => ID === id) || {
+      NAME: "unknown",
+      LAST_NAME: "",
+    }
   );
 }
 
 const List = () => {
-  // @ts-ignore
-  const companies = useSelector((state) => state.company.companiesWithContacts);
-  // @ts-ignore
-  const users = useSelector((state) => state.common.users);
+  const companies = useAppSelector(
+    (state) => state.company.companiesWithContacts
+  );
+  const users = useAppSelector((state) => state.common.users);
 
   const data = useMemo(
     () =>
-      companies.map((company: any, index: number) => {
+      companies.map((company: Company, index: number) => {
         const responsibleForCompany = getUserNameById(
           users,
           company.ASSIGNED_BY_ID
@@ -45,11 +49,11 @@ const List = () => {
           position: index + 1,
           company: [company.TITLE, company.ID],
           responsibleForCompany: `${responsibleForCompany.NAME} ${responsibleForCompany.LAST_NAME}`,
-          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }: any) => [
+          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
             `${NAME} ${LAST_NAME}`,
             ID,
           ]),
-          responsibleForContact: company.CONTACTS.map((contact: any) => {
+          responsibleForContact: company.CONTACTS.map((contact) => {
             const { NAME, LAST_NAME } = getUserNameById(
               users,
               contact.ASSIGNED_BY_ID

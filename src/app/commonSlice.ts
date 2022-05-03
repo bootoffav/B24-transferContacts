@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { User } from "../types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Country, User } from "../types";
 
 export interface CommonState {
   stage:
@@ -8,35 +8,40 @@ export interface CommonState {
     | "scanFinished"
     | "transferring"
     | "transferred";
-  users: any[];
-  selectType: "manager" | "country";
+  users: User[];
+  selectType: "users" | "countries";
   chosenId: string;
+  countries: Country[];
 }
 
 const initialState: CommonState = {
   stage: "initial",
   users: [],
-  selectType: "manager",
+  selectType: "users",
   chosenId: "",
+  countries: [],
 };
 
 const commonSlice = createSlice({
   name: "common",
   initialState,
   reducers: {
-    setStage: (state, { payload }) => {
+    setStage: (state, { payload }: PayloadAction<CommonState["stage"]>) => {
       state.stage = payload;
     },
-    setUsers: (state, { payload }) => {
-      state.users = payload;
-    },
-    setSelectType: (state, { payload }) => {
+    setSelectType: (
+      state,
+      { payload }: PayloadAction<CommonState["selectType"]>
+    ) => {
       state.selectType = payload;
     },
-    setChosenId: (state, { payload }) => {
+    setChosenId: (state, { payload }: PayloadAction<string>) => {
       state.chosenId = payload;
     },
-    addUsers: (state, { payload: users }) => {
+    addCountries: (state, { payload }: PayloadAction<Country[]>) => {
+      state.countries = payload;
+    },
+    addUsers: (state, { payload: users }: PayloadAction<User[]>) => {
       // sort
       users.sort((a: User, b: User) => {
         if (a.NAME > b.NAME) return 1;
@@ -51,7 +56,7 @@ const commonSlice = createSlice({
       });
 
       activeUsers.unshift({
-        ID: "",
+        ID: 0,
         NAME: "none",
         LAST_NAME: "",
         ACTIVE: true,
@@ -61,6 +66,6 @@ const commonSlice = createSlice({
   },
 });
 
-export const { setStage, setUsers, setChosenId, setSelectType, addUsers } =
+export const { setStage, setChosenId, setSelectType, addUsers, addCountries } =
   commonSlice.actions;
 export default commonSlice.reducer;

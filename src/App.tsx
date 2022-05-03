@@ -1,6 +1,5 @@
-import UserSelector from "./features/userSelector/userSelector";
 import { fetchCompanies, fetchCompanyContacts } from "./app/endpoint";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   setCompanies,
   setDifferentResponsibles,
@@ -13,18 +12,15 @@ import List from "./features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
 import getDifferentContactResponsibles from "./app/differentContactResponsibles";
 import { CommonState } from "./app/commonSlice";
-import CountrySelector from "./features/countrySelector/CountrySelector";
+import { Company } from "./types";
+import EntitySelector from "./features/EntitySelector/EntitySelector";
 
 function App() {
-  const dispatch = useDispatch();
-  const chosenId = useSelector((state: any) => state.common.chosenId);
+  const dispatch = useAppDispatch();
+  const chosenId = useAppSelector((state) => state.common.chosenId);
 
-  // @ts-ignore
-  const stage = useSelector((state) => state.common.stage);
-  const selectType: CommonState["selectType"] = useSelector(
-    // @ts-ignore
-    (state) => state.common.selectType
-  );
+  const stage = useAppSelector((state) => state.common.stage);
+  const selectType = useAppSelector((state) => state.common.selectType);
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -43,17 +39,17 @@ function App() {
             <select
               defaultValue={"manager"}
               onChange={({ target: { value } }) => {
-                dispatch(setSelectType(value));
+                dispatch(setSelectType(value as CommonState["selectType"]));
                 dispatch(setChosenId(""));
               }}
             >
-              <option value="manager">Manager</option>
-              <option value="country">Country</option>
+              <option value="users">Manager</option>
+              <option value="countries">Country</option>
             </select>
           </div>
         </div>
         <div className="column is-one-fifth">
-          {selectType === "country" ? <CountrySelector /> : <UserSelector />}
+          <EntitySelector selectType={selectType} />
         </div>
         <div className="column">
           <button
@@ -67,15 +63,15 @@ function App() {
               dispatch(setStage("gettingData"));
               const companies = await fetchCompanies(chosenId, selectType);
               dispatch(setTotalAmount(companies.length));
-              const companiesWithContacts: any[] = [];
+              const companiesWithContacts: Company[] = [];
               for (let company of companies) {
                 const delay = async (ms = 500) =>
                   await new Promise((res) => setTimeout(res, Number(ms)));
 
                 await delay();
                 companiesWithContacts.push({
-                  CONTACTS: await fetchCompanyContacts(company.ID),
                   ...company,
+                  CONTACTS: await fetchCompanyContacts(company.ID),
                 });
                 dispatch(setProcessedAmount(1));
               }

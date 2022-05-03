@@ -1,25 +1,24 @@
-import { Country } from "../../types";
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
 import { transferContacts } from "../../app/endpoint";
 import { setStage } from "../../app/commonSlice";
 
 const InfoBlock = () => {
-  const companies = useSelector<unknown, Country[]>(
-    (state: any) => state.company.companiesWithContacts
+  const companies = useAppSelector(
+    (state) => state.company.companiesWithContacts
   );
-  const companiesTotalAmount = useSelector(
-    (state: any) => state.company.totalAmount
+  const companiesTotalAmount = useAppSelector(
+    (state) => state.company.totalAmount
   );
-  const companiesProcessedAmount = useSelector(
-    (state: any) => state.company.processedAmount
+  const companiesProcessedAmount = useAppSelector(
+    (state) => state.company.processedAmount
   );
 
-  const stage = useSelector((state: any) => state.common.stage);
-  const differentResponsibles = useSelector(
-    (state: any) => state.company.differentResponsibles
+  const stage = useAppSelector((state) => state.common.stage);
+  const differentResponsibles = useAppSelector(
+    (state) => state.company.differentResponsibles
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   function differentResponsiblesAmount() {
     let amount = 0;
