@@ -1,6 +1,8 @@
 import { stringify } from "qs";
 import { Company, Contact, Country, Transfer, User } from "../types";
 import { CommonState } from "./commonSlice";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "./store";
 
 const {
   REACT_APP_B24_ENDPOINT: endpoint,
@@ -9,26 +11,6 @@ const {
   REACT_APP_B24_COUNTRY_FIELD_ID: countryFieldId,
   REACT_APP_B24_COUNTRY_FIELD: countryField,
 } = process.env;
-
-const fetchCountryList = async function (): Promise<Country[]> {
-  return await fetch(
-    `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
-      stringify({ ID: countryFieldId })
-  )
-    .then((r) => r.json())
-    .then((response) => {
-      if ("error" in response && "error_description" in response) {
-        throw new Error();
-      }
-      const {
-        result: { LIST: countries },
-      } = response;
-      return countries.map((country: { VALUE: string; ID: string }) => ({
-        value: country.VALUE,
-        id: country.ID,
-      }));
-    });
-};
 
 const fetchCompanies = async (
   chosenId: string,
@@ -80,27 +62,34 @@ const fetchCompanyContacts = async (companyId: number): Promise<Contact[]> => {
     .then((r) => r.result);
 };
 
-const fetchUsers = async (): Promise<User[]> => {
-  let users: User[] = [];
-  let start = 0;
-  while (start !== undefined) {
-    const [result, next] = await fetch(
-      `${endpoint}${userId}/${webhookToken}/user.get`,
-      {
-        method: "POST",
-        body: stringify({
-          start,
-        }),
-      }
-    )
-      .then((r) => r.json())
-      .then(({ result, next }) => [result, next]);
-    users = users.concat(result);
-    start = next;
-  }
+const fetchUsers = createAsyncThunk(
+  "common/fetchUsers",
+  async (): Promise<User[]> => {
+    let users: User[] = [];
+    let start = 0;
+    while (start !== undefined) {
+      const [result, next] = await fetch(
+        `${endpoint}${userId}/${webhookToken}/user.get`,
+        {
+          method: "POST",
+          body: stringify({
+            start,
+          }),
+        }
+      )
+        .then((r) => r.json())
+        .then(({ result, next }) => [result, next]);
+      users = users.concat(result);
+      start = next;
+    }
 
-  return users;
-};
+    return users;
+  },
+  {
+    condition: (_, { getState }) =>
+      Boolean((getState() as RootState).common.users.length === 0),
+  }
+);
 
 async function* transferContacts(differentResponsibles: Transfer) {
   for (let responsibleId in differentResponsibles) {
@@ -122,10 +111,36 @@ async function* transferContacts(differentResponsibles: Transfer) {
   }
 }
 
+const fetchCountries = createAsyncThunk(
+  "common/fetchCountries",
+  async (): Promise<Country[]> =>
+    await fetch(
+      `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
+        stringify({ ID: countryFieldId })
+    )
+      .then((r) => r.json())
+      .then((response) => {
+        if ("error" in response && "error_description" in response) {
+          throw new Error();
+        }
+        const {
+          result: { LIST: countries },
+        } = response;
+        return countries.map((country: { VALUE: string; ID: string }) => ({
+          value: country.VALUE,
+          id: country.ID,
+        }));
+      }),
+  {
+    condition: (_, { getState }) =>
+      Boolean((getState() as RootState).common.countries.length === 0),
+  }
+);
+
 export {
-  fetchCountryList,
   fetchCompanies,
   fetchCompanyContacts,
   fetchUsers,
   transferContacts,
+  fetchCountries,
 };

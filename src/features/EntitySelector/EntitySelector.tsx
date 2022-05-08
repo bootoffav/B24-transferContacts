@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import {
-  addUsers,
-  CommonState,
-  setChosenId,
-  addCountries,
-} from "../../app/commonSlice";
-import { fetchUsers, fetchCountryList } from "../../app/endpoint";
+import { CommonState, setChosenId } from "../../app/commonSlice";
+import { fetchUsers, fetchCountries } from "../../app/endpoint";
 import { Country, User } from "../../types";
 
 type EntitySelectorProps = {
@@ -17,12 +12,9 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    (async () => {
-      selectType === "countries"
-        ? dispatch(addCountries(await fetchCountryList()))
-        : dispatch(addUsers(await fetchUsers()));
-    })();
-  }, [dispatch, selectType]);
+    dispatch(fetchUsers());
+    dispatch(fetchCountries());
+  }, [dispatch]);
 
   const selectOptions = useAppSelector((state) => state.common[selectType]);
 

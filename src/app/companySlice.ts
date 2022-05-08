@@ -41,4 +41,4 @@ export const {
   setTotalAmount,
   setProcessedAmount,
 } = companySlice.actions;
-export default companySlice.reducer;
+export default companySlice;

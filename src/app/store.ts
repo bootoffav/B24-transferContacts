@@ -1,14 +1,11 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import companyReducer from "./companySlice";
-import commonReducer from "./commonSlice";
-
-// @ts-ignore
-window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+import company from "./companySlice";
+import common from "./commonSlice";
 
 export const store = configureStore({
   reducer: {
-    company: companyReducer,
-    common: commonReducer,
+    company: company.reducer,
+    common: common.reducer,
   },
 });
 
