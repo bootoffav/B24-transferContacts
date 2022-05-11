@@ -61,6 +61,7 @@ const InfoBlock = () => {
               className="button ml-2 is-success is-small is-light"
               onClick={async () => {
                 dispatch(setStage("transferring"));
+                // eslint-disable-next-line
                 for await (let _ of transferContacts(differentResponsibles)) {
                   dispatch(setTransferredAmount(1));
                 }
