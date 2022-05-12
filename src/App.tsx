@@ -1,24 +1,14 @@
-import { fetchCompanies, fetchCompanyContacts } from "./app/endpoint";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
-import {
-  setCompanies,
-  setDifferentResponsibles,
-  setTotalAmount,
-  setProcessedAmount,
-} from "./app/companySlice";
-import { setSelectType, setStage, setChosenId } from "./app/commonSlice";
-import InfoBlock from "./features/InfoBlock/InfoBlock";
-import List from "./features/List/List";
+import { useAppDispatch, useAppSelector } from "app/hooks";
+import { setSelectType, setChosenId } from "app/commonSlice";
+import InfoBlock from "features/InfoBlock/InfoBlock";
+import List from "features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
-import getDifferentContactResponsibles from "./app/differentContactResponsibles";
-import { CommonState } from "./app/commonSlice";
-import { Company } from "./types";
-import EntitySelector from "./features/EntitySelector/EntitySelector";
+import { CommonState } from "app/commonSlice";
+import EntitySelector from "features/EntitySelector/EntitySelector";
+import GetCompanies from "features/GetCompanies/GetCompanies";
 
 function App() {
   const dispatch = useAppDispatch();
-  const chosenId = useAppSelector((state) => state.common.chosenId);
-
   const stage = useAppSelector((state) => state.common.stage);
   const selectType = useAppSelector((state) => state.common.selectType);
 
@@ -52,41 +42,7 @@ function App() {
           <EntitySelector selectType={selectType} />
         </div>
         <div className="column">
-          <button
-            className="button is-primary"
-            onClick={async () => {
-              if (chosenId === "") {
-                alert(`choose ${selectType} first`);
-                return;
-              }
-
-              dispatch(setStage("gettingData"));
-              const companies = await fetchCompanies(chosenId, selectType);
-              dispatch(setTotalAmount(companies.length));
-              const companiesWithContacts: Company[] = [];
-              for (let company of companies) {
-                const delay = async (ms = 500) =>
-                  await new Promise((res) => setTimeout(res, Number(ms)));
-
-                await delay();
-                companiesWithContacts.push({
-                  ...company,
-                  CONTACTS: await fetchCompanyContacts(company.ID),
-                });
-                dispatch(setProcessedAmount(1));
-              }
-              dispatch(setCompanies(companiesWithContacts));
-              dispatch(setStage("scanFinished"));
-              dispatch(setProcessedAmount(0));
-              dispatch(setTotalAmount(0));
-              const differentResponsibles = getDifferentContactResponsibles(
-                companiesWithContacts
-              );
-              dispatch(setDifferentResponsibles(differentResponsibles));
-            }}
-          >
-            Get companies
-          </button>
+          <GetCompanies />
         </div>
       </div>
       <InfoBlock />

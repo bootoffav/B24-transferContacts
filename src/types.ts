@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    aborted?: boolean;
+  }
+}
+
 export type Country = {
   value: string;
   id: string;
