@@ -91,6 +91,7 @@ const generateExcelFileStructure = (
           case 3:
           case 4:
             // @ts-ignore
+            // eslint-disable-next-line
             toYield = v.map(([id, title]) => {
               const toRet: any = { v: title };
               if (columnIndex === 3) {
@@ -157,7 +158,7 @@ const generateExcelFileStructure = (
       CreatedDate: new Date(),
     },
     SheetNames: ["Transfer contacts"],
-    Sheets: { ["Transfer contacts"]: ws },
+    Sheets: { "Transfer contacts": ws },
   };
 
   return {
