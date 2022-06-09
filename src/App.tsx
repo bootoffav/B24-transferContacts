@@ -6,11 +6,16 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { CommonState } from "app/commonSlice";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
+import Export from "features/Export/Export";
+import "./styles.scss";
 
 function App() {
   const dispatch = useAppDispatch();
-  const stage = useAppSelector((state) => state.common.stage);
-  const selectType = useAppSelector((state) => state.common.selectType);
+  const stage = useAppSelector(({ common }) => common.stage);
+  const selectType = useAppSelector(({ common }) => common.selectType);
+  const companies = useAppSelector(
+    ({ company }) => company.companiesWithContacts
+  );
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -30,7 +35,7 @@ function App() {
               defaultValue={"manager"}
               onChange={({ target: { value } }) => {
                 dispatch(setSelectType(value as CommonState["selectType"]));
-                dispatch(setChosenId(""));
+                dispatch(setChosenId());
               }}
             >
               <option value="users">Manager</option>
@@ -46,7 +51,12 @@ function App() {
         </div>
       </div>
       <InfoBlock />
-      {stage === "scanFinished" && <List />}
+      {stage === "scanFinished" && companies.length && (
+        <>
+          <Export />
+          <List />
+        </>
+      )}
     </div>
   ) : (
     <>{loginWithRedirect()}</>

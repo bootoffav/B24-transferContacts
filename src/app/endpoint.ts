@@ -13,7 +13,7 @@ const {
 } = process.env;
 
 const fetchCompanies = async (
-  chosenId: string,
+  chosenId: number,
   selectType: CommonState["selectType"]
 ): Promise<Company[]> => {
   if (!chosenId) throw new Error("ID not specified");
@@ -68,7 +68,7 @@ const fetchUsers = createAsyncThunk(
     let users: User[] = [];
     let start = 0;
     while (start !== undefined) {
-      const [result, next] = await fetch(
+      const { result: usersChunk, next } = await fetch(
         `${endpoint}${userId}/${webhookToken}/user.get`,
         {
           method: "POST",
@@ -76,10 +76,8 @@ const fetchUsers = createAsyncThunk(
             start,
           }),
         }
-      )
-        .then((r) => r.json())
-        .then(({ result, next }) => [result, next]);
-      users = users.concat(result);
+      ).then((r): Promise<{ result: User[]; next: number }> => r.json());
+      users = users.concat(usersChunk);
       start = next;
     }
 
@@ -128,7 +126,7 @@ const fetchCountries = createAsyncThunk(
         } = response;
         return countries.map((country: { VALUE: string; ID: string }) => ({
           value: country.VALUE,
-          id: country.ID,
+          ID: country.ID,
         }));
       }),
   {

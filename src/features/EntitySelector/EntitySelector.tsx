@@ -26,8 +26,8 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
     ));
 
   const mapCountries = () =>
-    (selectOptions as Country[]).map(({ value, id }) => (
-      <option key={id} value={id}>
+    (selectOptions as Country[]).map(({ value, ID }) => (
+      <option key={ID} value={ID}>
         {value}
       </option>
     ));
@@ -35,7 +35,9 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
   return (
     <div className="control is-disabled">
       <div className={`select ${selectOptions.length ? "" : "is-loading"}`}>
-        <select onChange={({ target }) => dispatch(setChosenId(target.value))}>
+        <select
+          onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
+        >
           {selectType === "countries" ? mapCountries() : mapUsers()}
         </select>
       </div>

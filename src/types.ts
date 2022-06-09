@@ -6,7 +6,7 @@ declare global {
 
 export type Country = {
   value: string;
-  id: string;
+  ID: number;
 };
 
 export interface User {

@@ -10,7 +10,7 @@ const sort = (users: any) => {
 };
 
 // divide users: active ones will go first, dismissed will go last
-const splitActiveDismissed = (users: any) => {
+const splitActiveDismissed = (users: User[]) => {
   let activeUsers: User[] = [];
   let dismissedUsers: User[] = [];
   users.forEach((user: User) => {
@@ -20,4 +20,16 @@ const splitActiveDismissed = (users: any) => {
   return [...activeUsers, ...dismissedUsers];
 };
 
-export { sort, splitActiveDismissed };
+function getUserNameById(
+  users: User[],
+  id: number
+): { NAME: string; LAST_NAME: string } {
+  return (
+    users.find(({ ID }: User) => ID === id) || {
+      NAME: "unknown",
+      LAST_NAME: "",
+    }
+  );
+}
+
+export { sort, splitActiveDismissed, getUserNameById };

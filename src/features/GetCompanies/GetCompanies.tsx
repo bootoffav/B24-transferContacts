@@ -14,43 +14,48 @@ import { SyntheticEvent, useState } from "react";
 export default function GetCompanies() {
   const [state, setState] = useState<"idle" | "processing">("idle");
   const dispatch = useAppDispatch();
-  const chosenId = useAppSelector((state) => state.common.chosenId);
-  const selectType = useAppSelector((state) => state.common.selectType);
+  const [chosenId, selectType] = useAppSelector(({ common }) => [
+    common.chosenId,
+    common.selectType,
+  ]);
 
   const clickHandler = async ({ target }: SyntheticEvent) => {
-    if (chosenId === "" || chosenId === "0") {
-      alert(`choose ${selectType} first`);
+    if (chosenId) {
+      // if (chosenId === "" || chosenId === "0") {
+
+      // }
+
+      if ((target as HTMLButtonElement).innerHTML === "STOP") {
+        window.aborted = true;
+        return;
+      }
+      // set up initital state
+      setState("processing");
+      dispatch(setProcessedAmount(0));
+      dispatch(setTotalAmount(0));
+      dispatch(setStage("gettingData"));
+
+      // get companies
+      const companies = await fetchCompanies(chosenId, selectType);
+      dispatch(setTotalAmount(companies.length));
+
+      //working on company contacts
+      let companiesWithContacts: Company[] = [];
+      for await (const company of getCompaniesWithContacts(companies)) {
+        companiesWithContacts = [...companiesWithContacts, company];
+        dispatch(setProcessedAmount(1));
+      }
+
+      dispatch(setCompanies(companiesWithContacts));
+      dispatch(setStage("scanFinished"));
+      const differentResponsibles = getDifferentContactResponsibles(
+        companiesWithContacts
+      );
+      dispatch(setDifferentResponsibles(differentResponsibles));
+      setState("idle");
       return;
     }
-
-    if ((target as HTMLButtonElement).innerHTML === "STOP") {
-      window.aborted = true;
-      return;
-    }
-    // set up initital state
-    setState("processing");
-    dispatch(setProcessedAmount(0));
-    dispatch(setTotalAmount(0));
-    dispatch(setStage("gettingData"));
-
-    // get companies
-    const companies = await fetchCompanies(chosenId, selectType);
-    dispatch(setTotalAmount(companies.length));
-
-    //working on company contacts
-    let companiesWithContacts: Company[] = [];
-    for await (const company of getCompaniesWithContacts(companies)) {
-      companiesWithContacts = [...companiesWithContacts, company];
-      dispatch(setProcessedAmount(1));
-    }
-
-    dispatch(setCompanies(companiesWithContacts));
-    dispatch(setStage("scanFinished"));
-    const differentResponsibles = getDifferentContactResponsibles(
-      companiesWithContacts
-    );
-    dispatch(setDifferentResponsibles(differentResponsibles));
-    setState("idle");
+    alert(`choose ${selectType} first`);
   };
 
   return (

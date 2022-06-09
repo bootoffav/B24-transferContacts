@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
 import { useAppSelector } from "../../app/hooks";
 import { Company, User } from "../../types";
+import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 
 const formLink = (
@@ -18,18 +19,6 @@ const formLink = (
     </a>
   </>
 );
-
-function getUserNameById(
-  users: User[],
-  id: number
-): { NAME: string; LAST_NAME: string } {
-  return (
-    users.find(({ ID }: User) => ID === id) || {
-      NAME: "unknown",
-      LAST_NAME: "",
-    }
-  );
-}
 
 const List = () => {
   const companies = useAppSelector(
@@ -126,39 +115,29 @@ const List = () => {
     tableInstance;
 
   return (
-    <>
-      {companies.length ? (
-        <table className="table mx-auto" {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
+    <table className="table mx-auto is-fullwidth" {...getTableProps()}>
+      <thead>
+        {headerGroups.map((headerGroup) => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
             ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      ) : (
-        ""
-      )}
-    </>
+          </tr>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map((row) => {
+          prepareRow(row);
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map((cell) => {
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 };
 
