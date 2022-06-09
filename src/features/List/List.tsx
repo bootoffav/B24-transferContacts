@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import { Company, User } from "../../types";
+import { Company } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 
