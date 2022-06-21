@@ -1,30 +1,25 @@
 import { useMemo } from "react";
 import { Cell, useTable } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import { Company } from "../../types";
+import { Company, EntityType } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 
-const formLink = (
-  [title, id]: [string, string],
-  type: "company" | "contact"
-) => (
-  <>
-    <a
-      target="_blank"
-      rel="noopener noreferrer"
-      href={`${process.env.REACT_APP_B24_ADDRESS}crm/${type}/details/${id}/`}
-    >
-      {title}
-    </a>
-  </>
+const formLink = ([title, id]: [string, string], type: EntityType) => (
+  <a
+    target="_blank"
+    rel="noopener noreferrer"
+    href={`${process.env.REACT_APP_B24_ADDRESS}crm/${type}/details/${id}/`}
+  >
+    {title}
+  </a>
 );
 
 const List = () => {
-  const companies = useAppSelector(
-    (state) => state.company.companiesWithContacts
-  );
-  const users = useAppSelector((state) => state.common.users);
+  const { users, companies } = useAppSelector(({ company, common }) => ({
+    companies: company.companiesWithRelatedEntities,
+    users: common.users,
+  }));
 
   const data = useMemo(
     () =>
@@ -37,18 +32,22 @@ const List = () => {
         return {
           position: index + 1,
           company: [company.TITLE, company.ID],
-          responsibleForCompany: `${responsibleForCompany.NAME} ${responsibleForCompany.LAST_NAME}`,
+          responsibleForCompany,
           contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
             `${NAME} ${LAST_NAME}`,
             ID,
           ]),
-          responsibleForContact: company.CONTACTS.map((contact) => {
-            const { NAME, LAST_NAME } = getUserNameById(
-              users,
-              contact.ASSIGNED_BY_ID
-            );
-            return `${NAME} ${LAST_NAME}`;
-          }),
+          deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
+          lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
+          responsibleForContact: company.CONTACTS.map((contact) =>
+            getUserNameById(users, contact.ASSIGNED_BY_ID)
+          ),
+          responsibleForDeal: company.DEALS.map((deal) =>
+            getUserNameById(users, deal.ASSIGNED_BY_ID)
+          ),
+          responsibleForLead: company.LEADS.map((lead) =>
+            getUserNameById(users, lead.ASSIGNED_BY_ID)
+          ),
         };
       }),
     [companies, users]
@@ -56,29 +55,28 @@ const List = () => {
 
   const getSubRows = ({
     value,
+    column,
     row: {
       values: { responsibleForCompany },
     },
   }: Cell) => {
-    return value.map((v: [string, string] | string, index: number) => {
-      return (
-        <table key={index}>
-          <tbody>
-            <tr>
-              <td
-                className={
-                  responsibleForCompany !== v ? styles.otherResponsible : ""
-                }
-              >
-                {typeof v === "object" ? formLink(v, "contact") : v}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      );
-    });
+    return (
+      <ul>
+        {value.map((v: [string, string] | string, index: number) => {
+          return (
+            <li
+              key={index}
+              className={
+                responsibleForCompany !== v ? styles.otherResponsible : ""
+              }
+            >
+              {typeof v === "object" ? formLink(v, column.id as EntityType) : v}
+            </li>
+          );
+        })}
+      </ul>
+    );
   };
-
   const columns = useMemo(
     () => [
       {
@@ -104,6 +102,26 @@ const List = () => {
         accessor: "responsibleForContact",
         Cell: getSubRows,
       },
+      {
+        Header: "Lead",
+        accessor: "lead",
+        Cell: getSubRows,
+      },
+      {
+        Header: "Responsible for lead",
+        accessor: "responsibleForLead",
+        Cell: getSubRows,
+      },
+      {
+        Header: "Deal",
+        accessor: "deal",
+        Cell: getSubRows,
+      },
+      {
+        Header: "Responsible for Deal",
+        accessor: "responsibleForDeal",
+        Cell: getSubRows,
+      },
     ],
     []
   );
@@ -115,7 +133,10 @@ const List = () => {
     tableInstance;
 
   return (
-    <table className="table mx-auto is-fullwidth" {...getTableProps()}>
+    <table
+      className="table is-bordered is-hoverable is-fullwidth"
+      {...getTableProps()}
+    >
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>

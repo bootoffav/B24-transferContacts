@@ -11,10 +11,12 @@ import "./styles.scss";
 
 function App() {
   const dispatch = useAppDispatch();
-  const stage = useAppSelector(({ common }) => common.stage);
-  const selectType = useAppSelector(({ common }) => common.selectType);
-  const companies = useAppSelector(
-    ({ company }) => company.companiesWithContacts
+  const { stage, selectType, companies } = useAppSelector(
+    ({ common, company }) => ({
+      stage: common.stage,
+      selectType: common.selectType,
+      companies: company.companiesWithRelatedEntities,
+    })
   );
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -24,7 +26,7 @@ function App() {
   }
 
   return isAuthenticated ? (
-    <div className="container mt-2">
+    <div className="container is-fluid mt-2">
       <div className="columns">
         <div className="column has-text-weight-medium is-flex is-justify-content-end is-align-items-center">
           Choose:
@@ -43,7 +45,7 @@ function App() {
             </select>
           </div>
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-2">
           <EntitySelector selectType={selectType} />
         </div>
         <div className="column">

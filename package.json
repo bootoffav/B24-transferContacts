@@ -17,6 +17,7 @@
     "@types/react-table": "^7.7.10",
     "bulma": "^0.9.3",
     "dayjs": "^1.11.3",
+    "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.0",
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.182"
   }
 }

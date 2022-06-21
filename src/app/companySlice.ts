@@ -4,14 +4,14 @@ import { Company, Transfer } from "../types";
 interface CompanyState {
   totalAmount: number;
   processedAmount: number;
-  companiesWithContacts: Company[];
+  companiesWithRelatedEntities: Company[];
   differentResponsibles: Transfer;
 }
 
 const initialState: CompanyState = {
   totalAmount: 0,
   processedAmount: 0,
-  companiesWithContacts: [],
+  companiesWithRelatedEntities: [],
   differentResponsibles: [],
 };
 
@@ -20,7 +20,7 @@ export const companySlice = createSlice({
   initialState,
   reducers: {
     setCompanies: (state, { payload }) => {
-      state.companiesWithContacts = payload;
+      state.companiesWithRelatedEntities = payload;
     },
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;

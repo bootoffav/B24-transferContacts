@@ -21,6 +21,14 @@ export interface Company {
   ASSIGNED_BY_ID: number;
   ID: number;
   CONTACTS: Contact[];
+  DEALS: Deal[];
+  LEADS: Lead[];
+}
+
+export interface Lead {
+  TITLE: string;
+  ASSIGNED_BY_ID: number;
+  ID: number;
 }
 
 export interface Contact {
@@ -31,8 +39,20 @@ export interface Contact {
   LAST_NAME: string;
 }
 
+export interface Deal {
+  ASSIGNED_BY_ID: number;
+  ID: number;
+  TITLE: string;
+}
+
 // key is Responsible ID
 // value is array of Contacts ID that need to be transferred
 export interface Transfer {
-  [key: number]: number[];
+  [key: number]: {
+    CONTACTS: number[];
+    DEALS: number[];
+    LEADS: number[];
+  };
 }
+
+export type EntityType = "company" | "contact" | "deal" | "lead";

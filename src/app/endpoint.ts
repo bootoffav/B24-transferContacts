@@ -1,5 +1,13 @@
 import { stringify } from "qs";
-import { Company, Contact, Country, Transfer, User } from "../types";
+import {
+  Company,
+  Contact,
+  Deal,
+  Country,
+  Transfer,
+  User,
+  EntityType,
+} from "../types";
 import { CommonState } from "./commonSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "./store";
@@ -51,13 +59,20 @@ const fetchCompanies = async (
   return companies;
 };
 
-const fetchCompanyContacts = async (companyId: number): Promise<Contact[]> => {
-  return await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.list`, {
-    method: "POST",
-    body: stringify({
-      filter: { COMPANY_ID: companyId },
-    }),
-  })
+const fetchRelatedEntities = async (
+  entityId: number,
+  entityType: EntityType,
+  headEntity: "company" | "contact" = "company"
+): Promise<Contact[] | Deal[]> => {
+  return await fetch(
+    `${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`,
+    {
+      method: "POST",
+      body: stringify({
+        filter: { [`${headEntity.toUpperCase()}_ID`]: entityId },
+      }),
+    }
+  )
     .then((r) => r.json())
     .then((r) => r.result);
 };
@@ -89,22 +104,28 @@ const fetchUsers = createAsyncThunk(
   }
 );
 
-async function* transferContacts(differentResponsibles: Transfer) {
+async function* transferEntity(differentResponsibles: Transfer) {
   for (let responsibleId in differentResponsibles) {
-    for (let contactId of differentResponsibles[responsibleId]) {
-      await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
-        method: "POST",
-        body: stringify({
-          id: contactId,
-          fields: {
-            ASSIGNED_BY_ID: responsibleId,
-          },
-          params: { REGISTER_SONET_EVENT: "Y" },
-        }),
-      })
-        .then((r) => r.json())
-        .catch(console.log);
-      yield;
+    for (const entitySet of ["CONTACTS", "LEADS", "DEALS"] as const) {
+      for (const entityId of differentResponsibles[responsibleId][entitySet]) {
+        yield await fetch(
+          `${endpoint}${userId}/${webhookToken}/crm.${entitySet
+            .toLowerCase()
+            .slice(0, -1)}.update`,
+          {
+            method: "POST",
+            body: stringify({
+              id: entityId,
+              fields: {
+                ASSIGNED_BY_ID: responsibleId,
+              },
+              params: { REGISTER_SONET_EVENT: "Y" },
+            }),
+          }
+        )
+          .then((r) => r.json())
+          .catch(console.log);
+      }
     }
   }
 }
@@ -137,8 +158,8 @@ const fetchCountries = createAsyncThunk(
 
 export {
   fetchCompanies,
-  fetchCompanyContacts,
+  fetchRelatedEntities,
   fetchUsers,
-  transferContacts,
+  transferEntity,
   fetchCountries,
 };

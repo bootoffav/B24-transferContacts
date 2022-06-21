@@ -10,7 +10,7 @@ export interface ExportProps {
 const Export = (props: ExportProps) => {
   const [companies, chosenId, titleLookupArray, users] = useAppSelector(
     ({ common, company }) => [
-      company.companiesWithContacts,
+      company.companiesWithRelatedEntities,
       common.chosenId,
       common[common.selectType],
       common.users,

@@ -20,16 +20,13 @@ const splitActiveDismissed = (users: User[]) => {
   return [...activeUsers, ...dismissedUsers];
 };
 
-function getUserNameById(
-  users: User[],
-  id: number
-): { NAME: string; LAST_NAME: string } {
-  return (
-    users.find(({ ID }: User) => ID === id) || {
-      NAME: "unknown",
-      LAST_NAME: "",
-    }
-  );
+function getUserNameById(users: User[], id: number): string {
+  const found = users.find(({ ID }: User) => ID === id) || {
+    NAME: "unknown",
+    LAST_NAME: "",
+  };
+
+  return `${found.NAME} ${found.LAST_NAME}`;
 }
 
 export { sort, splitActiveDismissed, getUserNameById };

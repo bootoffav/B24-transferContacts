@@ -1,32 +1,34 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
-import { transferContacts } from "../../app/endpoint";
+import { transferEntity } from "../../app/endpoint";
 import { setStage, setTransferredAmount } from "../../app/commonSlice";
 
 const InfoBlock = () => {
-  const companies = useAppSelector(
-    (state) => state.company.companiesWithContacts
-  );
-  const companiesTotalAmount = useAppSelector(
-    (state) => state.company.totalAmount
-  );
-  const companiesProcessedAmount = useAppSelector(
-    (state) => state.company.processedAmount
-  );
+  const {
+    companies,
+    companiesTotalAmount,
+    companiesProcessedAmount,
+    differentResponsibles,
+    transferredAmount,
+    stage,
+  } = useAppSelector(({ common, company }) => ({
+    companies: company.companiesWithRelatedEntities,
+    companiesTotalAmount: company.totalAmount,
+    companiesProcessedAmount: company.processedAmount,
+    differentResponsibles: company.differentResponsibles,
+    transferredAmount: common.transferredAmount,
+    stage: common.stage,
+  }));
 
-  const stage = useAppSelector((state) => state.common.stage);
-  const differentResponsibles = useAppSelector(
-    (state) => state.company.differentResponsibles
-  );
-  const transferredAmount = useAppSelector(
-    (state) => state.common.transferredAmount
-  );
   const dispatch = useAppDispatch();
 
   function differentResponsiblesAmount() {
     let amount = 0;
     for (const responsible in differentResponsibles) {
-      amount += differentResponsibles[responsible].length;
+      amount = Object.values(differentResponsibles[responsible]).reduce(
+        (acc, set) => set.length + acc,
+        0
+      );
     }
     return amount;
   }
@@ -54,7 +56,7 @@ const InfoBlock = () => {
         <>
           <p>
             Found {companies.length} companies, {differentResponsiblesAmount()}{" "}
-            different responsibles for contacts
+            different responsibles for contacts, leads & deals
           </p>
           {companies.length ? (
             <button
@@ -62,14 +64,14 @@ const InfoBlock = () => {
               onClick={async () => {
                 dispatch(setStage("transferring"));
                 // eslint-disable-next-line
-                for await (let _ of transferContacts(differentResponsibles)) {
+                for await (let _ of transferEntity(differentResponsibles)) {
                   dispatch(setTransferredAmount(1));
                 }
                 dispatch(setStage("transferred"));
                 dispatch(setTransferredAmount(0));
               }}
             >
-              FIX IT BY TRANSFERRING CONTACTS!
+              FIX THEM ALL AT ONCE!
             </button>
           ) : (
             ""
