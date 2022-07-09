@@ -86,7 +86,7 @@ const generateExcelFileStructure = (
     }
   );
 
-  function* fillCell() {
+  function* fillCells() {
     let startRowIndex = 2;
     let lowestRowIndex = 2;
     let currentRowIndex: number;
@@ -99,53 +99,48 @@ const generateExcelFileStructure = (
       7: "deal",
     };
 
-    for (const row of structuredData) {
+    for (const company of structuredData) {
       let columnIndex = 0;
-      currentRowIndex = startRowIndex;
       let id, title;
-      for (const v of row) {
+      for (const rawCellData of company) {
+        currentRowIndex = startRowIndex;
         let toYield: any;
         switch (columnIndex) {
-          case 1:
-            // @ts-ignore
-            [id, title] = v;
-            toYield = { v: title };
-            toYield.l = {
-              Target: `${process.env.REACT_APP_B24_ADDRESS}crm/company/details/${id}/`,
-            };
-            toYield.s = {
-              font: {
-                underline: true,
-                color: { rgb: "CC2581FF" },
+          case 1: // company title
+            [id, title] = rawCellData;
+            toYield = {
+              v: title,
+              l: {
+                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/company/details/${id}/`,
+              },
+              s: {
+                font: {
+                  underline: true,
+                  color: { rgb: "CC2581FF" },
+                },
               },
             };
             break;
           case 3:
-          case 4:
           case 5:
-          case 6:
           case 7:
-          case 8:
-            // eslint-disable-next-line
-            toYield = (v as []).map(([id, title]: any) => {
-              const toRet: any = { v: title };
-              if ([3, 5, 7].includes(columnIndex)) {
-                toRet.l = {
-                  Target: `${process.env.REACT_APP_B24_ADDRESS}crm/${linkTypeMap[columnIndex]}/details/${id}/`,
-                };
-                toRet.s = {
-                  font: {
-                    underline: true,
-                    color: { rgb: "CC2581FF" },
-                  },
-                };
-              }
-              return toRet;
-            });
+            toYield = (rawCellData as []).map(([id, title]: any) => ({
+              v: title,
+              l: {
+                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/${linkTypeMap[columnIndex]}/details/${id}/`,
+              },
+              s: {
+                font: {
+                  underline: true,
+                  color: { rgb: "CC2581FF" },
+                },
+              },
+            }));
             break;
           default:
-            toYield = { v };
+            toYield = { v: rawCellData };
         }
+
         if (Array.isArray(toYield)) {
           if (toYield.length) {
             // has related entities
@@ -159,26 +154,47 @@ const generateExcelFileStructure = (
           } else {
             // no related entities in Company, but should render empty cell for the company row
             yield {
-              [`${columnLetters[columnIndex]}${currentRowIndex}`]: "-",
+              [`${columnLetters[columnIndex]}${currentRowIndex}`]: { v: "-" },
             };
+            currentRowIndex += 1;
           }
         } else {
-          yield {
-            [`${columnLetters[columnIndex]}${currentRowIndex}`]: toYield,
-          };
+          // toYield is not array
+          if (Array.isArray(toYield.v)) {
+            if (toYield.v.length) {
+              for (const val of toYield.v) {
+                yield {
+                  [`${columnLetters[columnIndex]}${currentRowIndex}`]: {
+                    v: val,
+                  },
+                };
+                currentRowIndex += 1;
+              }
+            } else {
+              yield {
+                [`${columnLetters[columnIndex]}${currentRowIndex}`]: { v: "-" },
+              };
+              currentRowIndex += 1;
+            }
+          } else {
+            yield {
+              [`${columnLetters[columnIndex]}${currentRowIndex}`]: toYield,
+            };
+          }
         }
+        // end toYield is array
+
         if (lowestRowIndex < currentRowIndex) {
           lowestRowIndex = currentRowIndex;
         }
         columnIndex += 1;
-        currentRowIndex = startRowIndex;
-      }
+      } // end of company
       startRowIndex = lowestRowIndex;
-    }
+    } // end of all companies
   }
 
   // @ts-ignore
-  for (const cell of fillCell()) {
+  for (const cell of fillCells()) {
     ws = { ...ws, ...cell };
   }
 
