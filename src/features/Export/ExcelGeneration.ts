@@ -60,31 +60,28 @@ const generateExcelFileStructure = (
       [Company["ID"], Company["TITLE"]],
       ReturnType<typeof getUserNameById>,
       [Contact["ID"], string][],
-      [Contact["ASSIGNED_BY_ID"], ReturnType<typeof getUserNameById>][],
+      ReturnType<typeof getUserNameById>[],
       [Lead["ID"], Lead["TITLE"]][],
-      [Lead["ASSIGNED_BY_ID"], ReturnType<typeof getUserNameById>][],
+      ReturnType<typeof getUserNameById>[],
       [Deal["ID"], Deal["TITLE"]][],
-      [Deal["ASSIGNED_BY_ID"], ReturnType<typeof getUserNameById>][]
+      ReturnType<typeof getUserNameById>[]
     ] => {
       return [
         String(index + 1),
         [ID, TITLE],
         getUserNameById(users, ASSIGNED_BY_ID),
         CONTACTS.map(({ ID, NAME, LAST_NAME }) => [ID, `${NAME} ${LAST_NAME}`]), // Contact
-        CONTACTS.map(({ ASSIGNED_BY_ID }) => [
-          ASSIGNED_BY_ID,
-          getUserNameById(users, ASSIGNED_BY_ID),
-        ]), // Responsible for Contact
-        LEADS.map(({ ID, TITLE }) => [ID, TITLE]), // Lead
-        LEADS.map(({ ASSIGNED_BY_ID }) => [
-          ASSIGNED_BY_ID,
-          getUserNameById(users, ASSIGNED_BY_ID),
-        ]), // Responsible for Lead
+        CONTACTS.map(({ ASSIGNED_BY_ID }) =>
+          getUserNameById(users, ASSIGNED_BY_ID)
+        ),
+        LEADS.map(({ ID, TITLE }) => [ID, TITLE]),
+        LEADS.map(({ ASSIGNED_BY_ID }) =>
+          getUserNameById(users, ASSIGNED_BY_ID)
+        ),
         DEALS.map(({ ID, TITLE }) => [ID, TITLE]),
-        DEALS.map(({ ASSIGNED_BY_ID }) => [
-          ASSIGNED_BY_ID,
-          getUserNameById(users, ASSIGNED_BY_ID),
-        ]), // Responsible for Lead
+        DEALS.map(({ ASSIGNED_BY_ID }) =>
+          getUserNameById(users, ASSIGNED_BY_ID)
+        ),
       ];
     }
   );

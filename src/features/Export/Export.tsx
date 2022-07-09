@@ -3,11 +3,7 @@ import excelFile from "./ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useAppSelector } from "app/hooks";
 
-export interface ExportProps {
-  //   name: string;
-}
-
-const Export = (props: ExportProps) => {
+const Export = () => {
   const [companies, chosenId, titleLookupArray, users] = useAppSelector(
     ({ common, company }) => [
       company.companiesWithRelatedEntities,
@@ -53,7 +49,4 @@ const Export = (props: ExportProps) => {
   );
 };
 
-// function getEntityTitle(users: any, chosenId: any) {
-//   return title;
-// }
 export default Export;
