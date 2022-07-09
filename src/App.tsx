@@ -53,12 +53,13 @@ function App() {
         </div>
       </div>
       <InfoBlock />
-      {stage === "scanFinished" && companies.length && (
+      {(stage === "scanFinished" && companies.length && (
         <>
           <Export />
           <List />
         </>
-      )}
+      )) ||
+        ""}
     </div>
   ) : (
     <>{loginWithRedirect()}</>

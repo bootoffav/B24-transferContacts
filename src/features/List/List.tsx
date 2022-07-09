@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Cell, useTable } from "react-table";
+import { Cell, useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector } from "../../app/hooks";
 import { Company, EntityType } from "../../types";
 import { getUserNameById } from "utils/users";
@@ -30,7 +30,6 @@ const List = () => {
         );
 
         return {
-          position: index + 1,
           company: [company.TITLE, company.ID],
           responsibleForCompany,
           contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
@@ -77,16 +76,35 @@ const List = () => {
       </ul>
     );
   };
+
+  const memoizedSort = useMemo(
+    () =>
+      (
+        {
+          values: {
+            company: [A],
+          },
+        }: any,
+        {
+          values: {
+            company: [B],
+          },
+        }: any
+      ) =>
+        A > B ? 1 : A < B ? -1 : 0,
+    []
+  );
+
   const columns = useMemo(
     () => [
       {
         Header: "#",
-        accessor: "position",
       },
       {
         Header: "Company",
         accessor: "company",
         Cell: ({ value }: Cell) => formLink(value, "company"),
+        sortType: memoizedSort,
       },
       {
         Header: "Responsible for company",
@@ -123,42 +141,102 @@ const List = () => {
         Cell: getSubRows,
       },
     ],
-    []
+    [memoizedSort]
   );
 
-  // @ts-ignore
-  const tableInstance = useTable({ columns, data });
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    tableInstance;
+  const pageSize = 20;
+  const tableInstance = useTable(
+    {
+      // @ts-ignore
+      columns,
+      data,
+      manualPagination: false,
+      initialState: {
+        pageSize,
+        sortBy: [{ id: "company" }],
+      },
+    },
+    useSortBy,
+    usePagination
+  );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    prepareRow,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    nextPage,
+    previousPage,
+    state: { pageIndex },
+  } = tableInstance;
 
   return (
-    <table
-      className="table is-bordered is-hoverable is-fullwidth"
-      {...getTableProps()}
-    >
-      <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row) => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-              })}
+    <>
+      <table
+        className="table is-bordered is-hoverable is-fullwidth"
+        {...getTableProps()}
+      >
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+              ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row: any, i: number) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell: any) =>
+                  cell.column.id === "#" ? (
+                    <td {...cell.getCellProps()}>
+                      {pageIndex * pageSize + (i + 1)}
+                    </td>
+                  ) : (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  )
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <nav
+        className="pagination mx-auto"
+        role="navigation"
+        aria-label="pagination"
+        style={{
+          width: "60%",
+          display: `${pageOptions.length === 1 ? "none" : ""}`,
+        }}
+      >
+        <button
+          className="button bd-fat-button is-primary is-light"
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          <i>←</i>
+          <span className="ml-2">Previous page</span>
+        </button>
+        <strong>
+          Page {pageIndex + 1} of {pageOptions.length}
+        </strong>{" "}
+        <button
+          className="button bd-fat-button is-primary is-light"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          <span className="mr-2">Next page</span>
+          <i>→</i>
+        </button>
+      </nav>
+    </>
   );
 };
 

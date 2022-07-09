@@ -14,7 +14,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.7",
-    "@types/react-table": "^7.7.10",
+    "@types/react-table": "^7.7.12",
     "bulma": "^0.9.3",
     "dayjs": "^1.11.3",
     "lodash": "^4.17.21",
