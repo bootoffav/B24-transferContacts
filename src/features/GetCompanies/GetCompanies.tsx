@@ -46,6 +46,10 @@ export default function GetCompanies() {
         dispatch(setProcessedAmount(1));
       }
 
+      // sort companies alphabetically
+      companiesWithRelatedEntities.sort(({ TITLE: A }, { TITLE: B }) =>
+        A > B ? 1 : A < B ? -1 : 0
+      );
       dispatch(setCompanies(companiesWithRelatedEntities));
       dispatch(setStage("scanFinished"));
       const differentResponsibles = getDifferentResponsibles(

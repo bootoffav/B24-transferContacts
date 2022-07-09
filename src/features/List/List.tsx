@@ -77,23 +77,23 @@ const List = () => {
     );
   };
 
-  const memoizedSort = useMemo(
-    () =>
-      (
-        {
-          values: {
-            company: [A],
-          },
-        }: any,
-        {
-          values: {
-            company: [B],
-          },
-        }: any
-      ) =>
-        A > B ? 1 : A < B ? -1 : 0,
-    []
-  );
+  // const memoizedSort = useMemo(
+  //   () =>
+  //     (
+  //       {
+  //         values: {
+  //           company: [A],
+  //         },
+  //       }: any,
+  //       {
+  //         values: {
+  //           company: [B],
+  //         },
+  //       }: any
+  //     ) =>
+  //       A > B ? 1 : A < B ? -1 : 0,
+  //   []
+  // );
 
   const columns = useMemo(
     () => [
@@ -104,7 +104,7 @@ const List = () => {
         Header: "Company",
         accessor: "company",
         Cell: ({ value }: Cell) => formLink(value, "company"),
-        sortType: memoizedSort,
+        // sortType: memoizedSort,
       },
       {
         Header: "Responsible for company",
@@ -141,7 +141,7 @@ const List = () => {
         Cell: getSubRows,
       },
     ],
-    [memoizedSort]
+    []
   );
 
   const pageSize = 20;
@@ -153,7 +153,6 @@ const List = () => {
       manualPagination: false,
       initialState: {
         pageSize,
-        sortBy: [{ id: "company" }],
       },
     },
     useSortBy,
