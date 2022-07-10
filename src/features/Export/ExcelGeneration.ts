@@ -57,7 +57,7 @@ const generateExcelFileStructure = (
       index
     ): [
       string,
-      [Company["ID"], Company["TITLE"]],
+      [Company["ID"], Company["TITLE"]][],
       ReturnType<typeof getUserNameById>,
       [Contact["ID"], string][],
       ReturnType<typeof getUserNameById>[],
@@ -68,7 +68,7 @@ const generateExcelFileStructure = (
     ] => {
       return [
         String(index + 1),
-        [ID, TITLE],
+        [[ID, TITLE]],
         getUserNameById(users, ASSIGNED_BY_ID),
         CONTACTS.map(({ ID, NAME, LAST_NAME }) => [ID, `${NAME} ${LAST_NAME}`]), // Contact
         CONTACTS.map(({ ASSIGNED_BY_ID }) =>
@@ -91,43 +91,30 @@ const generateExcelFileStructure = (
     let lowestRowIndex = 2;
     let currentRowIndex: number;
     const columnLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
-    const linkTypeMap: {
-      [key: number]: string;
-    } = {
-      3: "contact",
-      5: "lead",
-      7: "deal",
-    };
+    const linkType = new Map([
+      [1, "company"],
+      [3, "contact"],
+      [5, "lead"],
+      [7, "deal"],
+    ]);
 
     for (const company of structuredData) {
       let columnIndex = 0;
-      let id, title;
       for (const rawCellData of company) {
         currentRowIndex = startRowIndex;
         let toYield: any;
         switch (columnIndex) {
-          case 1: // company title
-            [id, title] = rawCellData;
-            toYield = {
-              v: title,
-              l: {
-                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/company/details/${id}/`,
-              },
-              s: {
-                font: {
-                  underline: true,
-                  color: { rgb: "CC2581FF" },
-                },
-              },
-            };
-            break;
+          case 1:
           case 3:
           case 5:
           case 7:
+            // eslint-disable-next-line
             toYield = (rawCellData as []).map(([id, title]: any) => ({
               v: title,
               l: {
-                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/${linkTypeMap[columnIndex]}/details/${id}/`,
+                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/${linkType.get(
+                  columnIndex
+                )}/details/${id}/`,
               },
               s: {
                 font: {
