@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { Cell, useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import { Company, EntityType } from "../../types";
+import type { Company, EntityType, TableDataStructure } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
-import type { TableDataStructure } from "../../types";
+import Navigation, { NaviProps } from "./Navigation";
 
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
@@ -164,13 +164,19 @@ const List = () => {
     headerGroups,
     page,
     prepareRow,
+    state: { pageIndex },
+  } = tableInstance;
+
+  const { canPreviousPage, canNextPage, pageOptions, nextPage, previousPage } =
+    tableInstance;
+  const naviProps: NaviProps = {
+    pageIndex,
     canPreviousPage,
     canNextPage,
     pageOptions,
     nextPage,
     previousPage,
-    state: { pageIndex },
-  } = tableInstance;
+  };
 
   return (
     <>
@@ -206,35 +212,7 @@ const List = () => {
           })}
         </tbody>
       </table>
-      <nav
-        className="pagination mx-auto"
-        role="navigation"
-        aria-label="pagination"
-        style={{
-          width: "60%",
-          display: `${pageOptions.length === 1 ? "none" : ""}`,
-        }}
-      >
-        <button
-          className="button bd-fat-button is-primary is-light"
-          onClick={() => previousPage()}
-          disabled={!canPreviousPage}
-        >
-          <i>←</i>
-          <span className="ml-2">Previous page</span>
-        </button>
-        <strong>
-          Page {pageIndex + 1} of {pageOptions.length}
-        </strong>{" "}
-        <button
-          className="button bd-fat-button is-primary is-light"
-          onClick={() => nextPage()}
-          disabled={!canNextPage}
-        >
-          <span className="mr-2">Next page</span>
-          <i>→</i>
-        </button>
-      </nav>
+      <Navigation {...naviProps} />
     </>
   );
 };
