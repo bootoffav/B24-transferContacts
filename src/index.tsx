@@ -1,12 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "bulma";
 import App from "./App";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root")!);
+root.render(
   <React.StrictMode>
     <Auth0Provider
       domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
@@ -17,6 +18,5 @@ ReactDOM.render(
         <App />
       </Provider>
     </Auth0Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
