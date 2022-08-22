@@ -55,4 +55,16 @@ export interface Transfer {
   };
 }
 
+export type TableDataStructure = {
+  company: (string | number)[];
+  responsibleForCompany: string;
+  contact: (string | number)[][];
+  contactPosition: string[];
+  deal: (string | number)[][];
+  lead: (string | number)[][];
+  responsibleForContact: string[];
+  responsibleForDeal: string[];
+  responsibleForLead: string[];
+}[];
+
 export type EntityType = "company" | "contact" | "deal" | "lead";

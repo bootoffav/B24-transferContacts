@@ -1,16 +1,24 @@
 import { useMemo } from "react";
 import { Cell, useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import { Company, Contact, EntityType } from "../../types";
+import { Company, EntityType } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
+import type { TableDataStructure } from "../../types";
 
-const contactPositionField = process.env.REACT_APP_B24_CONTACT_POSITION_FIELD!;
-const formLink = ([title, id]: [string, string], type: EntityType) => (
+const {
+  REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
+  REACT_APP_B24_ADDRESS: b24Address,
+} = process.env;
+
+const formLink = (
+  [title, id]: TableDataStructure[number]["company"],
+  type: EntityType
+) => (
   <a
     target="_blank"
     rel="noopener noreferrer"
-    href={`${process.env.REACT_APP_B24_ADDRESS}crm/${type}/details/${id}/`}
+    href={`${b24Address}crm/${type}/details/${id}/`}
   >
     {title}
   </a>
@@ -22,9 +30,9 @@ const List = () => {
     users: common.users,
   }));
 
-  const data = useMemo(
+  const data = useMemo<TableDataStructure>(
     () =>
-      companies.map((company: Company, index: number) => {
+      companies.map((company: Company) => {
         const responsibleForCompany = getUserNameById(
           users,
           company.ASSIGNED_BY_ID
@@ -33,16 +41,13 @@ const List = () => {
         return {
           company: [company.TITLE, company.ID],
           responsibleForCompany,
-          contact: company.CONTACTS.map(
-            ({
-              ID,
-              NAME,
-              LAST_NAME,
-            }: // [contactPositionField]: position,
-            any) => {
-              // return [`${NAME} ${LAST_NAME}, (${position})`, ID];
-              return [`${NAME} ${LAST_NAME}`, ID];
-            }
+          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
+            `${NAME} ${LAST_NAME}`,
+            ID,
+          ]),
+          contactPosition: company.CONTACTS.map(
+            // @ts-expect-error
+            ({ [contactPositionField]: position }) => position || "--"
           ),
           deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
           lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
@@ -66,17 +71,18 @@ const List = () => {
     row: {
       values: { responsibleForCompany },
     },
-  }: Cell) => {
+  }: Cell<{}, [string, string]>) => {
+    const applyStyle = (v: string): string => {
+      const noApplyStyleColumns = ["contactPosition"];
+      if (noApplyStyleColumns.includes(column.id)) return "";
+      return responsibleForCompany !== v ? styles.otherResponsible : "";
+    };
+
     return (
       <ul>
-        {value.map((v: [string, string] | string, index: number) => {
+        {value.map((v, index) => {
           return (
-            <li
-              key={index}
-              className={
-                responsibleForCompany !== v ? styles.otherResponsible : ""
-              }
-            >
+            <li key={index} className={applyStyle(v)}>
               {typeof v === "object" ? formLink(v, column.id as EntityType) : v}
             </li>
           );
@@ -94,7 +100,6 @@ const List = () => {
         Header: "Company",
         accessor: "company",
         Cell: ({ value }: Cell) => formLink(value, "company"),
-        // sortType: memoizedSort,
       },
       {
         Header: "Responsible for company",
@@ -103,6 +108,11 @@ const List = () => {
       {
         Header: "Contact",
         accessor: "contact",
+        Cell: getSubRows,
+      },
+      {
+        Header: "Position",
+        accessor: "contactPosition",
         Cell: getSubRows,
       },
       {
