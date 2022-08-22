@@ -9,7 +9,7 @@ import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
 import "./styles.scss";
 
-function App() {
+export default function App() {
   const dispatch = useAppDispatch();
   const { stage, selectType, companies } = useAppSelector(
     ({ common, company }) => ({
@@ -65,4 +65,3 @@ function App() {
     <>{loginWithRedirect()}</>
   );
 }
-export default App;

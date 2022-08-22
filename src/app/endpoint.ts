@@ -18,6 +18,7 @@ const {
   REACT_APP_B24_WEBHOOK_TOKEN: webhookToken,
   REACT_APP_B24_COUNTRY_FIELD_ID: countryFieldId,
   REACT_APP_B24_COUNTRY_FIELD: countryField,
+  REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
 } = process.env;
 
 const fetchCompanies = async (
@@ -64,12 +65,15 @@ const fetchRelatedEntities = async (
   entityType: EntityType,
   headEntity: "company" | "contact" = "company"
 ): Promise<Contact[] | Deal[]> => {
+  const select = entityType === "contact" ? ["*", contactPositionField] : ["*"];
+
   return await fetch(
     `${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`,
     {
       method: "POST",
       body: stringify({
         filter: { [`${headEntity.toUpperCase()}_ID`]: entityId },
+        select,
       }),
     }
   )

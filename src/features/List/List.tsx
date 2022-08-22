@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { Cell, useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import { Company, EntityType } from "../../types";
+import { Company, Contact, EntityType } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 
+const contactPositionField = process.env.REACT_APP_B24_CONTACT_POSITION_FIELD!;
 const formLink = ([title, id]: [string, string], type: EntityType) => (
   <a
     target="_blank"
@@ -32,10 +33,17 @@ const List = () => {
         return {
           company: [company.TITLE, company.ID],
           responsibleForCompany,
-          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
-            `${NAME} ${LAST_NAME}`,
-            ID,
-          ]),
+          contact: company.CONTACTS.map(
+            ({
+              ID,
+              NAME,
+              LAST_NAME,
+            }: // [contactPositionField]: position,
+            any) => {
+              // return [`${NAME} ${LAST_NAME}, (${position})`, ID];
+              return [`${NAME} ${LAST_NAME}`, ID];
+            }
+          ),
           deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
           lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
           responsibleForContact: company.CONTACTS.map((contact) =>
@@ -76,24 +84,6 @@ const List = () => {
       </ul>
     );
   };
-
-  // const memoizedSort = useMemo(
-  //   () =>
-  //     (
-  //       {
-  //         values: {
-  //           company: [A],
-  //         },
-  //       }: any,
-  //       {
-  //         values: {
-  //           company: [B],
-  //         },
-  //       }: any
-  //     ) =>
-  //       A > B ? 1 : A < B ? -1 : 0,
-  //   []
-  // );
 
   const columns = useMemo(
     () => [
