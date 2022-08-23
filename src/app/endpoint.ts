@@ -108,6 +108,17 @@ const fetchUsers = createAsyncThunk(
   }
 );
 
+async function changePosition(id: Contact["ID"], position = "test") {
+  return fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
+    method: "POST",
+    body: stringify({
+      id,
+      fields: {
+        [contactPositionField!]: position,
+      },
+    }),
+  });
+}
 async function* transferEntity(differentResponsibles: Transfer) {
   for (let responsibleId in differentResponsibles) {
     for (const entitySet of ["CONTACTS", "LEADS", "DEALS"] as const) {
@@ -166,4 +177,5 @@ export {
   fetchUsers,
   transferEntity,
   fetchCountries,
+  changePosition,
 };

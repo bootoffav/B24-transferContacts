@@ -5,6 +5,7 @@ import type { Company, EntityType, TableDataStructure } from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
+import Position from "./Position";
 
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
@@ -47,7 +48,10 @@ const List = () => {
           ]),
           contactPosition: company.CONTACTS.map(
             // @ts-expect-error
-            ({ [contactPositionField]: position }) => position || "--"
+            ({ [contactPositionField!]: position, ID }) => [
+              position === null ? "--" : position,
+              ID,
+            ]
           ),
           deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
           lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
@@ -81,6 +85,16 @@ const List = () => {
     return (
       <ul>
         {value.map((v, index) => {
+          if (column.id === "contactPosition") {
+            try {
+              const [position, id] = v;
+              return (
+                <li key={index}>
+                  <Position value={position} id={id as unknown as number} />
+                </li>
+              );
+            } catch {}
+          }
           return (
             <li key={index} className={applyStyle(v)}>
               {typeof v === "object" ? formLink(v, column.id as EntityType) : v}
