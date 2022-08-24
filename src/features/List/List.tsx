@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import { Cell, useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector } from "../../app/hooks";
-import type { Company, EntityType, TableDataStructure } from "../../types";
+import type {
+  Company,
+  Contact,
+  EntityType,
+  TableDataStructure,
+} from "../../types";
 import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
@@ -10,7 +15,11 @@ import Position from "./Position";
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
   REACT_APP_B24_ADDRESS: b24Address,
+  // REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField,
 } = process.env;
+
+const contactCountryField =
+  process.env.REACT_APP_B24_CONTACT_COUNTRY_FIELD ?? "";
 
 const formLink = (
   [title, id]: TableDataStructure[number]["company"],
@@ -24,6 +33,20 @@ const formLink = (
     {title}
   </a>
 );
+
+function prepareContact({
+  ID,
+  NAME,
+  LAST_NAME,
+  ...rest
+}: Contact): TableDataStructure[number]["contact"][number] {
+  return [
+    NAME + " " + (LAST_NAME ? ` ${LAST_NAME}` : ""),
+    ID,
+    // @ts-expect-error
+    rest[contactCountryField],
+  ];
+}
 
 const List = () => {
   const { users, companies } = useAppSelector(({ company, common }) => ({
@@ -42,14 +65,11 @@ const List = () => {
         return {
           company: [company.TITLE, company.ID],
           responsibleForCompany,
-          contact: company.CONTACTS.map(({ ID, NAME, LAST_NAME }) => [
-            `${NAME} ${LAST_NAME}`,
-            ID,
-          ]),
+          contact: company.CONTACTS.map(prepareContact),
           contactPosition: company.CONTACTS.map(
             // @ts-expect-error
             ({ [contactPositionField!]: position, ID }) => [
-              position === null ? "--" : position,
+              position ?? "--",
               ID,
             ]
           ),
@@ -71,21 +91,21 @@ const List = () => {
 
   const getSubRows = ({
     value,
-    column,
+    column: { id },
     row: {
       values: { responsibleForCompany },
     },
   }: Cell<{}, [string, string]>) => {
     const applyStyle = (v: string): string => {
       const noApplyStyleColumns = ["contactPosition"];
-      if (noApplyStyleColumns.includes(column.id)) return "";
+      if (noApplyStyleColumns.includes(id)) return "";
       return responsibleForCompany !== v ? styles.otherResponsible : "";
     };
 
     return (
       <ul>
         {value.map((v, index) => {
-          if (column.id === "contactPosition") {
+          if (id === "contactPosition") {
             try {
               const [position, id] = v;
               return (
@@ -97,7 +117,8 @@ const List = () => {
           }
           return (
             <li key={index} className={applyStyle(v)}>
-              {typeof v === "object" ? formLink(v, column.id as EntityType) : v}
+              {typeof v === "object" ? formLink(v, id as EntityType) : v}
+              {id === "contact" ? (v.at(-1) ? "" : "*") : ""}
             </li>
           );
         })}
@@ -227,8 +248,15 @@ const List = () => {
         </tbody>
       </table>
       <Navigation {...naviProps} />
+      {footNote}
     </>
   );
 };
 
+const footNote = (
+  <div>
+    <hr />
+    <span className={styles.otherResponsible}>*</span> - no country assigned
+  </div>
+);
 export default List;

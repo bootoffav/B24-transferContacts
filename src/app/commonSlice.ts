@@ -29,20 +29,29 @@ const commonSlice = createSlice({
   name: "common",
   initialState,
   reducers: {
-    setStage: (state, { payload }: PayloadAction<CommonState["stage"]>) => {
+    setStage: (
+      state: CommonState,
+      { payload }: PayloadAction<CommonState["stage"]>
+    ) => {
       state.stage = payload;
     },
-    setTransferredAmount: (state, { payload }) => {
+    setTransferredAmount: (
+      state: CommonState,
+      { payload }: PayloadAction<number>
+    ) => {
       state.transferredAmount =
         payload === 0 ? 0 : state.transferredAmount + payload;
     },
     setSelectType: (
-      state,
+      state: CommonState,
       { payload }: PayloadAction<CommonState["selectType"]>
     ) => {
       state.selectType = payload;
     },
-    setChosenId: (state, { payload }: PayloadAction<number | undefined>) => {
+    setChosenId: (
+      state: CommonState,
+      { payload }: PayloadAction<number | undefined>
+    ) => {
       state.chosenId = payload;
     },
   },

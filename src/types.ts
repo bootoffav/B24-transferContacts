@@ -58,7 +58,7 @@ export interface Transfer {
 export type TableDataStructure = {
   company: (string | number)[];
   responsibleForCompany: string;
-  contact: (string | number)[][];
+  contact: [string, number, boolean][];
   contactPosition: [string, number][];
   deal: (string | number)[][];
   lead: (string | number)[][];

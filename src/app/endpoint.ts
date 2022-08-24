@@ -16,8 +16,9 @@ const {
   REACT_APP_B24_ENDPOINT: endpoint,
   REACT_APP_B24_USER_ID: userId,
   REACT_APP_B24_WEBHOOK_TOKEN: webhookToken,
-  REACT_APP_B24_COUNTRY_FIELD_ID: countryFieldId,
-  REACT_APP_B24_COUNTRY_FIELD: countryField,
+  REACT_APP_B24_COMPANY_COUNTRY_FIELD_ID: countryFieldId,
+  REACT_APP_B24_COMPANY_COUNTRY_FIELD: countryField,
+  REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField,
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
 } = process.env;
 
@@ -65,7 +66,10 @@ const fetchRelatedEntities = async (
   entityType: EntityType,
   headEntity: "company" | "contact" = "company"
 ): Promise<Contact[] | Deal[]> => {
-  const select = entityType === "contact" ? ["*", contactPositionField] : ["*"];
+  const select =
+    entityType === "contact"
+      ? ["*", contactPositionField, contactCountryField]
+      : ["*"];
 
   return await fetch(
     `${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`,
