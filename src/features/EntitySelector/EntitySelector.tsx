@@ -34,7 +34,11 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
 
   return (
     <div className="control is-disabled">
-      <div className={`select ${selectOptions.length ? "" : "is-loading"}`}>
+      <div
+        className={`select is-fullwidth ${
+          selectOptions.length ? "" : "is-loading"
+        }`}
+      >
         <select
           onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
         >
