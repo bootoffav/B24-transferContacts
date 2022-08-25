@@ -8,6 +8,7 @@ import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
 import "./styles.scss";
+import AppLoader from "features/Apploader/AppLoader";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -22,7 +23,7 @@ export default function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
-    return <div>Loading ...</div>;
+    return <AppLoader />;
   }
 
   return isAuthenticated ? (
