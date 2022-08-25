@@ -8,7 +8,7 @@ import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
 import "./styles.scss";
-import AppLoader from "features/Apploader/AppLoader";
+import { ClipLoader } from "react-spinners";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ export default function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
-    return <AppLoader />;
+    return <ClipLoader className="centered" loading={true} size={300} />;
   }
 
   return isAuthenticated ? (
