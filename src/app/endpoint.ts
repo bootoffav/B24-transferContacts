@@ -192,6 +192,24 @@ async function fetchContactEmails(
     });
 }
 
+async function updateContactEmails(
+  contactId: Contact["ID"],
+  emails: Contact["EMAIL"][]
+) {
+  return await fetch(
+    `${endpoint}${userId}/${webhookToken}/crm.contact.update?`,
+    {
+      method: "POST",
+      body: stringify({
+        id: contactId,
+        fields: { EMAIL: emails },
+      }),
+    }
+  )
+    .then((r) => r.json())
+    .then(({ result }) => result);
+}
+
 export {
   fetchCompanies,
   fetchRelatedEntities,
@@ -200,4 +218,5 @@ export {
   transferEntity,
   fetchCountries,
   changePosition,
+  updateContactEmails,
 };
