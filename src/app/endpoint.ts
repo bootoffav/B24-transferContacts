@@ -175,9 +175,27 @@ const fetchCountries = createAsyncThunk(
   }
 );
 
+async function fetchContactEmails(
+  contactId: number
+): Promise<Contact["EMAIL"][]> {
+  return await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.list?`, {
+    method: "POST",
+    body: stringify({
+      filter: { ID: contactId },
+      select: ["EMAIL"],
+    }),
+  })
+    .then((r) => r.json())
+    .then(({ result }) => {
+      const { EMAIL } = result[0];
+      return EMAIL as Contact["EMAIL"][];
+    });
+}
+
 export {
   fetchCompanies,
   fetchRelatedEntities,
+  fetchContactEmails,
   fetchUsers,
   transferEntity,
   fetchCountries,

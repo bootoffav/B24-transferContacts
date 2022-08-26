@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Country, User } from "../types";
+import { Contact, Country, User } from "../types";
 import { sort, splitActiveDismissed } from "../utils/users";
 import { fetchCountries, fetchUsers } from "./endpoint";
 
@@ -15,9 +15,12 @@ export interface CommonState {
   selectType: "users" | "countries";
   chosenId?: number;
   countries: Country[];
+  modalHidden: boolean;
+  contactIdForEmails?: Contact["ID"];
 }
 
 const initialState: CommonState = {
+  modalHidden: true,
   stage: "initial",
   users: [],
   selectType: "users",
@@ -34,6 +37,12 @@ const commonSlice = createSlice({
       { payload }: PayloadAction<CommonState["stage"]>
     ) => {
       state.stage = payload;
+    },
+    setContactIdForEmails: (
+      state: CommonState,
+      { payload }: PayloadAction<CommonState["contactIdForEmails"]>
+    ) => {
+      state.contactIdForEmails = payload;
     },
     setTransferredAmount: (
       state: CommonState,
@@ -53,6 +62,9 @@ const commonSlice = createSlice({
       { payload }: PayloadAction<number | undefined>
     ) => {
       state.chosenId = payload;
+    },
+    hideModal: (state: CommonState, { payload }: PayloadAction<boolean>) => {
+      state.modalHidden = payload;
     },
   },
   extraReducers: (builder) => {
@@ -76,6 +88,12 @@ const commonSlice = createSlice({
   },
 });
 
-export const { setStage, setChosenId, setSelectType, setTransferredAmount } =
-  commonSlice.actions;
+export const {
+  setStage,
+  setChosenId,
+  setSelectType,
+  setTransferredAmount,
+  hideModal,
+  setContactIdForEmails,
+} = commonSlice.actions;
 export default commonSlice;

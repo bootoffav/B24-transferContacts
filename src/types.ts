@@ -37,6 +37,12 @@ export interface Contact {
   ID: number;
   NAME: string;
   LAST_NAME: string;
+  EMAIL: {
+    ID: `${number}`;
+    VALUE_TYPE: "WORK" | "MAILING" | "OTHER" | "HOME";
+    VALUE: string;
+    TYPE_ID: "EMAIL";
+  };
 }
 
 export interface Deal {
@@ -56,9 +62,9 @@ export interface Transfer {
 }
 
 export type TableDataStructure = {
-  company: (string | number)[];
+  company: [string, number];
   responsibleForCompany: string;
-  contact: [string, number, boolean][];
+  contact: [string, number, string | null][];
   contactPosition: [string, number][];
   deal: (string | number)[][];
   lead: (string | number)[][];

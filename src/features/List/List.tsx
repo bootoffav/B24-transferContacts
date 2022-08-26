@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Cell, useSortBy, useTable, usePagination } from "react-table";
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import type {
   Company,
   Contact,
@@ -11,18 +12,21 @@ import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import Position from "./Position";
+import EmailHandler from "features/EmailHandler/EmailHandler";
+import { Dispatch } from "@reduxjs/toolkit";
 
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
   REACT_APP_B24_ADDRESS: b24Address,
-  // REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField,
 } = process.env;
 
 const contactCountryField =
   process.env.REACT_APP_B24_CONTACT_COUNTRY_FIELD ?? "";
 
 const formLink = (
-  [title, id]: TableDataStructure[number]["company"],
+  [title, id]:
+    | TableDataStructure[number]["company"]
+    | TableDataStructure[number]["contact"][number],
   type: EntityType
 ) => (
   <a
@@ -48,11 +52,56 @@ function prepareContact({
   ];
 }
 
+const applyStyle = (
+  v: string,
+  responsibleForCompany: string,
+  columnId: string
+): string => {
+  const noApplyStyleColumns = ["contactPosition"];
+  if (noApplyStyleColumns.includes(columnId)) return "";
+  return responsibleForCompany !== v ? styles.attention : "";
+};
+
+function contactCellRenderer(
+  {
+    value,
+    column: { id },
+    row: {
+      values: { responsibleForCompany },
+    },
+  }: Cell<{}, TableDataStructure[number]["contact"]>,
+  dispatch: Dispatch
+) {
+  return (
+    <ul>
+      {value.map((v, index) => {
+        return (
+          <li key={index} className="is-flex is-justify-content-space-between">
+            {formLink(v, id as EntityType)}
+            {v.at(-1) ? "" : <span className={styles.attention}>*</span>}{" "}
+            {/* no country case */}
+            <span
+              onClick={() => {
+                dispatch(setContactIdForEmails(v[1]));
+                dispatch(hideModal(false));
+              }}
+              className="is-clickable is-size-7 py-1"
+            >
+              [emails]
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 const List = () => {
   const { users, companies } = useAppSelector(({ company, common }) => ({
     companies: company.companiesWithRelatedEntities,
     users: common.users,
   }));
+  const dispatch = useAppDispatch();
 
   const data = useMemo<TableDataStructure>(
     () =>
@@ -96,12 +145,6 @@ const List = () => {
       values: { responsibleForCompany },
     },
   }: Cell<{}, [string, string]>) => {
-    const applyStyle = (v: string): string => {
-      const noApplyStyleColumns = ["contactPosition"];
-      if (noApplyStyleColumns.includes(id)) return "";
-      return responsibleForCompany !== v ? styles.otherResponsible : "";
-    };
-
     return (
       <ul>
         {value.map((v, index) => {
@@ -116,7 +159,10 @@ const List = () => {
             } catch {}
           }
           return (
-            <li key={index} className={applyStyle(v)}>
+            <li
+              key={index}
+              className={applyStyle(v, responsibleForCompany, id)}
+            >
               {typeof v === "object" ? formLink(v, id as EntityType) : v}
               {id === "contact" ? (v.at(-1) ? "" : "*") : ""}
             </li>
@@ -143,7 +189,7 @@ const List = () => {
       {
         Header: "Contact",
         accessor: "contact",
-        Cell: getSubRows,
+        Cell: (cell) => contactCellRenderer(cell, dispatch),
       },
       {
         Header: "Position",
@@ -176,7 +222,7 @@ const List = () => {
         Cell: getSubRows,
       },
     ],
-    []
+    [dispatch]
   );
 
   const pageSize = 20;
@@ -248,6 +294,7 @@ const List = () => {
         </tbody>
       </table>
       <Navigation {...naviProps} />
+      <EmailHandler />
       {footNote}
     </>
   );
@@ -256,7 +303,7 @@ const List = () => {
 const footNote = (
   <div>
     <hr />
-    <span className={styles.otherResponsible}>*</span> - no country assigned
+    <span className={styles.attention}>*</span> - no country assigned
   </div>
 );
 export default List;
