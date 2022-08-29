@@ -1,7 +1,7 @@
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import { fetchContactEmails, updateContactEmails } from "app/endpoint";
 import { useAppSelector, useAppDispatch } from "app/hooks";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { Contact } from "types";
 
@@ -62,33 +62,10 @@ export default function EmailHandler() {
 }
 
 type ValueType = "HOME" | "WORK" | "MAILING" | "OTHER";
-function emailReducer(
-  state: Contact["EMAIL"][],
-  {
-    type,
-    payload,
-  }: {
-    type: "changeValueType";
-    payload: {
-      id: `${number}`;
-      VALUE_TYPE: ValueType;
-    };
-  }
-) {
-  switch (type) {
-    case "changeValueType":
-      const idx = state.findIndex(({ ID }) => ID === payload.id);
-      const newState = [...state];
-      newState[idx] = { ...state[idx], VALUE_TYPE: payload.VALUE_TYPE };
-      return newState;
-    default:
-      return state;
-  }
-}
 
 function EmailPresenter(props: { emails: Contact["EMAIL"][] }) {
   const [saving, setSaving] = useState(false);
-  const [emails, dispatch] = useReducer(emailReducer, props.emails);
+  const [emails, setEmails] = useState(props.emails);
   const reduxDispatch = useAppDispatch();
   const contactIdForEmails = useAppSelector(
     ({ common: { contactIdForEmails } }) => contactIdForEmails
@@ -105,12 +82,14 @@ function EmailPresenter(props: { emails: Contact["EMAIL"][] }) {
                 <select
                   value={email.VALUE_TYPE}
                   onChange={({ target: { value } }) => {
-                    dispatch({
-                      type: "changeValueType",
-                      payload: {
-                        id: email.ID,
+                    setEmails((emails) => {
+                      const idx = emails.findIndex(({ ID }) => ID === email.ID);
+                      const newEmails = [...emails];
+                      newEmails[idx] = {
+                        ...emails[idx],
                         VALUE_TYPE: value as ValueType,
-                      },
+                      };
+                      return newEmails;
                     });
                   }}
                 >
