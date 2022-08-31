@@ -12,7 +12,7 @@ import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import Position from "./Position";
-import EmailHandler from "features/EmailHandler/EmailHandler";
+import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
 
 const {
@@ -294,7 +294,7 @@ const List = () => {
         </tbody>
       </table>
       <Navigation {...naviProps} />
-      <EmailHandler />
+      <EmailFormChanger />
       {footNote}
     </>
   );
