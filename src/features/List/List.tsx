@@ -45,7 +45,7 @@ function prepareContact({
   ...rest
 }: Contact): TableDataStructure[number]["contact"][number] {
   return [
-    NAME + " " + (LAST_NAME ? ` ${LAST_NAME}` : ""),
+    LAST_NAME ? `${NAME} ${LAST_NAME}` : NAME,
     ID,
     // @ts-expect-error
     rest[contactCountryField],
@@ -77,15 +77,17 @@ function contactCellRenderer(
       {value.map((v, index) => {
         return (
           <li key={index} className="is-flex is-justify-content-space-between">
-            {formLink(v, id as EntityType)}
-            {v.at(-1) ? "" : <span className={styles.attention}>*</span>}{" "}
-            {/* no country case */}
+            <span>
+              {formLink(v, id as EntityType)}
+              {/* no country case */}
+              {v.at(-1) ? "" : <span className={styles.attention}>*</span>}
+            </span>
             <span
+              className="is-clickable is-size-7 py-1"
               onClick={() => {
                 dispatch(setContactIdForEmails(v[1]));
                 dispatch(hideModal(false));
               }}
-              className="is-clickable is-size-7 py-1"
             >
               [emails]
             </span>
@@ -164,7 +166,6 @@ const List = () => {
               className={applyStyle(v, responsibleForCompany, id)}
             >
               {typeof v === "object" ? formLink(v, id as EntityType) : v}
-              {id === "contact" ? (v.at(-1) ? "" : "*") : ""}
             </li>
           );
         })}
