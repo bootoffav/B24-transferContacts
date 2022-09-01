@@ -28,9 +28,9 @@ export default function App() {
 
   return isAuthenticated ? (
     <div className="container is-fluid mt-2">
-      <div className="columns">
-        <div className="column has-text-weight-medium is-flex is-justify-content-end is-align-items-center">
-          Choose:
+      <div className="columns is-flex is-align-items-center is-justify-content-center">
+        <div className="column is-2">
+          <span className="is-pulled-right">Choose:</span>
         </div>
         <div className="column is-2">
           <div className="select is-fullwidth">
@@ -49,7 +49,7 @@ export default function App() {
         <div className="column is-2">
           <EntitySelector selectType={selectType} />
         </div>
-        <div className="column">
+        <div className="column is-2">
           <GetCompanies />
         </div>
       </div>

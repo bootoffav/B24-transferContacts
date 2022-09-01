@@ -102,7 +102,7 @@ const InfoBlock = () => {
 
   return (
     <div className="columns">
-      <div className="column has-text-centered is-size-4">{output}</div>
+      <div className="column has-text-centered is-size-5">{output}</div>
     </div>
   );
 };

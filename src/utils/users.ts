@@ -21,12 +21,8 @@ const splitActiveDismissed = (users: User[]) => {
 };
 
 function getUserNameById(users: User[], id: number): string {
-  const found = users.find(({ ID }: User) => ID === id) || {
-    NAME: "unknown",
-    LAST_NAME: "",
-  };
-
-  return `${found.NAME} ${found.LAST_NAME}`;
+  const found = users.find(({ ID }: User) => ID === id);
+  return found ? `${found.NAME[0]}. ${found.LAST_NAME}` : "unknown";
 }
 
 export { sort, splitActiveDismissed, getUserNameById };

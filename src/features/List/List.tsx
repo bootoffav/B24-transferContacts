@@ -30,6 +30,7 @@ const formLink = (
   type: EntityType
 ) => (
   <a
+    // style={{ whiteSpace: "pre" }}
     target="_blank"
     rel="noopener noreferrer"
     href={`${b24Address}crm/${type}/details/${id}/`}
@@ -63,13 +64,7 @@ const applyStyle = (
 };
 
 function contactCellRenderer(
-  {
-    value,
-    column: { id },
-    row: {
-      values: { responsibleForCompany },
-    },
-  }: Cell<{}, TableDataStructure[number]["contact"]>,
+  { value, column: { id } }: Cell<{}, TableDataStructure[number]["contact"]>,
   dispatch: Dispatch
 ) {
   return (
@@ -83,7 +78,7 @@ function contactCellRenderer(
               {v.at(-1) ? "" : <span className={styles.attention}>*</span>}
             </span>
             <span
-              className="is-clickable is-size-7 py-1"
+              className="ml-1 is-clickable"
               onClick={() => {
                 dispatch(setContactIdForEmails(v[1]));
                 dispatch(hideModal(false));
@@ -184,10 +179,6 @@ const List = () => {
         Cell: ({ value }: Cell) => formLink(value, "company"),
       },
       {
-        Header: "Responsible for company",
-        accessor: "responsibleForCompany",
-      },
-      {
         Header: "Contact",
         accessor: "contact",
         Cell: (cell) => contactCellRenderer(cell, dispatch),
@@ -198,7 +189,11 @@ const List = () => {
         Cell: getSubRows,
       },
       {
-        Header: "Responsible for contact",
+        Header: "Resp. for company",
+        accessor: "responsibleForCompany",
+      },
+      {
+        Header: "Resp. for contact",
         accessor: "responsibleForContact",
         Cell: getSubRows,
       },
@@ -208,7 +203,7 @@ const List = () => {
         Cell: getSubRows,
       },
       {
-        Header: "Responsible for lead",
+        Header: "Resp. for lead",
         accessor: "responsibleForLead",
         Cell: getSubRows,
       },
@@ -218,7 +213,7 @@ const List = () => {
         Cell: getSubRows,
       },
       {
-        Header: "Responsible for Deal",
+        Header: "Resp. for deal",
         accessor: "responsibleForDeal",
         Cell: getSubRows,
       },
@@ -262,41 +257,49 @@ const List = () => {
 
   return (
     <>
-      <table
-        className="table is-bordered is-hoverable is-fullwidth"
-        {...getTableProps()}
-      >
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row: any, i: number) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell: any) =>
-                  cell.column.id === "#" ? (
-                    <td {...cell.getCellProps()}>
-                      {pageIndex * pageSize + (i + 1)}
-                    </td>
-                  ) : (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  )
-                )}
+      <div>
+        <table
+          className="table is-bordered is-hoverable is-fullwidth"
+          {...getTableProps()}
+        >
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps({
+                      className: "has-text-centered",
+                    })}
+                  >
+                    {column.render("Header")}
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row: any, i: number) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell: any) =>
+                    cell.column.id === "#" ? (
+                      <td {...cell.getCellProps()}>
+                        {pageIndex * pageSize + (i + 1)}
+                      </td>
+                    ) : (
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    )
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <EmailFormChanger />
+      </div>
+      <div>{footNote}</div>
       <Navigation {...naviProps} />
-      <EmailFormChanger />
-      {footNote}
     </>
   );
 };
@@ -304,7 +307,7 @@ const List = () => {
 const footNote = (
   <div>
     <hr />
-    <span className={styles.attention}>*</span> - no country assigned
+    <span className={`ml-4 ${styles.attention}`}>*</span> - no country assigned
   </div>
 );
 export default List;

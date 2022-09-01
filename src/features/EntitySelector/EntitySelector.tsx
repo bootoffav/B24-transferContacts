@@ -33,18 +33,16 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
     ));
 
   return (
-    <div className="control is-disabled">
-      <div
-        className={`select is-fullwidth ${
-          selectOptions.length ? "" : "is-loading"
-        }`}
+    <div
+      className={`select is-fullwidth ${
+        selectOptions.length ? "" : "is-loading"
+      }`}
+    >
+      <select
+        onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
       >
-        <select
-          onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
-        >
-          {selectType === "countries" ? mapCountries() : mapUsers()}
-        </select>
-      </div>
+        {selectType === "countries" ? mapCountries() : mapUsers()}
+      </select>
     </div>
   );
 }
