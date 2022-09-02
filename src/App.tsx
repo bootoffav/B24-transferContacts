@@ -28,7 +28,7 @@ export default function App() {
 
   return isAuthenticated ? (
     <div className="container is-fluid mt-2">
-      <div className="columns is-flex is-align-items-center is-justify-content-center">
+      <header className="columns is-flex is-align-items-center is-justify-content-center">
         <div className="column is-2">
           <span className="is-pulled-right">Choose:</span>
         </div>
@@ -52,7 +52,7 @@ export default function App() {
         <div className="column is-2">
           <GetCompanies />
         </div>
-      </div>
+      </header>
       <InfoBlock />
       {(stage === "scanFinished" && companies.length && (
         <>

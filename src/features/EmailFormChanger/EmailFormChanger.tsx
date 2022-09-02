@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { Contact } from "types";
 
-const emailMap = new Map([
+export const emailMap = new Map([
   ["HOME", "Home"],
   ["WORK", "Work"],
   ["MAILING", "For newsletters"],

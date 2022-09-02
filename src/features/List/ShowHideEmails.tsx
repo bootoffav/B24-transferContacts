@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { TableInstance } from "react-table";
 
-export default function ShowHideEmails() {
-  const onClick = () => {
-    setEmailsColumnHidden(!emailsColumnHidden);
-  };
-  const [emailsColumnHidden, setEmailsColumnHidden] = useState(true);
+export default function ShowHideEmails({
+  thc,
+}: {
+  thc: TableInstance["toggleHideColumn"];
+}) {
+  const [columnHidden, setColumnHidden] = useState(true);
+
+  useEffect(() => {
+    thc("contactEmails", columnHidden);
+  }, [thc, columnHidden]);
+
   return (
-    <span onClick={onClick}>
-      <i className="fas fa-plus" />{" "}
-      <em className="is-underlined">
-        {emailsColumnHidden ? "show" : "hide"} emails
-      </em>
-    </span>
+    <em
+      onClick={() => setColumnHidden(!columnHidden)}
+      className="is-underlined"
+      style={{
+        cursor: "pointer",
+      }}
+    >
+      {columnHidden ? "show" : "hide"} emails
+    </em>
   );
 }

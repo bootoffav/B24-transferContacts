@@ -12,7 +12,9 @@ import { getUserNameById } from "utils/users";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import Position from "./Position";
-import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
+import EmailFormChanger, {
+  emailMap,
+} from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
 import ShowHideEmails from "./ShowHideEmails";
 
@@ -31,7 +33,6 @@ const formLink = (
   type: EntityType
 ) => (
   <a
-    // style={{ whiteSpace: "pre" }}
     target="_blank"
     rel="noopener noreferrer"
     href={`${b24Address}crm/${type}/details/${id}/`}
@@ -71,7 +72,7 @@ function contactEmailCellRenderer({
     <ul key={idx}>
       {contact.map(({ VALUE, ID, VALUE_TYPE }) => (
         <li key={ID}>
-          {VALUE}: {VALUE_TYPE}
+          {VALUE} ({emailMap.get(VALUE_TYPE)})
         </li>
       ))}
     </ul>
@@ -99,7 +100,7 @@ function contactCellRenderer(
                 dispatch(hideModal(false));
               }}
             >
-              [change email types]
+              [cet]<sup>1</sup>
             </span>
           </li>
         );
@@ -109,7 +110,6 @@ function contactCellRenderer(
 }
 
 const List = () => {
-  // const [emailsColumnHidden, setEmailsColumnHidden] = useState(true);
   const { users, companies } = useAppSelector(({ company, common }) => ({
     companies: company.companiesWithRelatedEntities,
     users: common.users,
@@ -264,6 +264,7 @@ const List = () => {
     page,
     prepareRow,
     state: { pageIndex },
+    toggleHideColumn,
   } = tableInstance;
 
   const { canPreviousPage, canNextPage, pageOptions, nextPage, previousPage } =
@@ -278,7 +279,7 @@ const List = () => {
   };
 
   return (
-    <>
+    <main>
       <div>
         <table
           className="table is-bordered is-hoverable is-fullwidth"
@@ -287,18 +288,18 @@ const List = () => {
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => {
-                  return (
-                    <th
-                      {...column.getHeaderProps({
-                        className: "has-text-centered",
-                      })}
-                    >
-                      {column.render("Header")}{" "}
-                      {column.id === "contact" ? <ShowHideEmails /> : ""}
-                    </th>
-                  );
-                })}
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps({
+                      className: "has-text-centered",
+                    })}
+                  >
+                    {column.render("Header")}{" "}
+                    {column.id === "contact" && (
+                      <ShowHideEmails thc={toggleHideColumn} />
+                    )}
+                  </th>
+                ))}
               </tr>
             ))}
           </thead>
@@ -325,14 +326,20 @@ const List = () => {
       </div>
       <div>{footNote}</div>
       <Navigation {...naviProps} />
-    </>
+    </main>
   );
 };
 
 const footNote = (
-  <div>
+  <footer>
     <hr />
-    <span className={`ml-4 ${styles.attention}`}>*</span> - no country assigned
-  </div>
+    <div>
+      <span className={`ml-4 ${styles.attention}`}>*</span> - no country
+      assigned
+    </div>
+    <div className={`ml-4`}>
+      1 - CET: <b>c</b>hange <b>e</b>mail <b>t</b>ypes
+    </div>
+  </footer>
 );
 export default List;
