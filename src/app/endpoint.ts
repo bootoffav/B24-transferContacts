@@ -68,19 +68,16 @@ const fetchRelatedEntities = async (
 ): Promise<Contact[] | Deal[]> => {
   const select =
     entityType === "contact"
-      ? ["*", contactPositionField, contactCountryField]
+      ? ["*", contactPositionField, contactCountryField, "EMAIL"]
       : ["*"];
 
-  return await fetch(
-    `${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`,
-    {
-      method: "POST",
-      body: stringify({
-        filter: { [`${headEntity.toUpperCase()}_ID`]: entityId },
-        select,
-      }),
-    }
-  )
+  return fetch(`${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`, {
+    method: "POST",
+    body: stringify({
+      filter: { [`${headEntity.toUpperCase()}_ID`]: entityId },
+      select,
+    }),
+  })
     .then((r) => r.json())
     .then((r) => r.result);
 };

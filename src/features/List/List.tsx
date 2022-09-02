@@ -14,6 +14,7 @@ import Navigation, { NaviProps } from "./Navigation";
 import Position from "./Position";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
+import ShowHideEmails from "./ShowHideEmails";
 
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
@@ -63,6 +64,20 @@ const applyStyle = (
   return responsibleForCompany !== v ? styles.attention : "";
 };
 
+function contactEmailCellRenderer({
+  value: contactsEmails,
+}: Cell<{}, TableDataStructure[number]["contactEmails"][]>) {
+  return contactsEmails.map((contact, idx) => (
+    <ul key={idx}>
+      {contact.map(({ VALUE, ID, VALUE_TYPE }) => (
+        <li key={ID}>
+          {VALUE}: {VALUE_TYPE}
+        </li>
+      ))}
+    </ul>
+  ));
+}
+
 function contactCellRenderer(
   { value, column: { id } }: Cell<{}, TableDataStructure[number]["contact"]>,
   dispatch: Dispatch
@@ -84,7 +99,7 @@ function contactCellRenderer(
                 dispatch(hideModal(false));
               }}
             >
-              [emails]
+              [change email types]
             </span>
           </li>
         );
@@ -94,6 +109,7 @@ function contactCellRenderer(
 }
 
 const List = () => {
+  // const [emailsColumnHidden, setEmailsColumnHidden] = useState(true);
   const { users, companies } = useAppSelector(({ company, common }) => ({
     companies: company.companiesWithRelatedEntities,
     users: common.users,
@@ -112,6 +128,7 @@ const List = () => {
           company: [company.TITLE, company.ID],
           responsibleForCompany,
           contact: company.CONTACTS.map(prepareContact),
+          contactEmails: company.CONTACTS.map(({ EMAIL }) => EMAIL || []),
           contactPosition: company.CONTACTS.map(
             // @ts-expect-error
             ({ [contactPositionField!]: position, ID }) => [
@@ -182,6 +199,11 @@ const List = () => {
         Header: "Contact",
         accessor: "contact",
         Cell: (cell) => contactCellRenderer(cell, dispatch),
+      },
+      {
+        Header: "Contact emails",
+        accessor: "contactEmails",
+        Cell: contactEmailCellRenderer,
       },
       {
         Header: "Position",
@@ -265,15 +287,18 @@ const List = () => {
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps({
-                      className: "has-text-centered",
-                    })}
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
+                {headerGroup.headers.map((column) => {
+                  return (
+                    <th
+                      {...column.getHeaderProps({
+                        className: "has-text-centered",
+                      })}
+                    >
+                      {column.render("Header")}{" "}
+                      {column.id === "contact" ? <ShowHideEmails /> : ""}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
