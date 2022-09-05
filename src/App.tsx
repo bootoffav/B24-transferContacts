@@ -23,7 +23,11 @@ export default function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
-    return <ClipLoader className="centered" loading={true} size={300} />;
+    return (
+      <div className="centered is-flex is-justify-content-center">
+        <ClipLoader loading={true} size={300} />
+      </div>
+    );
   }
 
   return isAuthenticated ? (
