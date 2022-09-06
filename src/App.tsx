@@ -9,6 +9,7 @@ import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
 import "./styles.scss";
 import { ClipLoader } from "react-spinners";
+import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -60,7 +61,10 @@ export default function App() {
       <InfoBlock />
       {(stage === "scanFinished" && companies.length && (
         <>
-          <Export />
+          <div className="columns">
+            <CompanyFilter />
+            <Export />
+          </div>
           <List />
         </>
       )) ||

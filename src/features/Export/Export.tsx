@@ -28,25 +28,23 @@ const Export = () => {
   };
 
   return (
-    <div className="columns">
-      <div className="column">
-        <button
-          className="button is-small is-info is-light is-pulled-right"
-          onClick={() => {
-            const { filename, content } = excelFile(
-              companies,
-              getEntityTitle(),
-              users
-            );
-            XLSX.writeFile(content, filename);
-          }}
-        >
-          <span className="icon is-small">
-            <i className="fas fa-file-download"></i>
-          </span>
-          <span>Export to Excel</span>
-        </button>
-      </div>
+    <div className="column">
+      <button
+        className="button is-small is-info is-light is-pulled-right"
+        onClick={() => {
+          const { filename, content } = excelFile(
+            companies,
+            getEntityTitle(),
+            users
+          );
+          XLSX.writeFile(content, filename);
+        }}
+      >
+        <span className="icon is-small">
+          <i className="fas fa-file-download"></i>
+        </span>
+        <span>Export to Excel</span>
+      </button>
     </div>
   );
 };

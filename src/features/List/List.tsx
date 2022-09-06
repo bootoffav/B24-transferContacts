@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -7,12 +7,20 @@ import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import ShowHideEmails from "./ShowHideEmails";
 import { formColumns, formData } from "./TableDataLogic";
+import { noCountrySelector } from "./NoCountrySelector";
 
 const List = () => {
-  const { users, companies } = useAppSelector(({ company, common }) => ({
-    companies: company.companiesWithRelatedEntities,
+  const viewMode = useAppSelector(({ list }) => list.viewMode);
+  const companies = useAppSelector(
+    viewMode === "all"
+      ? ({ company }) => company.companiesWithRelatedEntities
+      : noCountrySelector
+  );
+
+  const { users } = useAppSelector(({ common }) => ({
     users: common.users,
   }));
+
   const dispatch = useAppDispatch();
   const data: TableDataStructure = useMemo(
     () => formData(companies, users),
