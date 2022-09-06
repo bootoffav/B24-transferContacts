@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useSortBy, useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -37,6 +37,11 @@ const List = () => {
       manualPagination: false,
       initialState: {
         pageSize,
+        sortBy: [
+          {
+            id: "company",
+          },
+        ],
       },
     },
     useSortBy,
