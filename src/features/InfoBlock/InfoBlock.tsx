@@ -40,9 +40,12 @@ const InfoBlock = () => {
       output = "Choose country, click Get companies to make a list";
       break;
     case "gettingData":
+    case "cancelling":
       output = (
         <>
-          <span className="p-2">Getting data</span>
+          <span className="p-2">
+            {stage === "gettingData" ? "Getting data" : "Cancelling"}
+          </span>
           <ClipLoader loading={true} />
           <p className="p-2">
             Processing {companiesProcessedAmount} of {companiesTotalAmount}{" "}

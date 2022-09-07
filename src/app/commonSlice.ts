@@ -3,13 +3,17 @@ import { Contact, Country, User } from "../types";
 import { sort, splitActiveDismissed } from "../utils/users";
 import { fetchCountries, fetchUsers } from "./endpoint";
 
+const stages = [
+  "initial",
+  "gettingData",
+  "cancelling",
+  "scanFinished",
+  "transferring",
+  "transferred",
+] as const;
+
 export interface CommonState {
-  stage:
-    | "initial"
-    | "gettingData"
-    | "scanFinished"
-    | "transferring"
-    | "transferred";
+  stage: typeof stages[number];
   users: User[];
   transferredAmount: number;
   selectType: "users" | "countries";
@@ -17,6 +21,10 @@ export interface CommonState {
   countries: Country[];
   modalHidden: boolean;
   contactIdForEmails?: Contact["ID"];
+}
+
+function isStage(stage: CommonState["stage"]): stage is CommonState["stage"] {
+  return stages.includes(stage);
 }
 
 const initialState: CommonState = {
@@ -32,38 +40,31 @@ const commonSlice = createSlice({
   name: "common",
   initialState,
   reducers: {
-    setStage: (
-      state: CommonState,
-      { payload }: PayloadAction<CommonState["stage"]>
-    ) => {
-      state.stage = payload;
+    setStage: (state, { payload }: PayloadAction<CommonState["stage"]>) => {
+      if (isStage(payload)) {
+        state.stage = payload;
+      }
     },
     setContactIdForEmails: (
-      state: CommonState,
+      state,
       { payload }: PayloadAction<CommonState["contactIdForEmails"]>
     ) => {
       state.contactIdForEmails = payload;
     },
-    setTransferredAmount: (
-      state: CommonState,
-      { payload }: PayloadAction<number>
-    ) => {
+    setTransferredAmount: (state, { payload }: PayloadAction<number>) => {
       state.transferredAmount =
         payload === 0 ? 0 : state.transferredAmount + payload;
     },
     setSelectType: (
-      state: CommonState,
+      state,
       { payload }: PayloadAction<CommonState["selectType"]>
     ) => {
       state.selectType = payload;
     },
-    setChosenId: (
-      state: CommonState,
-      { payload }: PayloadAction<number | undefined>
-    ) => {
+    setChosenId: (state, { payload }: PayloadAction<number | undefined>) => {
       state.chosenId = payload;
     },
-    hideModal: (state: CommonState, { payload }: PayloadAction<boolean>) => {
+    hideModal: (state, { payload }: PayloadAction<boolean>) => {
       state.modalHidden = payload;
     },
   },

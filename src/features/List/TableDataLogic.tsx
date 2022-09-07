@@ -5,7 +5,7 @@ import type {
   Company,
   User,
 } from "types";
-import type { Cell, Row } from "react-table";
+import type { Cell } from "react-table";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
 import { formLink, applyStyle } from "./utils";
@@ -116,18 +116,6 @@ const formColumns = (dispatch: Dispatch) => [
     Header: "Company",
     accessor: "company",
     Cell: ({ value }: Cell) => formLink(value, "company"),
-    sortType: (
-      {
-        values: {
-          company: [a],
-        },
-      }: Row,
-      {
-        values: {
-          company: [b],
-        },
-      }: Row
-    ) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1),
   },
   {
     Header: "Contact",

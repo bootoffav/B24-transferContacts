@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
-import { useSortBy, useTable, usePagination } from "react-table";
+import { useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import type { TableDataStructure } from "../../types";
 import styles from "./List.module.css";
@@ -44,7 +44,6 @@ const List = () => {
         ],
       },
     },
-    useSortBy,
     usePagination
   );
 

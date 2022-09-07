@@ -9,11 +9,11 @@ import {
 import getDifferentResponsibles from "app/differentResponsibles";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage } from "app/commonSlice";
-import { SyntheticEvent, useState } from "react";
+import type { SyntheticEvent } from "react";
 import { Contact, Company } from "../../types";
+import ControlButton from "./ControlButton";
 
 export default function GetCompanies() {
-  const [state, setState] = useState<"idle" | "processing">("idle");
   const dispatch = useAppDispatch();
   const [chosenId, selectType] = useAppSelector(({ common }) => [
     common.chosenId,
@@ -24,10 +24,10 @@ export default function GetCompanies() {
     if (chosenId) {
       if ((target as HTMLButtonElement).innerHTML === "STOP") {
         window.aborted = true;
+        dispatch(setStage("cancelling"));
         return;
       }
       // set up initital state
-      setState("processing");
       dispatch(setProcessedAmount(0));
       dispatch(setTotalAmount(0));
       dispatch(setStage("gettingData"));
@@ -46,30 +46,24 @@ export default function GetCompanies() {
         dispatch(setProcessedAmount(1));
       }
 
-      // sort companies alphabetically
-      companiesWithRelatedEntities.sort(({ TITLE: A }, { TITLE: B }) =>
-        A > B ? 1 : A < B ? -1 : 0
-      );
+      // sort companies alphabetically, case insensitive
+      companiesWithRelatedEntities.sort(({ TITLE: A }, { TITLE: B }) => {
+        A = A.toLowerCase();
+        B = B.toLowerCase();
+        return A > B ? 1 : A < B ? -1 : 0;
+      });
       dispatch(setCompanies(companiesWithRelatedEntities));
       dispatch(setStage("scanFinished"));
       const differentResponsibles = getDifferentResponsibles(
         companiesWithRelatedEntities
       );
       dispatch(setDifferentResponsibles(differentResponsibles));
-      setState("idle");
       return;
     }
     alert(`choose ${selectType} first`);
   };
 
-  return (
-    <button
-      className={`button ${state === "idle" ? "is-primary" : "is-danger"}`}
-      onClick={clickHandler}
-    >
-      {state === "idle" ? "Get companies" : "STOP"}
-    </button>
-  );
+  return <ControlButton clickHandler={clickHandler} />;
 }
 
 async function* getCompaniesWithRelatedEntities(
