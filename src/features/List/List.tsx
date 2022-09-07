@@ -7,15 +7,10 @@ import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import ShowHideEmails from "./ShowHideEmails";
 import { formColumns, formData } from "./TableDataLogic";
-import { noCountrySelector } from "./NoCountrySelector";
+import { companySelector } from "./CompanySelector";
 
 const List = () => {
-  const viewMode = useAppSelector(({ list }) => list.viewMode);
-  const companies = useAppSelector(
-    viewMode === "all"
-      ? ({ company }) => company.companiesWithRelatedEntities
-      : noCountrySelector
-  );
+  const companies = useAppSelector(companySelector);
 
   const { users } = useAppSelector(({ common }) => ({
     users: common.users,

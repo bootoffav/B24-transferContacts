@@ -1,5 +1,9 @@
 import { useAppSelector, useAppDispatch } from "app/hooks";
-import { setViewMode } from "features/List/ListSlice";
+import {
+  setViewMode,
+  viewModeAll,
+  viewModeNoCountries,
+} from "features/List/ListSlice";
 
 export default function CompanyFilter() {
   const viewMode = useAppSelector(({ list }) => list.viewMode);
@@ -9,20 +13,20 @@ export default function CompanyFilter() {
     <div className="buttons has-addons">
       <button
         className={`button is-light is-link ${
-          viewMode === "all" ? "is-active" : ""
+          viewMode === viewModeAll ? "is-active" : ""
         }`}
         onClick={() => {
-          dispatch(setViewMode("all"));
+          dispatch(setViewMode(viewModeAll));
         }}
       >
         All
       </button>
       <button
         className={`button is-light is-link ${
-          viewMode === "noCountries" ? "is-active" : ""
+          viewMode === viewModeNoCountries ? "is-active" : ""
         }`}
         onClick={() => {
-          dispatch(setViewMode("noCountries"));
+          dispatch(setViewMode(viewModeNoCountries));
         }}
       >
         No countries

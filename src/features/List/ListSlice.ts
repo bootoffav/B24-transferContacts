@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export const viewModeAll = "all";
+export const viewModeNoCountries = "noCountries";
+
 interface ListSliceState {
-  viewMode: "all" | "noCountries";
+  viewMode: typeof viewModeAll | typeof viewModeNoCountries;
 }
 
 const initialState: ListSliceState = {
@@ -13,11 +16,9 @@ const listSlice = createSlice({
   initialState,
   reducers: {
     setViewMode(state, { payload }: PayloadAction<ListSliceState["viewMode"]>) {
-      if ((["all", "noCountries"] as const).includes(payload)) {
+      if ([viewModeAll, viewModeNoCountries].includes(payload)) {
         state.viewMode = payload;
       }
-
-      return state;
     },
   },
 });

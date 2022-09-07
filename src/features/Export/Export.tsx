@@ -2,16 +2,16 @@ import type { User, Country } from "../../types";
 import excelFile from "./ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useAppSelector } from "app/hooks";
+import { companySelector } from "features/List/CompanySelector";
 
 const Export = () => {
-  const [companies, chosenId, titleLookupArray, users] = useAppSelector(
-    ({ common, company }) => [
-      company.companiesWithRelatedEntities,
-      common.chosenId,
-      common[common.selectType],
-      common.users,
-    ]
-  );
+  const [chosenId, titleLookupArray, users] = useAppSelector(({ common }) => [
+    common.chosenId,
+    common[common.selectType],
+    common.users,
+  ]);
+  const companies = useAppSelector(companySelector);
+
   const getEntityTitle = (): string => {
     // @ts-ignore
     const foundEntity: User | Country | undefined = titleLookupArray.find(
