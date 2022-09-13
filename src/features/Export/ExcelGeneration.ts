@@ -1,7 +1,7 @@
 import { RootState } from "app/store";
 import dayjs from "dayjs";
-import { User, Contact, Company, Lead, Deal } from "types";
-import { getUserNameById } from "utils/users";
+import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
+import { User, Contact, Company } from "types";
 
 const HeaderColumnStyle = {
   alignment: {
@@ -51,8 +51,10 @@ const generateExcelFileStructure = (
         CONTACTS.map(({ ID, NAME, LAST_NAME }) => [ID, `${NAME} ${LAST_NAME}`]), // Contact
         CONTACTS.map(
           ({ EMAILS }) =>
-            // console.log(EMAILS);
-            EMAILS.map(({ VALUE }) => VALUE) //to-do refactor to align with types
+            EMAILS.map(
+              ({ VALUE, VALUE_TYPE }) =>
+                `${VALUE} (${emailMap.get(VALUE_TYPE)})`
+            ) //to-do refactor to align with types
         ),
       ];
     }
@@ -76,8 +78,8 @@ const generateExcelFileStructure = (
         switch (columnIndex) {
           case 1:
           case 2:
-            // eslint-disable-next-line
             toYield = (rawCellData as []).map(
+              // eslint-disable-next-line
               ([id, title]: [string, string]) => ({
                 v: title,
                 l: {
@@ -109,11 +111,8 @@ const generateExcelFileStructure = (
           if (toYield.length) {
             // has related entities
             for (const relatedEntityCell of toYield) {
-              // console.log(relatedEntityCell);
-
               // case for contactEmails
               if (Array.isArray(relatedEntityCell)) {
-                debugger;
                 for (const email of relatedEntityCell) {
                   yield {
                     [`${columnLetters[columnIndex]}${currentRowIndex}`]: email,

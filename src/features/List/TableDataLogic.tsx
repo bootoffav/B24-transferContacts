@@ -37,22 +37,19 @@ function prepareContact({
 function contactEmailCellRenderer({
   value: contactsEmails,
 }: Cell<{}, TableDataStructure[number]["contactEmails"]>) {
-  if (!contactsEmails.length) {
-    return (
-      <ul>
-        <li>1</li>
+  return contactsEmails.map((contactEmails, idx) =>
+    contactEmails.length ? (
+      <ul key={idx}>
+        {contactEmails.map(({ VALUE, ID, VALUE_TYPE }) => (
+          <li key={ID}>
+            {VALUE} ({emailMap.get(VALUE_TYPE)})
+          </li>
+        ))}
       </ul>
-    );
-  }
-  return contactsEmails.map((contact, idx) => (
-    <ul key={idx}>
-      {contact.map(({ VALUE, ID, VALUE_TYPE }) => (
-        <li key={ID}>
-          {VALUE} ({emailMap.get(VALUE_TYPE)})
-        </li>
-      ))}
-    </ul>
-  ));
+    ) : (
+      <br />
+    )
+  );
 }
 
 function contactCellRenderer(
