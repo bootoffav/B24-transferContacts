@@ -36,7 +36,14 @@ function prepareContact({
 
 function contactEmailCellRenderer({
   value: contactsEmails,
-}: Cell<{}, TableDataStructure[number]["contactEmails"][]>) {
+}: Cell<{}, TableDataStructure[number]["contactEmails"]>) {
+  if (!contactsEmails.length) {
+    return (
+      <ul>
+        <li>1</li>
+      </ul>
+    );
+  }
   return contactsEmails.map((contact, idx) => (
     <ul key={idx}>
       {contact.map(({ VALUE, ID, VALUE_TYPE }) => (
@@ -89,7 +96,7 @@ const formData = (companies: Company[], users: User[]): TableDataStructure =>
       company: [company.TITLE, company.ID],
       responsibleForCompany,
       contact: company.CONTACTS.map(prepareContact),
-      contactEmails: company.CONTACTS.map(({ EMAIL }) => EMAIL || []),
+      contactEmails: company.CONTACTS.map(({ EMAILS }) => EMAILS || []),
       contactPosition: company.CONTACTS.map(
         // @ts-expect-error
         ({ [contactPositionField!]: position, ID }) => [position ?? "--", ID]

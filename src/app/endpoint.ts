@@ -79,7 +79,17 @@ const fetchRelatedEntities = async (
     }),
   })
     .then((r) => r.json())
-    .then((r) => r.result);
+    .then(({ result }) =>
+      entityType === "contact"
+        ? result.map((contact: Contact & { EMAIL?: Contact["EMAILS"] }) => {
+            delete Object.assign(contact, { EMAILS: contact.EMAIL || [] })[
+              "EMAIL"
+            ];
+            console.log(contact.EMAILS);
+            return contact;
+          })
+        : result
+    );
 };
 
 const fetchUsers = createAsyncThunk(
@@ -174,7 +184,7 @@ const fetchCountries = createAsyncThunk(
 
 async function fetchContactEmails(
   contactId: number
-): Promise<Contact["EMAIL"][]> {
+): Promise<Contact["EMAILS"]> {
   return fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.list?`, {
     method: "POST",
     body: stringify({
@@ -185,13 +195,13 @@ async function fetchContactEmails(
     .then((r) => r.json())
     .then(({ result }) => {
       const { EMAIL = [] } = result[0];
-      return EMAIL as Contact["EMAIL"][];
+      return EMAIL as Contact["EMAILS"];
     });
 }
 
 async function updateContactEmails(
   contactId: Contact["ID"],
-  emails: Contact["EMAIL"][]
+  emails: Contact["EMAILS"]
 ) {
   return await fetch(
     `${endpoint}${userId}/${webhookToken}/crm.contact.update?`,

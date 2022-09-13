@@ -20,7 +20,7 @@ export default function EmailFormChanger() {
     ({ common: { contactIdForEmails } }) => contactIdForEmails
   );
   const dispatch = useAppDispatch();
-  const [emails, setEmails] = useState<Contact["EMAIL"][] | undefined>();
+  const [emails, setEmails] = useState<Contact["EMAILS"] | undefined>();
   const [saving, toggleSaving] = useState(false);
 
   useEffect(() => {

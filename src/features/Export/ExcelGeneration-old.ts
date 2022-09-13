@@ -28,10 +28,26 @@ const generateExcelFileStructure = (
   let ws = {
     A1: { v: "#", s: HeaderColumnStyle },
     B1: { v: "COMPANY", s: HeaderColumnStyle },
-    C1: { v: "CONTACT", s: HeaderColumnStyle },
-    D1: { v: "CONTACT EMAILS", s: HeaderColumnStyle },
-    "!ref": `A1:D${totalAmountOfRows + 1}`,
-    "!cols": [{ width: 10 }, { width: 55 }, { width: 30 }, { width: 55 }],
+    // C1: { v: "RESPONSIBLE FOR COMPANY", s: HeaderColumnStyle },
+    // D1: { v: "CONTACT", s: HeaderColumnStyle },
+    // E1: { v: "RESPONSIBLE FOR CONTACT", s: HeaderColumnStyle },
+    // F1: { v: "LEAD", s: HeaderColumnStyle },
+    // G1: { v: "RESPONSIBLE FOR LEAD", s: HeaderColumnStyle },
+    // H1: { v: "DEAL", s: HeaderColumnStyle },
+    // I1: { v: "RESPONSIBLE FOR DEAL", s: HeaderColumnStyle },
+
+    "!ref": `A1:I${totalAmountOfRows + 1}`,
+    "!cols": [
+      { width: 10 },
+      { width: 55 },
+      // { width: 30 },
+      // { width: 55 },
+      // { width: 30 },
+      // { width: 55 },
+      // { width: 30 },
+      // { width: 55 },
+      // { width: 30 },
+    ],
     "!rows": [{ hpt: 30 }, ...Array(totalAmountOfRows).fill({ hpt: 20 })],
   };
 
@@ -42,18 +58,30 @@ const generateExcelFileStructure = (
     ): [
       string,
       [Company["ID"], Company["TITLE"]][],
-      [Contact["ID"], string][],
-      Contact["EMAILS"][number]["VALUE"][][]
+      // ReturnType<typeof getUserNameById>,
+      [Contact["ID"], string][]
+      // ReturnType<typeof getUserNameById>[]
+      // [Lead["ID"], Lead["TITLE"]][],
+      // ReturnType<typeof getUserNameById>[],
+      // [Deal["ID"], Deal["TITLE"]][],
+      // ReturnType<typeof getUserNameById>[]
     ] => {
       return [
         String(index + 1),
         [[ID, TITLE]],
+        // getUserNameById(users, ASSIGNED_BY_ID),
         CONTACTS.map(({ ID, NAME, LAST_NAME }) => [ID, `${NAME} ${LAST_NAME}`]), // Contact
-        CONTACTS.map(
-          ({ EMAILS }) =>
-            // console.log(EMAILS);
-            EMAILS.map(({ VALUE }) => VALUE) //to-do refactor to align with types
-        ),
+        // CONTACTS.map(({ ASSIGNED_BY_ID }) =>
+        //   getUserNameById(users, ASSIGNED_BY_ID)
+        // ),
+        // LEADS.map(({ ID, TITLE }) => [ID, TITLE]),
+        // LEADS.map(({ ASSIGNED_BY_ID }) =>
+        //   getUserNameById(users, ASSIGNED_BY_ID)
+        // ),
+        // DEALS.map(({ ID, TITLE }) => [ID, TITLE]),
+        // DEALS.map(({ ASSIGNED_BY_ID }) =>
+        //   getUserNameById(users, ASSIGNED_BY_ID)
+        // ),
       ];
     }
   );
@@ -62,10 +90,12 @@ const generateExcelFileStructure = (
     let startRowIndex = 2;
     let lowestRowIndex = 2;
     let currentRowIndex: number;
-    const columnLetters = ["A", "B", "C", "D"];
+    const columnLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
     const linkType = new Map([
       [1, "company"],
-      [2, "contact"],
+      [3, "contact"],
+      [5, "lead"],
+      [7, "deal"],
     ]);
 
     for (const company of structuredData) {
@@ -75,31 +105,24 @@ const generateExcelFileStructure = (
         let toYield: any;
         switch (columnIndex) {
           case 1:
-          case 2:
-            // eslint-disable-next-line
-            toYield = (rawCellData as []).map(
-              ([id, title]: [string, string]) => ({
-                v: title,
-                l: {
-                  Target: `${
-                    process.env.REACT_APP_B24_ADDRESS
-                  }crm/${linkType.get(columnIndex)}/details/${id}/`,
-                },
-                s: {
-                  font: {
-                    underline: true,
-                    color: { rgb: "CC2581FF" },
-                  },
-                },
-              })
-            );
-            break;
           case 3:
-            toYield = (rawCellData as []).map((emails: []) => {
-              return emails.map((email) => ({
-                v: email,
-              }));
-            });
+          case 5:
+          case 7:
+            // eslint-disable-next-line
+            toYield = (rawCellData as []).map(([id, title]: any) => ({
+              v: title,
+              l: {
+                Target: `${process.env.REACT_APP_B24_ADDRESS}crm/${linkType.get(
+                  columnIndex
+                )}/details/${id}/`,
+              },
+              s: {
+                font: {
+                  underline: true,
+                  color: { rgb: "CC2581FF" },
+                },
+              },
+            }));
             break;
           default:
             toYield = { v: rawCellData };
@@ -109,24 +132,11 @@ const generateExcelFileStructure = (
           if (toYield.length) {
             // has related entities
             for (const relatedEntityCell of toYield) {
-              // console.log(relatedEntityCell);
-
-              // case for contactEmails
-              if (Array.isArray(relatedEntityCell)) {
-                debugger;
-                for (const email of relatedEntityCell) {
-                  yield {
-                    [`${columnLetters[columnIndex]}${currentRowIndex}`]: email,
-                  };
-                  currentRowIndex += 1;
-                }
-              } else {
-                yield {
-                  [`${columnLetters[columnIndex]}${currentRowIndex}`]:
-                    relatedEntityCell,
-                };
-                currentRowIndex += 1;
-              }
+              yield {
+                [`${columnLetters[columnIndex]}${currentRowIndex}`]:
+                  relatedEntityCell,
+              };
+              currentRowIndex += 1;
             }
           } else {
             // no related entities in Company, but should render empty cell for the company row
@@ -170,6 +180,7 @@ const generateExcelFileStructure = (
     } // end of all companies
   }
 
+  // @ts-ignore
   for (const cell of fillCells()) {
     ws = { ...ws, ...cell };
   }
