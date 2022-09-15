@@ -1,14 +1,10 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { CommonState, setChosenId } from "../../app/commonSlice";
+import { setChosenId } from "../../app/commonSlice";
 import { fetchUsers, fetchCountries } from "../../app/endpoint";
-import { Country, User } from "../../types";
+import { optionSelector } from "./optionSelector";
 
-type EntitySelectorProps = {
-  selectType: CommonState["selectType"];
-};
-
-function EntitySelector({ selectType }: EntitySelectorProps) {
+function EntitySelector() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -16,21 +12,8 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
     dispatch(fetchCountries());
   }, [dispatch]);
 
-  const selectOptions = useAppSelector((state) => state.common[selectType]);
-
-  const mapUsers = () =>
-    (selectOptions as User[]).map(({ NAME, LAST_NAME, ID, ACTIVE }) => (
-      <option key={ID} value={ID}>
-        {`${NAME} ${LAST_NAME} ${ACTIVE ? "" : " - dismissed"}`}
-      </option>
-    ));
-
-  const mapCountries = () =>
-    (selectOptions as Country[]).map(({ value, ID }) => (
-      <option key={ID} value={ID}>
-        {value}
-      </option>
-    ));
+  const selectOptions = useAppSelector(optionSelector);
+  const chosenId = useAppSelector(({ common }) => common.chosenId);
 
   return (
     <div
@@ -39,9 +22,10 @@ function EntitySelector({ selectType }: EntitySelectorProps) {
       }`}
     >
       <select
+        value={chosenId}
         onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
       >
-        {selectType === "countries" ? mapCountries() : mapUsers()}
+        {selectOptions}
       </select>
     </div>
   );

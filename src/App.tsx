@@ -13,13 +13,10 @@ import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { stage, selectType, companies } = useAppSelector(
-    ({ common, company }) => ({
-      stage: common.stage,
-      selectType: common.selectType,
-      companies: company.companiesWithRelatedEntities,
-    })
-  );
+  const { stage, companies } = useAppSelector(({ common, company }) => ({
+    stage: common.stage,
+    companies: company.companiesWithRelatedEntities,
+  }));
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -52,7 +49,7 @@ export default function App() {
           </div>
         </div>
         <div className="column is-2">
-          <EntitySelector selectType={selectType} />
+          <EntitySelector />
         </div>
         <div className="column is-2">
           <GetCompanies />

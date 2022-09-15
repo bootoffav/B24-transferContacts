@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -89,19 +89,17 @@ const List = () => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {page.map((row: any, i: number) => {
+            {page.map((row, i) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>
-                  {row.cells.map((cell: any) =>
-                    cell.column.id === "#" ? (
-                      <td {...cell.getCellProps()}>
-                        {pageIndex * pageSize + (i + 1)}
-                      </td>
-                    ) : (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    )
-                  )}
+                  {row.cells.map(({ column: { id }, getCellProps, render }) => (
+                    <td {...getCellProps()}>
+                      {id === "#"
+                        ? pageIndex * pageSize + (i + 1)
+                        : render("Cell")}
+                    </td>
+                  ))}
                 </tr>
               );
             })}

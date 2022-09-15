@@ -85,7 +85,6 @@ const fetchRelatedEntities = async (
             delete Object.assign(contact, { EMAILS: contact.EMAIL || [] })[
               "EMAIL"
             ];
-            console.log(contact.EMAILS);
             return contact;
           })
         : result
