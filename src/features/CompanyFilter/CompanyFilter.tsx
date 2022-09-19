@@ -3,6 +3,7 @@ import {
   setViewMode,
   viewModeAll,
   viewModeNoCountries,
+  viewModeWithLinkedIn,
 } from "features/List/ListSlice";
 
 export default function CompanyFilter() {
@@ -30,6 +31,16 @@ export default function CompanyFilter() {
         }}
       >
         No countries
+      </button>
+      <button
+        className={`button is-light is-link ${
+          viewMode === viewModeWithLinkedIn ? "is-active" : ""
+        }`}
+        onClick={() => {
+          dispatch(setViewMode(viewModeWithLinkedIn));
+        }}
+      >
+        With LinkedIn
       </button>
     </div>
   );

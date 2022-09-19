@@ -14,11 +14,11 @@ import styles from "./List.module.css";
 import { getUserNameById } from "utils/users";
 import Position from "./Position";
 
-const { REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField } =
-  process.env;
-
-const contactCountryField =
-  process.env.REACT_APP_B24_CONTACT_COUNTRY_FIELD ?? "";
+const {
+  REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
+  REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField = "",
+  REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD: linkedInAccountField,
+} = process.env;
 
 function prepareContact({
   ID,
@@ -36,14 +36,12 @@ function prepareContact({
 
 function contactEmailCellRenderer({
   value: contactsEmails,
-}: Cell<{}, TableDataStructure[number]["contactEmails"]>) {
-  return contactsEmails.map((contactEmails, idx) =>
-    contactEmails.length ? (
+}: Cell<{}, TableDataStructure[number]["emails"]>) {
+  return contactsEmails.map((emails, idx) =>
+    emails.length ? (
       <ul key={idx}>
-        {contactEmails.map(({ VALUE, ID, VALUE_TYPE }) => (
-          <li key={ID}>
-            {VALUE} ({emailMap.get(VALUE_TYPE)})
-          </li>
+        {emails.map(({ VALUE, ID, VALUE_TYPE }) => (
+          <li key={ID}>{`${VALUE} (${emailMap.get(VALUE_TYPE)})`}</li>
         ))}
       </ul>
     ) : (
@@ -92,8 +90,10 @@ const formData = (companies: Company[], users: User[]): TableDataStructure =>
     return {
       company: [company.TITLE, company.ID],
       responsibleForCompany,
+      // @ts-ignore
+      linkedin: company[linkedInAccountField],
       contact: company.CONTACTS.map(prepareContact),
-      contactEmails: company.CONTACTS.map(({ EMAILS }) => EMAILS || []),
+      emails: company.CONTACTS.map(({ EMAILS }) => EMAILS || []),
       contactPosition: company.CONTACTS.map(
         // @ts-expect-error
         ({ [contactPositionField!]: position, ID }) => [position ?? "--", ID]
@@ -122,13 +122,17 @@ const formColumns = (dispatch: Dispatch) => [
     Cell: ({ value }: Cell) => formLink(value, "company"),
   },
   {
+    Header: "LinkedIn",
+    accessor: "linkedin",
+  },
+  {
     Header: "Contact",
     accessor: "contact",
     Cell: (cell: Cell) => contactCellRenderer(cell, dispatch),
   },
   {
     Header: "Contact emails",
-    accessor: "contactEmails",
+    accessor: "emails",
     Cell: contactEmailCellRenderer,
   },
   {

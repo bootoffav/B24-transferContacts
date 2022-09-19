@@ -20,6 +20,7 @@ const {
   REACT_APP_B24_COMPANY_COUNTRY_FIELD: countryField,
   REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField,
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
+  REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD: linkedInField,
 } = process.env;
 
 const fetchCompanies = async (
@@ -40,12 +41,14 @@ const fetchCompanies = async (
 
   let companies: Company[] = [];
   let start = 0;
+  const select = ["*", linkedInField];
   while (start !== undefined) {
     const [result, next] = await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.list`,
       {
         method: "POST",
         body: stringify({
+          select,
           filter,
           start,
         }),

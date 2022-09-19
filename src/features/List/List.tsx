@@ -1,11 +1,11 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import type { TableDataStructure } from "../../types";
 import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
-import ShowHideEmails from "./ShowHideEmails";
+import ShowHideColumn from "./ShowHideColumn";
 import { formColumns, formData } from "./TableDataLogic";
 import { companySelector } from "./CompanySelector";
 
@@ -32,11 +32,6 @@ const List = () => {
       manualPagination: false,
       initialState: {
         pageSize,
-        sortBy: [
-          {
-            id: "company",
-          },
-        ],
       },
     },
     usePagination
@@ -80,8 +75,17 @@ const List = () => {
                     })}
                   >
                     {column.render("Header")}{" "}
+                    {column.id === "company" && (
+                      <ShowHideColumn
+                        columnToOperate={"linkedin"}
+                        thc={toggleHideColumn}
+                      />
+                    )}
                     {column.id === "contact" && (
-                      <ShowHideEmails thc={toggleHideColumn} />
+                      <ShowHideColumn
+                        columnToOperate={"emails"}
+                        thc={toggleHideColumn}
+                      />
                     )}
                   </th>
                 ))}

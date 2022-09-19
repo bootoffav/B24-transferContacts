@@ -65,7 +65,7 @@ export type TableDataStructure = {
   company: [string, number];
   responsibleForCompany: string;
   contact: [string, number, string | null][];
-  contactEmails: Contact["EMAILS"][];
+  emails: Contact["EMAILS"][];
   contactPosition: [string, number][];
   deal: (string | number)[][];
   lead: (string | number)[][];

@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import type { TableInstance } from "react-table";
 
-export default function ShowHideEmails({
+export default function ShowHideColumn({
   thc,
+  columnToOperate,
 }: {
   thc: TableInstance["toggleHideColumn"];
+  columnToOperate: "emails" | "linkedin";
 }) {
   const [columnHidden, setColumnHidden] = useState(true);
 
   useEffect(() => {
-    thc("contactEmails", columnHidden);
-  }, [thc, columnHidden]);
+    thc(columnToOperate, columnHidden);
+  }, [thc, columnHidden, columnToOperate]);
 
   return (
     <em
@@ -20,7 +22,7 @@ export default function ShowHideEmails({
         cursor: "pointer",
       }}
     >
-      {columnHidden ? "show" : "hide"} emails
+      {`${columnHidden ? "show" : "hide"} ${columnToOperate}`}
     </em>
   );
 }
