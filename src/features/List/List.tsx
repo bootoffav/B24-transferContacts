@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -8,6 +8,7 @@ import Navigation, { NaviProps } from "./Navigation";
 import ShowHideColumn from "./ShowHideColumn";
 import { formColumns, formData } from "./TableDataLogic";
 import { companySelector } from "./CompanySelector";
+import { emailCell } from "app/CONSTANTS";
 
 const List = () => {
   const companies = useAppSelector(companySelector);
@@ -15,6 +16,24 @@ const List = () => {
   const { users } = useAppSelector(({ common }) => ({
     users: common.users,
   }));
+
+  useEffect(() => {
+    const uls = document.getElementsByClassName(emailCell);
+    [...uls].forEach((ul, idx) => {
+      try {
+        // change size of li for contact cell
+        ul.parentElement!.previousElementSibling!.firstChild!.childNodes[
+          idx
+          // @ts-expect-error
+        ].style.height = `${ul.offsetHeight}px`;
+        // change size of li for position cell
+        ul.parentElement!.nextElementSibling!.firstChild!.childNodes[
+          idx
+          // @ts-expect-error
+        ].style.height = `${ul.clientHeight}px`;
+      } catch {}
+    });
+  });
 
   const dispatch = useAppDispatch();
   const data: TableDataStructure = useMemo(
@@ -111,13 +130,13 @@ const List = () => {
         </table>
         <EmailFormChanger />
       </div>
-      <div>{footNote}</div>
+      <div>{footer}</div>
       <Navigation {...naviProps} />
     </main>
   );
 };
 
-const footNote = (
+const footer = (
   <footer>
     <hr />
     <div>
@@ -129,4 +148,5 @@ const footNote = (
     </div>
   </footer>
 );
+
 export default List;

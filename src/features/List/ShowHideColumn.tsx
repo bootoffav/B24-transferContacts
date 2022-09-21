@@ -8,7 +8,7 @@ export default function ShowHideColumn({
   thc: TableInstance["toggleHideColumn"];
   columnToOperate: "emails" | "linkedin";
 }) {
-  const [columnHidden, setColumnHidden] = useState(true);
+  const [columnHidden, setColumnHidden] = useState(false);
 
   useEffect(() => {
     thc(columnToOperate, columnHidden);

@@ -13,6 +13,7 @@ import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import styles from "./List.module.css";
 import { getUserNameById } from "utils/users";
 import Position from "./Position";
+import { emailCell } from "app/CONSTANTS";
 
 const {
   REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
@@ -39,7 +40,7 @@ function contactEmailCellRenderer({
 }: Cell<{}, TableDataStructure[number]["emails"]>) {
   return contactsEmails.map((emails, idx) =>
     emails.length ? (
-      <ul key={idx}>
+      <ul key={idx} className={emailCell}>
         {emails.map(({ VALUE, ID, VALUE_TYPE }) => (
           <li key={ID}>{`${VALUE} (${emailMap.get(VALUE_TYPE)})`}</li>
         ))}
@@ -65,7 +66,7 @@ function contactCellRenderer(
               {v.at(-1) ? "" : <span className={styles.attention}>*</span>}
             </span>
             <span
-              className="ml-1 is-clickable"
+              className="is-clickable"
               onClick={() => {
                 dispatch(setContactIdForEmails(v[1]));
                 dispatch(hideModal(false));
