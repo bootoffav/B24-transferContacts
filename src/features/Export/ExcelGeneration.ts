@@ -13,6 +13,10 @@ const HeaderColumnStyle = {
   },
 };
 
+const emptyCellPlaceholder = {
+  v: "-",
+};
+
 const generateExcelFileStructure = (
   companies: RootState["company"]["companiesWithRelatedEntities"],
   name: string,
@@ -70,9 +74,9 @@ const generateExcelFileStructure = (
       [2, "contact"],
     ]);
 
-    for (const company of structuredData) {
+    for (const row of structuredData) {
       let columnIndex = 0;
-      for (const rawCellData of company) {
+      for (const rawCellData of row) {
         currentRowIndex = startRowIndex;
         let toYield: any;
         switch (columnIndex) {
@@ -104,61 +108,44 @@ const generateExcelFileStructure = (
             });
             break;
           default:
-            toYield = { v: rawCellData };
+            toYield = [{ v: rawCellData }];
         }
 
-        if (Array.isArray(toYield)) {
-          if (toYield.length) {
-            // has related entities
-            for (const relatedEntityCell of toYield) {
-              // case for contactEmails
-              if (Array.isArray(relatedEntityCell)) {
-                for (const email of relatedEntityCell) {
-                  yield {
-                    [`${columnLetters[columnIndex]}${currentRowIndex}`]: email,
-                  };
-                  currentRowIndex += 1;
-                }
-              } else {
-                yield {
-                  [`${columnLetters[columnIndex]}${currentRowIndex}`]:
-                    relatedEntityCell,
-                };
-                currentRowIndex += 1;
-              }
-            }
-          } else {
-            // no related entities in Company, but should render empty cell for the company row
-            yield {
-              [`${columnLetters[columnIndex]}${currentRowIndex}`]: { v: "-" },
-            };
-            currentRowIndex += 1;
-          }
-        } else {
-          // toYield is not array
-          if (Array.isArray(toYield.v)) {
-            if (toYield.v.length) {
-              for (const val of toYield.v) {
-                yield {
-                  [`${columnLetters[columnIndex]}${currentRowIndex}`]: {
-                    v: val,
-                  },
-                };
-                currentRowIndex += 1;
-              }
-            } else {
+        for (let j = 0; j < toYield.length; j++) {
+          // emails case
+          if (columnIndex === 3) {
+            if (toYield[j].length === 0) {
               yield {
-                [`${columnLetters[columnIndex]}${currentRowIndex}`]: { v: "-" },
+                [`${columnLetters[columnIndex]}${currentRowIndex}`]:
+                  emptyCellPlaceholder,
               };
               currentRowIndex += 1;
             }
-          } else {
-            yield {
-              [`${columnLetters[columnIndex]}${currentRowIndex}`]: toYield,
-            };
+            for (const v of toYield[j]) {
+              yield {
+                [`${columnLetters[columnIndex]}${currentRowIndex}`]: v,
+              };
+              currentRowIndex += 1;
+            }
+            continue;
           }
+
+          // contact case
+          let addToRow = 0;
+          if (columnIndex === 2) {
+            try {
+              if (row[3][j - 1].length > 1) {
+                addToRow = row[3][j - 1].length - 1;
+              }
+            } catch {}
+          }
+          yield {
+            [`${columnLetters[columnIndex]}${currentRowIndex + addToRow}`]:
+              toYield[j],
+          };
+
+          currentRowIndex += 1;
         }
-        // end toYield is array
 
         if (lowestRowIndex < currentRowIndex) {
           lowestRowIndex = currentRowIndex;
