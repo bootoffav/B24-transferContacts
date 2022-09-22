@@ -41,7 +41,14 @@ const generateExcelFileStructure = (
 
   const structuredData = companies.map(
     (
-      { ID, TITLE, ASSIGNED_BY_ID, CONTACTS, LEADS, DEALS },
+      {
+        ID,
+        TITLE,
+        // ASSIGNED_BY_ID,
+        CONTACTS,
+        // LEADS,
+        //  DEALS
+      },
       index
     ): [
       string,
@@ -53,12 +60,13 @@ const generateExcelFileStructure = (
         String(index + 1),
         [[ID, TITLE]],
         CONTACTS.map(({ ID, NAME, LAST_NAME }) => [ID, `${NAME} ${LAST_NAME}`]), // Contact
-        CONTACTS.map(
-          ({ EMAILS }) =>
-            EMAILS.map(
-              ({ VALUE, VALUE_TYPE }) =>
-                `${VALUE} (${emailMap.get(VALUE_TYPE)})`
-            ) //to-do refactor to align with types
+        CONTACTS.map(({ EMAILS }) =>
+          EMAILS.length
+            ? EMAILS.map(
+                ({ VALUE, VALUE_TYPE }) =>
+                  `${VALUE} (${emailMap.get(VALUE_TYPE)})`
+              )
+            : []
         ),
       ];
     }
@@ -120,6 +128,7 @@ const generateExcelFileStructure = (
                   emptyCellPlaceholder,
               };
               currentRowIndex += 1;
+              continue;
             }
             for (const v of toYield[j]) {
               yield {

@@ -37,7 +37,7 @@ const InfoBlock = () => {
 
   switch (stage) {
     case "initial":
-      output = "Choose country, click Get companies to make a list";
+      output = "Choose country or manager, click Get companies to make a list";
       break;
     case "gettingData":
     case "cancelling":
