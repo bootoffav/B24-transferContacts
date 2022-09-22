@@ -2,6 +2,7 @@ import { RootState } from "app/store";
 import dayjs from "dayjs";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { User, Contact, Company } from "types";
+import { getUserNameById } from "utils/users";
 
 const HeaderColumnStyle = {
   alignment: {
@@ -34,8 +35,15 @@ const generateExcelFileStructure = (
     B1: { v: "COMPANY", s: HeaderColumnStyle },
     C1: { v: "CONTACT", s: HeaderColumnStyle },
     D1: { v: "CONTACT EMAILS", s: HeaderColumnStyle },
-    "!ref": `A1:D${totalAmountOfRows + 1}`,
-    "!cols": [{ width: 10 }, { width: 55 }, { width: 30 }, { width: 55 }],
+    E1: { v: "RESPONSIBLE FOR COMPANY", s: HeaderColumnStyle },
+    "!ref": `A1:E${totalAmountOfRows + 1}`,
+    "!cols": [
+      { width: 10 },
+      { width: 55 },
+      { width: 30 },
+      { width: 55 },
+      { width: 30 },
+    ],
     "!rows": [{ hpt: 30 }, ...Array(totalAmountOfRows).fill({ hpt: 20 })],
   };
 
@@ -44,7 +52,7 @@ const generateExcelFileStructure = (
       {
         ID,
         TITLE,
-        // ASSIGNED_BY_ID,
+        ASSIGNED_BY_ID,
         CONTACTS,
         // LEADS,
         //  DEALS
@@ -54,7 +62,8 @@ const generateExcelFileStructure = (
       string,
       [Company["ID"], Company["TITLE"]][],
       [Contact["ID"], string][],
-      Contact["EMAILS"][number]["VALUE"][][]
+      Contact["EMAILS"][number]["VALUE"][][],
+      ReturnType<typeof getUserNameById>
     ] => {
       return [
         String(index + 1),
@@ -68,6 +77,7 @@ const generateExcelFileStructure = (
               )
             : []
         ),
+        getUserNameById(users, ASSIGNED_BY_ID),
       ];
     }
   );
@@ -76,7 +86,7 @@ const generateExcelFileStructure = (
     let startRowIndex = 2;
     let lowestRowIndex = 2;
     let currentRowIndex: number;
-    const columnLetters = ["A", "B", "C", "D"];
+    const columnLetters = ["A", "B", "C", "D", "E"];
     const linkType = new Map([
       [1, "company"],
       [2, "contact"],
