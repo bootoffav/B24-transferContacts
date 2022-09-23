@@ -9,7 +9,7 @@ const {
 
 export const companySelector = createSelector(
   ({ company, list: { viewMode } }: RootState) => ({
-    companies: company.companiesWithRelatedEntities,
+    companies: company.companies,
     viewMode,
   }),
   ({ companies, viewMode }) => {

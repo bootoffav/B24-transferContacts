@@ -5,7 +5,7 @@ const contactCountryField =
   process.env.REACT_APP_B24_CONTACT_COUNTRY_FIELD ?? "";
 
 export const noCountrySelector = createSelector(
-  ({ company }: RootState) => company.companiesWithRelatedEntities,
+  ({ company }: RootState) => company.companies,
   (companiesWithRelatedEntities) =>
     companiesWithRelatedEntities.filter(
       ({ CONTACTS }) =>

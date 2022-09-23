@@ -12,7 +12,7 @@ const InfoBlock = () => {
     transferredAmount,
     stage,
   } = useAppSelector(({ common, company }) => ({
-    companies: company.companiesWithRelatedEntities,
+    companies: company.companies,
     companiesTotalAmount: company.totalAmount,
     companiesProcessedAmount: company.processedAmount,
     differentResponsibles: company.differentResponsibles,

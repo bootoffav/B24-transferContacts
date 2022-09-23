@@ -14,7 +14,7 @@ const HeaderColumnStyle = {
 };
 
 const generateExcelFileStructure = (
-  companies: RootState["company"]["companiesWithRelatedEntities"],
+  companies: RootState["company"]["companies"],
   name: string,
   users: User[]
 ) => {

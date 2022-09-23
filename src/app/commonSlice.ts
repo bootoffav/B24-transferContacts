@@ -21,6 +21,7 @@ export interface CommonState {
   countries: Country[];
   modalHidden: boolean;
   contactIdForEmails?: Contact["ID"];
+  linkedInOnly: boolean;
 }
 
 function isStage(stage: CommonState["stage"]): stage is CommonState["stage"] {
@@ -34,6 +35,7 @@ const initialState: CommonState = {
   selectType: "users",
   countries: [],
   transferredAmount: 0,
+  linkedInOnly: false,
 };
 
 const commonSlice = createSlice({
@@ -50,6 +52,12 @@ const commonSlice = createSlice({
       { payload }: PayloadAction<CommonState["contactIdForEmails"]>
     ) => {
       state.contactIdForEmails = payload;
+    },
+    setLinkedInOnly: (
+      state,
+      { payload }: PayloadAction<CommonState["linkedInOnly"]>
+    ) => {
+      state.linkedInOnly = payload;
     },
     setTransferredAmount: (state, { payload }: PayloadAction<number>) => {
       state.transferredAmount =
@@ -96,5 +104,6 @@ export const {
   setTransferredAmount,
   hideModal,
   setContactIdForEmails,
+  setLinkedInOnly,
 } = commonSlice.actions;
 export default commonSlice;
