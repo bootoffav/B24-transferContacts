@@ -41,8 +41,10 @@ function contactEmailCellRenderer({
   return contactsEmails.map((emails, idx) =>
     emails.length ? (
       <ul key={idx} className={emailCell}>
-        {emails.map(({ VALUE, ID, VALUE_TYPE }) => (
-          <li key={ID}>{`${VALUE} (${emailMap.get(VALUE_TYPE)})`}</li>
+        {emails.map(({ VALUE, VALUE_TYPE }) => (
+          <li key={Math.random()}>{`${VALUE} (${emailMap.get(
+            VALUE_TYPE
+          )})`}</li>
         ))}
       </ul>
     ) : (
