@@ -8,55 +8,58 @@ import {
 } from "app/companySlice";
 import getDifferentResponsibles from "app/differentResponsibles";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { setStage } from "app/commonSlice";
+import { setStage, Stage } from "app/commonSlice";
 import type { SyntheticEvent } from "react";
 import { Contact, Company } from "../../types";
 import ControlButton from "./ControlButton";
 
 export default function GetCompanies() {
   const dispatch = useAppDispatch();
-  const [chosenId, selectType] = useAppSelector(({ common }) => [
-    common.chosenId,
-    common.selectType,
-  ]);
+  const chosenId = useAppSelector(({ common }) => common.chosenId);
+  const selectType = useAppSelector(({ common }) => common.selectType);
+  const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
 
   const clickHandler = async ({ target }: SyntheticEvent) => {
     if (chosenId) {
       if ((target as HTMLButtonElement).innerHTML === "STOP") {
         window.aborted = true;
-        dispatch(setStage("cancelling"));
+        dispatch(setStage(Stage.cancelling));
         return;
       }
-      // set up initital state
+      // set up initial state
       dispatch(setProcessedAmount(0));
       dispatch(setTotalAmount(0));
-      dispatch(setStage("gettingData"));
+      dispatch(setStage(Stage.gettingData));
 
       // get companies
-      const companies = await fetchCompanies(chosenId, selectType);
-      dispatch(setTotalAmount(companies.length));
+      const rawCompanies = await fetchCompanies(chosenId, selectType);
+
+      if (linkedInOnly) {
+        dispatch(setCompanies(rawCompanies));
+        dispatch(setStage(Stage.linkedInOnlyScanFinished));
+        return;
+      }
+      dispatch(setTotalAmount(rawCompanies.length));
 
       //working on company related entities
-      let companiesWithRelatedEntities: Company[] = [];
-      for await (const company of getCompaniesWithRelatedEntities(companies)) {
-        companiesWithRelatedEntities = [
-          ...companiesWithRelatedEntities,
-          company,
-        ];
+      let companies: Company[] = [];
+      for await (const company of getCompaniesWithRelatedEntities(
+        rawCompanies
+      )) {
+        companies = [...companies, company];
         dispatch(setProcessedAmount(1));
       }
 
       // sort companies alphabetically, case insensitive
-      companiesWithRelatedEntities.sort(({ TITLE: A }, { TITLE: B }) => {
+      companies.sort(({ TITLE: A }, { TITLE: B }) => {
         A = A.toLowerCase();
         B = B.toLowerCase();
         return A > B ? 1 : A < B ? -1 : 0;
       });
-      dispatch(setCompanies(companiesWithRelatedEntities));
-      dispatch(setStage("scanFinished"));
-      const differentResponsibles = getDifferentResponsibles(
-        companiesWithRelatedEntities
-      );
+
+      dispatch(setCompanies(companies));
+      dispatch(setStage(Stage.scanFinished));
+      const differentResponsibles = getDifferentResponsibles(companies);
       dispatch(setDifferentResponsibles(differentResponsibles));
       return;
     }

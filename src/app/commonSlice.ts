@@ -3,17 +3,18 @@ import { Contact, Country, User } from "../types";
 import { sort, splitActiveDismissed } from "../utils/users";
 import { fetchCountries, fetchUsers } from "./endpoint";
 
-const stages = [
-  "initial",
-  "gettingData",
-  "cancelling",
-  "scanFinished",
-  "transferring",
-  "transferred",
-] as const;
+enum Stage {
+  initial,
+  gettingData,
+  cancelling,
+  scanFinished,
+  linkedInOnlyScanFinished,
+  transferring,
+  transferred,
+}
 
 export interface CommonState {
-  stage: typeof stages[number];
+  stage: Stage;
   users: User[];
   transferredAmount: number;
   selectType: "users" | "countries";
@@ -24,13 +25,13 @@ export interface CommonState {
   linkedInOnly: boolean;
 }
 
-function isStage(stage: CommonState["stage"]): stage is CommonState["stage"] {
-  return stages.includes(stage);
+function isStage(stage: Stage): stage is Stage {
+  return stage in Stage;
 }
 
 const initialState: CommonState = {
   modalHidden: true,
-  stage: "initial",
+  stage: Stage.initial,
   users: [],
   selectType: "users",
   countries: [],
@@ -106,4 +107,5 @@ export const {
   setContactIdForEmails,
   setLinkedInOnly,
 } = commonSlice.actions;
+export { Stage };
 export default commonSlice;

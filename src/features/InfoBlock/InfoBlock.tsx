@@ -1,9 +1,9 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
 import { transferEntity } from "../../app/endpoint";
-import { setStage, setTransferredAmount } from "../../app/commonSlice";
+import { setStage, setTransferredAmount, Stage } from "../../app/commonSlice";
 
-const InfoBlock = () => {
+export default function InfoBlock() {
   const {
     companies,
     companiesTotalAmount,
@@ -36,15 +36,15 @@ const InfoBlock = () => {
   let output: string | JSX.Element = "";
 
   switch (stage) {
-    case "initial":
+    case Stage.initial:
       output = "Choose country or manager, click Get companies to make a list";
       break;
-    case "gettingData":
-    case "cancelling":
+    case Stage.gettingData:
+    case Stage.cancelling:
       output = (
         <>
           <span className="p-2">
-            {stage === "gettingData" ? "Getting data" : "Cancelling"}
+            {stage === Stage.gettingData ? "Getting data" : "Cancelling"}
           </span>
           <ClipLoader loading={true} />
           <p className="p-2">
@@ -54,7 +54,7 @@ const InfoBlock = () => {
         </>
       );
       break;
-    case "scanFinished":
+    case Stage.scanFinished:
       output = (
         <>
           <p>
@@ -65,12 +65,12 @@ const InfoBlock = () => {
             <button
               className="button ml-2 is-success is-small is-light"
               onClick={async () => {
-                dispatch(setStage("transferring"));
+                dispatch(setStage(Stage.transferring));
                 // eslint-disable-next-line
                 for await (let _ of transferEntity(differentResponsibles)) {
                   dispatch(setTransferredAmount(1));
                 }
-                dispatch(setStage("transferred"));
+                dispatch(setStage(Stage.transferred));
                 dispatch(setTransferredAmount(0));
               }}
             >
@@ -82,7 +82,10 @@ const InfoBlock = () => {
         </>
       );
       break;
-    case "transferring":
+    case Stage.linkedInOnlyScanFinished:
+      output = "LinkedIn list ready";
+      break;
+    case Stage.transferring:
       output = (
         <>
           <span className="p-2">
@@ -94,7 +97,7 @@ const InfoBlock = () => {
         </>
       );
       break;
-    case "transferred":
+    case Stage.transferred:
       output = (
         <div className="notification is-warning">
           DONE, to check changes click GET COMPANIES again!
@@ -108,6 +111,4 @@ const InfoBlock = () => {
       <div className="column has-text-centered is-size-5">{output}</div>
     </div>
   );
-};
-
-export default InfoBlock;
+}

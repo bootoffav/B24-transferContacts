@@ -1,5 +1,6 @@
 import { useAppSelector } from "app/hooks";
 import type { SyntheticEvent } from "react";
+import { Stage } from "app/commonSlice";
 
 export default function ControlButton({
   clickHandler,
@@ -10,10 +11,10 @@ export default function ControlButton({
 
   let classType, label;
   switch (stage) {
-    case "gettingData":
+    case Stage.gettingData:
       [classType, label] = ["is-danger", "STOP"];
       break;
-    case "cancelling":
+    case Stage.cancelling:
       [classType, label] = ["is-warning", "Cancelling..."];
       break;
     default:

@@ -38,9 +38,9 @@ function prepareContact({
 function contactEmailCellRenderer({
   value: contactsEmails,
 }: Cell<{}, TableDataStructure[number]["emails"]>) {
-  return contactsEmails.map((emails, idx) =>
+  return contactsEmails.map((emails) =>
     emails.length ? (
-      <ul key={idx} className={emailCell}>
+      <ul key={Math.random()} className={emailCell}>
         {emails.map(({ VALUE, VALUE_TYPE }) => (
           <li key={Math.random()}>{`${VALUE} (${emailMap.get(
             VALUE_TYPE

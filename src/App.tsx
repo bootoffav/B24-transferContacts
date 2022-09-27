@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { setSelectType, setChosenId } from "app/commonSlice";
+import { setSelectType, setChosenId, Stage } from "app/commonSlice";
+import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
 import List from "features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -10,15 +11,26 @@ import Export from "features/Export/Export";
 import "./styles.scss";
 import { ClipLoader } from "react-spinners";
 import CompanyFilter from "features/CompanyFilter/CompanyFilter";
+import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
+import XLSX from "xlsx-js-style";
+import { useEffect } from "react";
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { stage, companies } = useAppSelector(({ common, company }) => ({
-    stage: common.stage,
-    companies: company.companiesWithRelatedEntities,
-  }));
+  const stage = useAppSelector(({ common }) => common.stage);
+  const companies = useAppSelector(({ company }) => company.companies);
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+
+  useEffect(() => {
+    if (stage === Stage.linkedInOnlyScanFinished) {
+      const { filename, content } = generateExcelFileStructureLinkedInOnly(
+        companies,
+        ""
+      );
+      XLSX.writeFile(content, filename);
+    }
+  }, [stage]);
 
   if (isLoading) {
     return (
@@ -29,7 +41,7 @@ export default function App() {
   }
 
   return isAuthenticated ? (
-    <div className="container is-fluid mt-2">
+    <div className="m-4">
       <header className="columns is-flex is-align-items-center is-justify-content-center">
         <div className="column is-2">
           <span className="is-pulled-right">Choose:</span>
@@ -37,7 +49,7 @@ export default function App() {
         <div className="column is-2">
           <div className="select is-fullwidth">
             <select
-              defaultValue={"manager"}
+              defaultValue="manager"
               onChange={({ target: { value } }) => {
                 dispatch(setSelectType(value as CommonState["selectType"]));
                 dispatch(setChosenId());
@@ -51,18 +63,24 @@ export default function App() {
         <div className="column is-2">
           <EntitySelector />
         </div>
+        <div className="column is-1 has-text-centered">
+          <LinkedInOnly />
+        </div>
         <div className="column is-2">
           <GetCompanies />
         </div>
       </header>
       <InfoBlock />
-      {(stage === "scanFinished" && companies.length && (
+      {stage === Stage.linkedInOnlyScanFinished}
+      {(stage === Stage.scanFinished && companies.length && (
         <>
           <div className="columns">
             <CompanyFilter />
             <Export />
           </div>
-          <List />
+          <div className="columns">
+            <List />
+          </div>
         </>
       )) ||
         ""}

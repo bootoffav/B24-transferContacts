@@ -1,5 +1,5 @@
 import type { User, Country } from "../../types";
-import excelFile from "./ExcelGeneration";
+import { generateExcelFileStructureForTransfer } from "./ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useAppSelector } from "app/hooks";
 import { companySelector } from "features/List/CompanySelector";
@@ -32,7 +32,7 @@ const Export = () => {
       <button
         className="button is-small is-info is-light is-pulled-right"
         onClick={() => {
-          const { filename, content } = excelFile(
+          const { filename, content } = generateExcelFileStructureForTransfer(
             companies,
             getEntityTitle(),
             users
