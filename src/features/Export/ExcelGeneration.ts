@@ -6,6 +6,13 @@ import { getUserNameById } from "utils/users";
 
 const linkedInField = process.env.REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD || "";
 
+const excelLinkStyle = {
+  font: {
+    underline: true,
+    color: { rgb: "CC2581FF" },
+  },
+};
+
 const HeaderColumnStyle = {
   alignment: {
     horizontal: "center",
@@ -55,12 +62,7 @@ function* fillCells(structuredData: structuredDataType[]) {
                   columnIndex
                 )}/details/${id}/`,
               },
-              s: {
-                font: {
-                  underline: true,
-                  color: { rgb: "CC2581FF" },
-                },
-              },
+              s: excelLinkStyle,
             })
           );
           break;
@@ -200,42 +202,53 @@ function generateExcelFileStructureLinkedInOnly(
 ) {
   const totalAmountOfRows = companies.length;
   let ws = {
-    A1: { v: "#", s: HeaderColumnStyle },
-    B1: { v: "COMPANY", s: HeaderColumnStyle },
-    C1: { v: "LINKEDIN", s: HeaderColumnStyle },
-    "!ref": `A1:C${totalAmountOfRows + 1}`,
-    "!cols": [{ width: 10 }, { width: 55 }, { width: 30 }],
+    A1: { v: "COMPANY", s: HeaderColumnStyle },
+    B1: { v: "LINKEDIN", s: HeaderColumnStyle },
+    "!ref": `A1:B${totalAmountOfRows + 1}`,
+    "!cols": [{ width: 55 }, { width: 30 }],
     "!rows": [{ hpt: 30 }, ...Array(totalAmountOfRows).fill({ hpt: 20 })],
   };
 
-  const structuredData = companies.map(({ ID, TITLE, ...company }, index) => {
-    // @ts-ignore
-    return [[[ID, TITLE]], company[linkedInField]];
+  const structuredData = companies
+    .map(({ ID, TITLE, ...company }) => {
+      // @ts-ignore
+      return [ID, TITLE, company[linkedInField]];
+    })
+    .filter((company) => company.at(-1)); // refactor: not DRY (should be handled by redux)
+
+  structuredData.forEach(([id, title, linkedIn], idx) => {
+    Object.assign(
+      ws,
+      {
+        [`A${idx + 2}`]: {
+          v: title,
+          l: {
+            Target: `${process.env.REACT_APP_B24_ADDRESS}crm/company/details/${id}/`,
+          },
+          s: excelLinkStyle,
+        },
+      },
+      {
+        [`B${idx + 2}`]: {
+          v: linkedIn,
+        },
+      }
+    );
   });
 
-  const columnLetters = ["A", "B"];
-  structuredData.forEach((row, idx) => {
-    // const cu
-    for (const )
-    ws = {
-
-    }
-  });
-
-
-  const filename = `Different_contacts,leads,deals_of${
-    name ? `_${name}` : ""
-  }_${dayjs().format("YYYY-MM-DD-HHmmss")}.xlsx`;
+  const filename = `LinkedIn List ${name ? `_${name}` : ""}_${dayjs().format(
+    "YYYY-MM-DD-HHmmss"
+  )}.xlsx`;
 
   const wb = {
     Props: {
-      Title: "Related company entities",
+      Title: "LinkedIn list",
       Subject: "XMT",
       Author: "@bootoffav",
       CreatedDate: new Date(),
     },
-    SheetNames: ["Related company entities"],
-    Sheets: { "Related company entities": ws },
+    SheetNames: ["LinkedIn list"],
+    Sheets: { "LinkedIn list": ws },
   };
 
   return {

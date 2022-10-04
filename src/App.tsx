@@ -14,11 +14,12 @@ import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
+import { companySelector } from "features/List/CompanySelector";
 
 export default function App() {
   const dispatch = useAppDispatch();
   const stage = useAppSelector(({ common }) => common.stage);
-  const companies = useAppSelector(({ company }) => company.companies);
+  const companies = useAppSelector(companySelector);
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -30,7 +31,7 @@ export default function App() {
       );
       XLSX.writeFile(content, filename);
     }
-  }, [stage]);
+  }, [stage, companies]);
 
   if (isLoading) {
     return (
@@ -72,7 +73,7 @@ export default function App() {
       </header>
       <InfoBlock />
       {stage === Stage.linkedInOnlyScanFinished}
-      {(stage === Stage.scanFinished && companies.length && (
+      {(stage === Stage.scanFinished && (
         <>
           <div className="columns">
             <CompanyFilter />
