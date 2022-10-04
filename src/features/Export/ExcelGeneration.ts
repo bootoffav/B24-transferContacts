@@ -205,7 +205,7 @@ function generateExcelFileStructureLinkedInOnly(
     A1: { v: "COMPANY", s: HeaderColumnStyle },
     B1: { v: "LINKEDIN", s: HeaderColumnStyle },
     "!ref": `A1:B${totalAmountOfRows + 1}`,
-    "!cols": [{ width: 55 }, { width: 30 }],
+    "!cols": [{ width: 55 }, { width: 55 }],
     "!rows": [{ hpt: 30 }, ...Array(totalAmountOfRows).fill({ hpt: 20 })],
   };
 
