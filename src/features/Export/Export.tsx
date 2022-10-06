@@ -1,8 +1,8 @@
-import type { User, Country } from "../../types";
 import { generateExcelFileStructureForTransfer } from "./ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useAppSelector } from "app/hooks";
 import { companySelector } from "features/List/CompanySelector";
+import { getEntityTitle } from "app/helpers";
 
 const Export = () => {
   const [chosenId, titleLookupArray, users] = useAppSelector(({ common }) => [
@@ -12,21 +12,6 @@ const Export = () => {
   ]);
   const companies = useAppSelector(companySelector);
 
-  const getEntityTitle = (): string => {
-    // @ts-ignore
-    const foundEntity: User | Country | undefined = titleLookupArray.find(
-      ({ ID }: User | Country) => Number(ID) === chosenId
-    );
-    if (foundEntity) {
-      return foundEntity.hasOwnProperty("value")
-        ? // @ts-ignore
-          foundEntity.value
-        : // @ts-ignore
-          `${foundEntity.NAME} ${foundEntity.LAST_NAME}`;
-    }
-    return "";
-  };
-
   return (
     <div className="column">
       <button
@@ -34,7 +19,7 @@ const Export = () => {
         onClick={() => {
           const { filename, content } = generateExcelFileStructureForTransfer(
             companies,
-            getEntityTitle(),
+            getEntityTitle(titleLookupArray, chosenId as number),
             users
           );
           XLSX.writeFile(content, filename);

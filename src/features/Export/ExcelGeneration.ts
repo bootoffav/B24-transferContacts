@@ -3,8 +3,7 @@ import dayjs from "dayjs";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { User, Contact, Company } from "types";
 import { getUserNameById } from "utils/users";
-
-const linkedInField = process.env.REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD || "";
+import { LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 
 const excelLinkStyle = {
   font: {
@@ -211,8 +210,7 @@ function generateExcelFileStructureLinkedInOnly(
 
   const structuredData = companies
     .map(({ ID, TITLE, ...company }) => {
-      // @ts-ignore
-      return [ID, TITLE, company[linkedInField]];
+      return [ID, TITLE, company[LINKEDIN_ACCOUNT_FIELD]];
     })
     .filter((company) => company.at(-1)); // refactor: not DRY (should be handled by redux)
 

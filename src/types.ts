@@ -1,3 +1,9 @@
+import {
+  CONTACT_COUNTRY_FIELD,
+  CONTACT_POSITION_FIELD,
+  LINKEDIN_ACCOUNT_FIELD,
+} from "./app/CONSTANTS";
+
 declare global {
   interface Window {
     aborted?: boolean;
@@ -17,6 +23,7 @@ export interface User {
 }
 
 export interface Company {
+  [LINKEDIN_ACCOUNT_FIELD]: string;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;
@@ -32,6 +39,8 @@ export interface Lead {
 }
 
 export interface Contact {
+  [CONTACT_POSITION_FIELD]: string;
+  [CONTACT_COUNTRY_FIELD]: string;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;

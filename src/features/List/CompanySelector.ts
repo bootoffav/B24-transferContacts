@@ -1,11 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
 import { viewModeNoCountries, viewModeWithLinkedIn } from "./ListSlice";
-
-const {
-  REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField = "",
-  REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD: linkedInAccountField = "",
-} = process.env;
+import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 
 export const companySelector = createSelector(
   ({ company, list: { viewMode } }: RootState) => ({
@@ -18,15 +14,11 @@ export const companySelector = createSelector(
         return companies.filter(
           ({ CONTACTS }) =>
             !CONTACTS.map(
-              (contact) => (contact as any)[contactCountryField]
+              (contact) => (contact as any)[CONTACT_COUNTRY_FIELD]
             ).every((el) => el)
         );
       case viewModeWithLinkedIn:
-        return companies.filter(
-          (company) =>
-            // @ts-ignore
-            company[linkedInAccountField]
-        );
+        return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       default:
         return companies;
     }

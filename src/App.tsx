@@ -15,11 +15,16 @@ import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGen
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
 import { companySelector } from "features/List/CompanySelector";
+import { getEntityTitle } from "app/helpers";
 
 export default function App() {
   const dispatch = useAppDispatch();
   const stage = useAppSelector(({ common }) => common.stage);
   const companies = useAppSelector(companySelector);
+  const [chosenId, titleLookupArray] = useAppSelector(({ common }) => [
+    common.chosenId,
+    common[common.selectType],
+  ]);
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -27,11 +32,11 @@ export default function App() {
     if (stage === Stage.linkedInOnlyScanFinished) {
       const { filename, content } = generateExcelFileStructureLinkedInOnly(
         companies,
-        ""
+        getEntityTitle(titleLookupArray, chosenId as number)
       );
       XLSX.writeFile(content, filename);
     }
-  }, [stage, companies]);
+  }, [stage, companies, titleLookupArray, chosenId]);
 
   if (isLoading) {
     return (

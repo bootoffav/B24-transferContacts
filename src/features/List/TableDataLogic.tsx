@@ -13,13 +13,12 @@ import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import styles from "./List.module.css";
 import { getUserNameById } from "utils/users";
 import Position from "./Position";
-import { emailCell } from "app/CONSTANTS";
-
-const {
-  REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
-  REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField = "",
-  REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD: linkedInAccountField,
-} = process.env;
+import {
+  emailCell,
+  LINKEDIN_ACCOUNT_FIELD,
+  CONTACT_POSITION_FIELD,
+  CONTACT_COUNTRY_FIELD,
+} from "app/CONSTANTS";
 
 function prepareContact({
   ID,
@@ -30,8 +29,7 @@ function prepareContact({
   return [
     LAST_NAME ? `${NAME} ${LAST_NAME}` : NAME,
     ID,
-    // @ts-expect-error
-    rest[contactCountryField],
+    rest[CONTACT_COUNTRY_FIELD],
   ];
 }
 
@@ -48,7 +46,7 @@ function contactEmailCellRenderer({
         ))}
       </ul>
     ) : (
-      <br />
+      <br key={Math.random()} />
     )
   );
 }
@@ -93,13 +91,11 @@ const formData = (companies: Company[], users: User[]): TableDataStructure =>
     return {
       company: [company.TITLE, company.ID],
       responsibleForCompany,
-      // @ts-ignore
-      linkedin: company[linkedInAccountField],
+      linkedin: company[LINKEDIN_ACCOUNT_FIELD],
       contact: company.CONTACTS.map(prepareContact),
       emails: company.CONTACTS.map(({ EMAILS }) => EMAILS || []),
       contactPosition: company.CONTACTS.map(
-        // @ts-expect-error
-        ({ [contactPositionField!]: position, ID }) => [position ?? "--", ID]
+        ({ [CONTACT_POSITION_FIELD]: position, ID }) => [position ?? "--", ID]
       ),
       deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
       lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
