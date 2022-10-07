@@ -37,7 +37,7 @@ export default function App() {
       XLSX.writeFile(content, filename);
       setTimeout(() => dispatch(setStage(Stage.initial)), 3000);
     }
-  }, [stage, companies, titleLookupArray, chosenId]);
+  }, [stage, companies, titleLookupArray, chosenId, dispatch]);
 
   if (isLoading) {
     return (
