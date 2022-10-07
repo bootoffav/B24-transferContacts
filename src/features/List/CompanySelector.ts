@@ -43,6 +43,7 @@ export const companySelector = createSelector(
               return true;
             }
           }
+          return false;
         });
       default:
         return companies;
