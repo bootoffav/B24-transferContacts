@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { setSelectType, setChosenId, Stage } from "app/commonSlice";
+import { setSelectType, setChosenId, Stage, setStage } from "app/commonSlice";
 import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
 import List from "features/List/List";
@@ -35,6 +35,7 @@ export default function App() {
         getEntityTitle(titleLookupArray, chosenId as number)
       );
       XLSX.writeFile(content, filename);
+      setTimeout(() => dispatch(setStage(Stage.initial)), 3000);
     }
   }, [stage, companies, titleLookupArray, chosenId]);
 
