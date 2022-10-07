@@ -3,7 +3,7 @@ import { RootState } from "app/store";
 import {
   viewModeNoCountries,
   viewModeWithLinkedIn,
-  viewModeCompanyContactsDiffCountries,
+  viewModeContactsCountryNone,
 } from "./ListSlice";
 import {
   COMPANY_COUNTRY_FIELD,
@@ -29,20 +29,19 @@ export const companySelector = createSelector(
         );
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
-      case viewModeCompanyContactsDiffCountries:
+      case viewModeContactsCountryNone:
         return companies.filter((company) => {
-          const companyCountry = companyCountryList.find(
-            ({ ID }) => ID === company[COMPANY_COUNTRY_FIELD]
-          )?.value;
           for (const contact of company.CONTACTS) {
+            if (contact[CONTACT_COUNTRY_FIELD] === null) return true;
             const contactCountry = contactCountryList.find(
               ({ ID }) => ID === contact[CONTACT_COUNTRY_FIELD]
             )?.value;
 
-            if (contactCountry !== companyCountry) {
+            if (contactCountry === "none") {
               return true;
             }
           }
+
           return false;
         });
       default:

@@ -4,7 +4,7 @@ import {
   viewModeAll,
   viewModeNoCountries,
   viewModeWithLinkedIn,
-  viewModeCompanyContactsDiffCountries,
+  viewModeContactsCountryNone,
 } from "features/List/ListSlice";
 
 export default function CompanyFilter() {
@@ -31,7 +31,17 @@ export default function CompanyFilter() {
           dispatch(setViewMode(viewModeNoCountries));
         }}
       >
-        No countries
+        No country (company)
+      </button>
+      <button
+        className={`button is-light is-link ${
+          viewMode === viewModeContactsCountryNone ? "is-active" : ""
+        }`}
+        onClick={() => {
+          dispatch(setViewMode(viewModeContactsCountryNone));
+        }}
+      >
+        No country (contact)
       </button>
       <button
         className={`button is-light is-link ${
@@ -42,16 +52,6 @@ export default function CompanyFilter() {
         }}
       >
         With LinkedIn
-      </button>
-      <button
-        className={`button is-light is-link ${
-          viewMode === viewModeCompanyContactsDiffCountries ? "is-active" : ""
-        }`}
-        onClick={() => {
-          dispatch(setViewMode(viewModeCompanyContactsDiffCountries));
-        }}
-      >
-        Company and contacts diff. countries
       </button>
     </div>
   );
