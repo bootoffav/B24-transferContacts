@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export const viewModeAll = "all";
 export const viewModeNoCountries = "noCountries";
 export const viewModeWithLinkedIn = "withLinkedIn";
+export const viewModeCompanyContactsDiffCountries = "diffCountries";
 
 interface ListSliceState {
   viewMode:
     | typeof viewModeAll
     | typeof viewModeNoCountries
-    | typeof viewModeWithLinkedIn;
+    | typeof viewModeWithLinkedIn
+    | typeof viewModeCompanyContactsDiffCountries;
 }
 
 const initialState: ListSliceState = {
@@ -21,9 +23,12 @@ const listSlice = createSlice({
   reducers: {
     setViewMode(state, { payload }: PayloadAction<ListSliceState["viewMode"]>) {
       if (
-        [viewModeAll, viewModeNoCountries, viewModeWithLinkedIn].includes(
-          payload
-        )
+        [
+          viewModeAll,
+          viewModeNoCountries,
+          viewModeWithLinkedIn,
+          viewModeCompanyContactsDiffCountries,
+        ].includes(payload)
       ) {
         state.viewMode = payload;
       }

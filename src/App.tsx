@@ -63,7 +63,7 @@ export default function App() {
               }}
             >
               <option value="users">Manager</option>
-              <option value="countries">Country</option>
+              <option value="companyCountryList">Country</option>
             </select>
           </div>
         </div>

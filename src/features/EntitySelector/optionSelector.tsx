@@ -2,14 +2,14 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
 
 export const optionSelector = createSelector(
-  ({ common: { selectType, users, countries } }: RootState) => ({
+  ({ common: { selectType, users, companyCountryList } }: RootState) => ({
     selectType,
     users,
-    countries,
+    companyCountryList,
   }),
-  ({ selectType, users, countries }) =>
-    selectType === "countries"
-      ? countries.map(({ value, ID }) => (
+  ({ selectType, users, companyCountryList }) =>
+    selectType === "companyCountryList"
+      ? companyCountryList.map(({ value, ID }) => (
           <option key={ID} value={ID}>
             {value}
           </option>

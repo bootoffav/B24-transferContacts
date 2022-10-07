@@ -14,6 +14,7 @@ import { RootState } from "./store";
 import {
   COMPANY_COUNTRY_FIELD,
   COMPANY_COUNTRY_FIELD_ID,
+  CONTACT_COUNTRY_FIELD_ID,
   CONTACT_COUNTRY_FIELD,
   LINKEDIN_ACCOUNT_FIELD,
   CONTACT_POSITION_FIELD,
@@ -33,7 +34,7 @@ const fetchCompanies = async (
 
   let filter;
   switch (selectType) {
-    case "countries":
+    case "companyCountryList":
       filter = { [COMPANY_COUNTRY_FIELD]: chosenId };
       break;
     case "users":
@@ -43,7 +44,7 @@ const fetchCompanies = async (
 
   let companies: Company[] = [];
   let start = 0;
-  const select = ["*", LINKEDIN_ACCOUNT_FIELD];
+  const select = ["*", LINKEDIN_ACCOUNT_FIELD, COMPANY_COUNTRY_FIELD];
   while (start !== undefined) {
     const [result, next] = await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.list`,
@@ -162,27 +163,38 @@ async function* transferEntity(differentResponsibles: Transfer) {
 
 const fetchCountries = createAsyncThunk(
   "common/fetchCountries",
-  async (): Promise<Country[]> =>
-    await fetch(
-      `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
-        stringify({ ID: COMPANY_COUNTRY_FIELD_ID })
-    )
-      .then((r) => r.json())
-      .then((response) => {
-        if ("error" in response && "error_description" in response) {
-          throw new Error();
-        }
-        const {
-          result: { LIST: countries },
-        } = response;
-        return countries.map((country: { VALUE: string; ID: string }) => ({
-          value: country.VALUE,
-          ID: country.ID,
-        }));
-      }),
+  async (): Promise<[Country[], Country[]]> => {
+    function callback(response: any) {
+      if ("error" in response && "error_description" in response) {
+        throw new Error();
+      }
+      const {
+        result: { LIST: countries },
+      } = response;
+      return countries.map((country: { VALUE: string; ID: string }) => ({
+        value: country.VALUE,
+        ID: country.ID,
+      }));
+    }
+
+    return await Promise.all([
+      fetch(
+        `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
+          stringify({ ID: COMPANY_COUNTRY_FIELD_ID })
+      )
+        .then((r) => r.json())
+        .then(callback),
+      fetch(
+        `${endpoint}${userId}/${webhookToken}/crm.contact.userfield.get?` +
+          stringify({ ID: CONTACT_COUNTRY_FIELD_ID })
+      )
+        .then((r) => r.json())
+        .then(callback),
+    ]);
+  },
   {
     condition: (_, { getState }) =>
-      Boolean((getState() as RootState).common.countries.length === 0),
+      Boolean((getState() as RootState).common.companyCountryList.length === 0),
   }
 );
 

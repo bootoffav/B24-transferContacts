@@ -1,4 +1,5 @@
 import {
+  COMPANY_COUNTRY_FIELD,
   CONTACT_COUNTRY_FIELD,
   CONTACT_POSITION_FIELD,
   LINKEDIN_ACCOUNT_FIELD,
@@ -12,7 +13,7 @@ declare global {
 
 export type Country = {
   value: string;
-  ID: number;
+  ID: string;
 };
 
 export interface User {
@@ -24,6 +25,7 @@ export interface User {
 
 export interface Company {
   [LINKEDIN_ACCOUNT_FIELD]: string;
+  [COMPANY_COUNTRY_FIELD]: string;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;

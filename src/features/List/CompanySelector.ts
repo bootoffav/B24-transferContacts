@@ -1,14 +1,24 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
-import { viewModeNoCountries, viewModeWithLinkedIn } from "./ListSlice";
-import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
+import {
+  viewModeNoCountries,
+  viewModeWithLinkedIn,
+  viewModeCompanyContactsDiffCountries,
+} from "./ListSlice";
+import {
+  COMPANY_COUNTRY_FIELD,
+  CONTACT_COUNTRY_FIELD,
+  LINKEDIN_ACCOUNT_FIELD,
+} from "app/CONSTANTS";
 
 export const companySelector = createSelector(
-  ({ company, list: { viewMode } }: RootState) => ({
+  ({ company, common, list: { viewMode } }: RootState) => ({
     companies: company.companies,
+    companyCountryList: common.companyCountryList,
+    contactCountryList: common.contactCountryList,
     viewMode,
   }),
-  ({ companies, viewMode }) => {
+  ({ companies, viewMode, companyCountryList, contactCountryList }) => {
     switch (viewMode) {
       case viewModeNoCountries:
         return companies.filter(
@@ -19,6 +29,21 @@ export const companySelector = createSelector(
         );
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
+      case viewModeCompanyContactsDiffCountries:
+        return companies.filter((company) => {
+          const companyCountry = companyCountryList.find(
+            ({ ID }) => ID === company[COMPANY_COUNTRY_FIELD]
+          )?.value;
+          for (const contact of company.CONTACTS) {
+            const contactCountry = contactCountryList.find(
+              ({ ID }) => ID === contact[CONTACT_COUNTRY_FIELD]
+            )?.value;
+
+            if (contactCountry !== companyCountry) {
+              return true;
+            }
+          }
+        });
       default:
         return companies;
     }

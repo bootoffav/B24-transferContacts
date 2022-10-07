@@ -17,9 +17,10 @@ export interface CommonState {
   stage: Stage;
   users: User[];
   transferredAmount: number;
-  selectType: "users" | "countries";
+  selectType: "users" | "companyCountryList";
   chosenId?: number;
-  countries: Country[];
+  companyCountryList: Country[];
+  contactCountryList: Country[];
   modalHidden: boolean;
   contactIdForEmails?: Contact["ID"];
   linkedInOnly: boolean;
@@ -34,7 +35,8 @@ const initialState: CommonState = {
   stage: Stage.initial,
   users: [],
   selectType: "users",
-  countries: [],
+  companyCountryList: [],
+  contactCountryList: [],
   transferredAmount: 0,
   linkedInOnly: false,
 };
@@ -79,9 +81,13 @@ const commonSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCountries.fulfilled, (state, { payload }) => {
-        state.countries = payload;
-      })
+      .addCase(
+        fetchCountries.fulfilled,
+        (state, { payload: [companyCountryList, contactCountryList] }) => {
+          state.companyCountryList = companyCountryList;
+          state.contactCountryList = contactCountryList;
+        }
+      )
       .addCase(fetchUsers.fulfilled, (state, { payload: users }) => {
         users = splitActiveDismissed(sort(users));
         // add empty first
