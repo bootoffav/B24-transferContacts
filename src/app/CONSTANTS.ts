@@ -1,7 +1,7 @@
 export const emailCell = "contactEmails";
 
 export const COMPANY_COUNTRY_FIELD_ID = 207;
-export const COMPANY_COUNTRY_FIELD = "UF_CRM_139260199";
+export const COMPANY_COUNTRY_FIELD = "UF_CRM_1392601991";
 export const CONTACT_COUNTRY_FIELD = "UF_CRM_1392197513";
 export const CONTACT_COUNTRY_FIELD_ID = 507;
 export const CONTACT_POSITION_FIELD = "UF_CRM_1634268517946";

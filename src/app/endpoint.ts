@@ -11,16 +11,18 @@ import {
 import { CommonState } from "./commonSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import {
+  COMPANY_COUNTRY_FIELD,
+  COMPANY_COUNTRY_FIELD_ID,
+  CONTACT_COUNTRY_FIELD,
+  LINKEDIN_ACCOUNT_FIELD,
+  CONTACT_POSITION_FIELD,
+} from "./CONSTANTS";
 
 const {
   REACT_APP_B24_ENDPOINT: endpoint,
   REACT_APP_B24_USER_ID: userId,
   REACT_APP_B24_WEBHOOK_TOKEN: webhookToken,
-  REACT_APP_B24_COMPANY_COUNTRY_FIELD_ID: countryFieldId,
-  REACT_APP_B24_COMPANY_COUNTRY_FIELD: countryField,
-  REACT_APP_B24_CONTACT_COUNTRY_FIELD: contactCountryField,
-  REACT_APP_B24_CONTACT_POSITION_FIELD: contactPositionField,
-  REACT_APP_B24_LINKEDIN_ACCOUNT_FIELD: linkedInField,
 } = process.env;
 
 const fetchCompanies = async (
@@ -32,7 +34,7 @@ const fetchCompanies = async (
   let filter;
   switch (selectType) {
     case "countries":
-      filter = { [countryField as string]: chosenId };
+      filter = { [COMPANY_COUNTRY_FIELD]: chosenId };
       break;
     case "users":
       filter = { ASSIGNED_BY_ID: chosenId };
@@ -41,7 +43,7 @@ const fetchCompanies = async (
 
   let companies: Company[] = [];
   let start = 0;
-  const select = ["*", linkedInField];
+  const select = ["*", LINKEDIN_ACCOUNT_FIELD];
   while (start !== undefined) {
     const [result, next] = await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.list`,
@@ -71,7 +73,7 @@ const fetchRelatedEntities = async (
 ): Promise<Contact[] | Deal[]> => {
   const select =
     entityType === "contact"
-      ? ["*", contactPositionField, contactCountryField, "EMAIL"]
+      ? ["*", CONTACT_POSITION_FIELD, CONTACT_COUNTRY_FIELD, "EMAIL"]
       : ["*"];
 
   return fetch(`${endpoint}${userId}/${webhookToken}/crm.${entityType}.list`, {
@@ -127,7 +129,7 @@ async function changePosition(id: Contact["ID"], position = "test") {
     body: stringify({
       id,
       fields: {
-        [contactPositionField!]: position,
+        [CONTACT_POSITION_FIELD]: position,
       },
     }),
   });
@@ -163,7 +165,7 @@ const fetchCountries = createAsyncThunk(
   async (): Promise<Country[]> =>
     await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
-        stringify({ ID: countryFieldId })
+        stringify({ ID: COMPANY_COUNTRY_FIELD_ID })
     )
       .then((r) => r.json())
       .then((response) => {
