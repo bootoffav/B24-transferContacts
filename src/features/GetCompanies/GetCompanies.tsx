@@ -5,8 +5,10 @@ import {
   setDifferentResponsibles,
   setTotalAmount,
   setProcessedAmount,
+  setContactsNoCountries,
 } from "app/companySlice";
 import getDifferentResponsibles from "app/differentResponsibles";
+import getContactsNoCountries from "app/contactsNoCountries";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage } from "app/commonSlice";
 import type { SyntheticEvent } from "react";
@@ -18,6 +20,12 @@ export default function GetCompanies() {
   const chosenId = useAppSelector(({ common }) => common.chosenId);
   const selectType = useAppSelector(({ common }) => common.selectType);
   const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
+  const contactCountryLIst = useAppSelector(
+    ({ common }) => common.contactCountryList
+  );
+  const companyCountryLIst = useAppSelector(
+    ({ common }) => common.companyCountryList
+  );
 
   const clickHandler = async ({ target }: SyntheticEvent) => {
     if (chosenId) {
@@ -61,6 +69,13 @@ export default function GetCompanies() {
       dispatch(setStage(Stage.scanFinished));
       const differentResponsibles = getDifferentResponsibles(companies);
       dispatch(setDifferentResponsibles(differentResponsibles));
+
+      const contactsNoCountry = getContactsNoCountries(
+        companies,
+        companyCountryLIst,
+        contactCountryLIst
+      );
+      dispatch(setContactsNoCountries(contactsNoCountry));
       return;
     }
     alert(`choose ${selectType} first`);

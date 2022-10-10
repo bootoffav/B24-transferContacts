@@ -13,7 +13,7 @@ declare global {
 
 export type Country = {
   value: string;
-  ID: string;
+  ID: number;
 };
 
 export interface User {
@@ -25,7 +25,7 @@ export interface User {
 
 export interface Company {
   [LINKEDIN_ACCOUNT_FIELD]: string;
-  [COMPANY_COUNTRY_FIELD]: string;
+  [COMPANY_COUNTRY_FIELD]: number;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;
@@ -42,7 +42,7 @@ export interface Lead {
 
 export interface Contact {
   [CONTACT_POSITION_FIELD]: string;
-  [CONTACT_COUNTRY_FIELD]: string;
+  [CONTACT_COUNTRY_FIELD]: number;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;
@@ -72,10 +72,14 @@ export interface Transfer {
   };
 }
 
+export interface TransferCountry {
+  [key: number]: number[];
+}
+
 export type TableDataStructure = {
   company: [string, number];
   responsibleForCompany: string;
-  contact: [string, number, string | null][];
+  contact: [string, number, number][];
   emails: Contact["EMAILS"][];
   contactPosition: [string, number][];
   deal: (string | number)[][];

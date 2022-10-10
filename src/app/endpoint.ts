@@ -7,6 +7,7 @@ import {
   Transfer,
   User,
   EntityType,
+  TransferCountry,
 } from "../types";
 import { CommonState } from "./commonSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -136,7 +137,7 @@ async function changePosition(id: Contact["ID"], position = "test") {
   });
 }
 async function* transferEntity(differentResponsibles: Transfer) {
-  for (let responsibleId in differentResponsibles) {
+  for (const responsibleId in differentResponsibles) {
     for (const entitySet of ["CONTACTS", "LEADS", "DEALS"] as const) {
       for (const entityId of differentResponsibles[responsibleId][entitySet]) {
         yield await fetch(
@@ -161,6 +162,24 @@ async function* transferEntity(differentResponsibles: Transfer) {
   }
 }
 
+async function transferCountry(noCountry: TransferCountry) {
+  for (const countryId in noCountry) {
+    for (const contactId of noCountry[countryId]) {
+      await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
+        method: "POST",
+        body: stringify({
+          id: contactId,
+          fields: {
+            [CONTACT_COUNTRY_FIELD]: countryId,
+          },
+          params: { REGISTER_SONET_EVENT: "Y" },
+        }),
+      })
+        .then((r) => r.json())
+        .catch(console.log);
+    }
+  }
+}
 const fetchCountries = createAsyncThunk(
   "common/fetchCountries",
   async (): Promise<[Country[], Country[]]> => {
@@ -242,4 +261,5 @@ export {
   fetchCountries,
   changePosition,
   updateContactEmails,
+  transferCountry,
 };

@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Company, Transfer } from "../types";
+import { Company, Transfer, TransferCountry } from "../types";
 
 interface CompanyState {
   totalAmount: number;
   processedAmount: number;
   companies: Company[];
   differentResponsibles: Transfer;
+  contactsNoCountries: TransferCountry;
 }
 
 const initialState: CompanyState = {
@@ -13,6 +14,7 @@ const initialState: CompanyState = {
   processedAmount: 0,
   companies: [],
   differentResponsibles: [],
+  contactsNoCountries: [],
 };
 
 export const companySlice = createSlice({
@@ -24,6 +26,9 @@ export const companySlice = createSlice({
     },
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;
+    },
+    setContactsNoCountries: (state, { payload }) => {
+      state.contactsNoCountries = payload;
     },
     setTotalAmount: (state, { payload }: PayloadAction<number>) => {
       state.totalAmount = payload;
@@ -40,5 +45,6 @@ export const {
   setDifferentResponsibles,
   setTotalAmount,
   setProcessedAmount,
+  setContactsNoCountries,
 } = companySlice.actions;
 export default companySlice;

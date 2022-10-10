@@ -5,11 +5,7 @@ import {
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
 } from "./ListSlice";
-import {
-  COMPANY_COUNTRY_FIELD,
-  CONTACT_COUNTRY_FIELD,
-  LINKEDIN_ACCOUNT_FIELD,
-} from "app/CONSTANTS";
+import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 
 export const companySelector = createSelector(
   ({ company, common, list: { viewMode } }: RootState) => ({
@@ -18,7 +14,7 @@ export const companySelector = createSelector(
     contactCountryList: common.contactCountryList,
     viewMode,
   }),
-  ({ companies, viewMode, companyCountryList, contactCountryList }) => {
+  ({ companies, viewMode, contactCountryList }) => {
     switch (viewMode) {
       case viewModeNoCountries:
         return companies.filter(
@@ -32,7 +28,9 @@ export const companySelector = createSelector(
       case viewModeContactsCountryNone:
         return companies.filter((company) => {
           for (const contact of company.CONTACTS) {
-            if (contact[CONTACT_COUNTRY_FIELD] === null) return true;
+            if (contact[CONTACT_COUNTRY_FIELD] === null) {
+              return true;
+            }
             const contactCountry = contactCountryList.find(
               ({ ID }) => ID === contact[CONTACT_COUNTRY_FIELD]
             )?.value;
