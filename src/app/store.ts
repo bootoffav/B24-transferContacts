@@ -1,7 +1,7 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import company from "./companySlice";
 import common from "./commonSlice";
-import list from "../features/List/ListSlice";
+import list from "../features/List/listSlice";
 
 export const store = configureStore({
   reducer: {

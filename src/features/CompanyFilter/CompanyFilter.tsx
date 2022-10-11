@@ -5,14 +5,14 @@ import {
   viewModeNoCountries,
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
-} from "features/List/ListSlice";
+} from "features/List/listSlice";
 
 export default function CompanyFilter() {
   const viewMode = useAppSelector(({ list }) => list.viewMode);
   const dispatch = useAppDispatch();
 
   return (
-    <div className="buttons has-addons">
+    <div className="ml-3 buttons has-addons">
       <button
         className={`button is-light is-link ${
           viewMode === viewModeAll ? "is-active" : ""

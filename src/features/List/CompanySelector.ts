@@ -4,7 +4,7 @@ import {
   viewModeNoCountries,
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
-} from "./ListSlice";
+} from "./listSlice";
 import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 
 export const companySelector = createSelector(
