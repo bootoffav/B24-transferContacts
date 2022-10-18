@@ -12,7 +12,7 @@ import { formLink, applyStyle } from "./utils";
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import styles from "./List.module.css";
 import { getUserNameById } from "utils/users";
-import Position from "./Position";
+import Position from "../Position/Position";
 import {
   emailCell,
   LINKEDIN_ACCOUNT_FIELD,
