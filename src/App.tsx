@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { setSelectType, setChosenId, Stage, setStage } from "app/commonSlice";
+import { Stage, setStage } from "app/commonSlice";
 import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
 import List from "features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
-import { CommonState } from "app/commonSlice";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
@@ -16,6 +15,7 @@ import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
 import { companySelector } from "features/List/CompanySelector";
 import { getEntityTitle } from "app/helpers";
+import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -54,18 +54,7 @@ export default function App() {
           <span className="is-pulled-right">Choose:</span>
         </div>
         <div className="column is-2">
-          <div className="select is-fullwidth">
-            <select
-              defaultValue="manager"
-              onChange={({ target: { value } }) => {
-                dispatch(setSelectType(value as CommonState["selectType"]));
-                dispatch(setChosenId());
-              }}
-            >
-              <option value="users">Manager</option>
-              <option value="companyCountryList">Country</option>
-            </select>
-          </div>
+          <EntityTypeSelector />
         </div>
         <div className="column is-2">
           <EntitySelector />
