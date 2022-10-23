@@ -16,11 +16,17 @@ export type Country = {
   ID: number;
 };
 
+export type Departments = {
+  // [Department name]: [department id, department users' id]
+  [key: string]: [number, number[]];
+};
+
 export interface User {
   NAME: string;
   LAST_NAME: string;
   ID: number;
   ACTIVE: boolean;
+  UF_DEPARTMENT: number[];
 }
 
 export interface Company {

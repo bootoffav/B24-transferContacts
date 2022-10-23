@@ -1,6 +1,18 @@
-it("sums numbers", () => {
-  expect(1 + 2).toEqual(3);
-  expect(2 + 2).toEqual(4);
-});
+import { store } from "app/store";
+import { Departments } from "types";
+import { fetchDepartments, fetchUsers } from "../endpoint";
 
-export {};
+jest.setTimeout(10000);
+
+describe("test function that communicate with API", function () {
+  test("checks fetchDepatments", async function () {
+    const departments: Departments = {
+      "IT department": [7, [5]],
+    };
+    await store.dispatch(fetchUsers());
+    await store.dispatch(fetchDepartments());
+    expect(store.getState().common.departments).toEqual(
+      expect.objectContaining(departments)
+    );
+  });
+});

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Contact, Country, User } from "../types";
+import { Contact, Country, Departments, User } from "../types";
 import { sort, splitActiveDismissed } from "../utils/users";
-import { fetchCountries, fetchUsers } from "./endpoint";
+import { fetchCountries, fetchDepartments, fetchUsers } from "./endpoint";
 
 enum Stage {
   initial,
@@ -24,6 +24,7 @@ export interface CommonState {
   modalHidden: boolean;
   contactIdForEmails?: Contact["ID"];
   linkedInOnly: boolean;
+  departments: Departments;
 }
 
 function isStage(stage: Stage): stage is Stage {
@@ -39,6 +40,7 @@ const initialState: CommonState = {
   contactCountryList: [],
   transferredAmount: 0,
   linkedInOnly: false,
+  departments: {},
 };
 
 const commonSlice = createSlice({
@@ -97,9 +99,13 @@ const commonSlice = createSlice({
             NAME: "none",
             LAST_NAME: "",
             ACTIVE: true,
+            UF_DEPARTMENT: [0],
           },
           ...users,
         ];
+      })
+      .addCase(fetchDepartments.fulfilled, (state, { payload }) => {
+        state.departments = payload;
       });
   },
 });

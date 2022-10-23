@@ -8,6 +8,7 @@ import {
   User,
   EntityType,
   TransferCountry,
+  Departments,
 } from "../types";
 import { CommonState } from "./commonSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -180,6 +181,40 @@ async function transferCountry(noCountry: TransferCountry) {
     }
   }
 }
+
+const fetchDepartments = createAsyncThunk(
+  "common/fetchDepartments",
+  async (_, { getState }): Promise<Departments> => {
+    function findUsersInDepartment(dep: number): Departments[number][1] {
+      return users
+        .filter((user) => user.UF_DEPARTMENT.includes(dep))
+        .map((user) => +user.ID);
+    }
+
+    const { users } = (getState() as RootState).common;
+    const departments: Departments = {};
+    await fetch(`${endpoint}${userId}/${webhookToken}/department.get`)
+      .then((r) => r.json())
+      .then(async ({ result }): Promise<any> => {
+        for (const dep of result) {
+          const id = +dep.ID;
+          departments[dep.NAME] = [id, findUsersInDepartment(id)];
+        }
+      })
+      .catch(console.log);
+    return departments;
+  },
+  {
+    condition: (_, { getState }) => {
+      const store = getState() as RootState;
+      return Boolean(
+        Object.keys(store.common.departments).length === 0 &&
+          store.common.users.length
+      );
+    },
+  }
+);
+
 const fetchCountries = createAsyncThunk(
   "common/fetchCountries",
   async (): Promise<[Country[], Country[]]> => {
@@ -257,6 +292,7 @@ export {
   fetchRelatedEntities,
   fetchContactEmails,
   fetchUsers,
+  fetchDepartments,
   transferEntity,
   fetchCountries,
   changePosition,

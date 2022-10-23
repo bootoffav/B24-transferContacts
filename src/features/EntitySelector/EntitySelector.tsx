@@ -1,15 +1,22 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { setChosenId } from "../../app/commonSlice";
-import { fetchUsers, fetchCountries } from "../../app/endpoint";
+import {
+  fetchUsers,
+  fetchCountries,
+  fetchDepartments,
+} from "../../app/endpoint";
 import { optionSelector } from "./optionSelector";
 
 function EntitySelector() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchUsers());
     dispatch(fetchCountries());
+    (async () => {
+      await dispatch(fetchUsers());
+      dispatch(fetchDepartments());
+    })();
   }, [dispatch]);
 
   const selectOptions = useAppSelector(optionSelector);
