@@ -44,7 +44,8 @@ export default function InfoBlock() {
 
   switch (stage) {
     case Stage.initial:
-      output = "Choose country or manager, click Get companies to make a list";
+      output =
+        "Choose among country, manager or departments & click Get companies";
       break;
     case Stage.gettingData:
     case Stage.cancelling:
