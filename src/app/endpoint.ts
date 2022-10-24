@@ -40,6 +40,7 @@ const fetchCompanies = async (
       filter = { [COMPANY_COUNTRY_FIELD]: chosenId };
       break;
     case "users":
+    case "departments":
       filter = { ASSIGNED_BY_ID: chosenId };
       break;
   }
@@ -137,6 +138,7 @@ async function changePosition(id: Contact["ID"], position = "test") {
     }),
   });
 }
+
 async function* transferEntity(differentResponsibles: Transfer) {
   for (const responsibleId in differentResponsibles) {
     for (const entitySet of ["CONTACTS", "LEADS", "DEALS"] as const) {
@@ -187,7 +189,7 @@ const fetchDepartments = createAsyncThunk(
   async (_, { getState }): Promise<Departments> => {
     function findUsersInDepartment(dep: number): Departments[number][1] {
       return users
-        .filter((user) => user.UF_DEPARTMENT.includes(dep))
+        .filter((user) => user.ACTIVE && user.UF_DEPARTMENT.includes(dep))
         .map((user) => +user.ID);
     }
 

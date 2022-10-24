@@ -29,8 +29,11 @@ function EntitySelector() {
       }`}
     >
       <select
-        value={chosenId}
-        onChange={({ target }) => dispatch(setChosenId(Number(target.value)))}
+        value={chosenId?.toString()}
+        onChange={({ target }) => {
+          const ids = target.value.split(",").map((strId) => +strId);
+          dispatch(setChosenId(ids));
+        }}
       >
         {selectOptions}
       </select>

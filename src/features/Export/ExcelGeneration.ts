@@ -1,7 +1,7 @@
-import { RootState } from "app/store";
+import { RootState, store } from "app/store";
 import dayjs from "dayjs";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
-import { User, Contact, Company } from "types";
+import { Contact, Company } from "types";
 import { getUserNameById } from "utils/users";
 import { LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 
@@ -124,9 +124,9 @@ function* fillCells(structuredData: structuredDataType[]) {
 
 const generateExcelFileStructureForTransfer = (
   companies: RootState["company"]["companies"],
-  name: string,
-  users: User[]
+  name: string
 ) => {
+  const { users } = store.getState().common;
   const totalAmountOfRows = companies.reduce(
     (acc, { CONTACTS, DEALS, LEADS }) => {
       const addAmount = Math.max(CONTACTS.length, DEALS.length, LEADS.length);

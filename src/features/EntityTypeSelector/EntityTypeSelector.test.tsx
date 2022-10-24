@@ -1,4 +1,4 @@
-import { render, fireEvent, waitFor, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import EntityTypeSelector from "./EntityTypeSelector";
 import "@testing-library/jest-dom";
 import { Provider } from "react-redux";

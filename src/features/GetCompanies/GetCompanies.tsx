@@ -40,7 +40,11 @@ export default function GetCompanies() {
       dispatch(setStage(Stage.gettingData));
 
       // get companies
-      const rawCompanies = await fetchCompanies(chosenId, selectType);
+      const rawCompanies: Company[] = [];
+      for (const id of chosenId) {
+        const companiesOfSpecificUser = await fetchCompanies(id, selectType);
+        rawCompanies.push(...companiesOfSpecificUser);
+      }
 
       if (linkedInOnly) {
         dispatch(setCompanies(rawCompanies));

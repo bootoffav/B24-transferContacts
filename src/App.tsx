@@ -21,10 +21,6 @@ export default function App() {
   const dispatch = useAppDispatch();
   const stage = useAppSelector(({ common }) => common.stage);
   const companies = useAppSelector(companySelector);
-  const [chosenId, titleLookupArray] = useAppSelector(({ common }) => [
-    common.chosenId,
-    common[common.selectType],
-  ]);
 
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -32,12 +28,12 @@ export default function App() {
     if (stage === Stage.linkedInOnlyScanFinished) {
       const { filename, content } = generateExcelFileStructureLinkedInOnly(
         companies,
-        getEntityTitle(titleLookupArray, chosenId as number)
+        getEntityTitle()
       );
       XLSX.writeFile(content, filename);
       setTimeout(() => dispatch(setStage(Stage.initial)), 3000);
     }
-  }, [stage, companies, titleLookupArray, chosenId, dispatch]);
+  }, [stage, companies, dispatch]);
 
   if (isLoading) {
     return (

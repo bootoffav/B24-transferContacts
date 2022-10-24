@@ -5,11 +5,6 @@ import { companySelector } from "features/List/CompanySelector";
 import { getEntityTitle } from "app/helpers";
 
 const Export = () => {
-  const [chosenId, titleLookupArray, users] = useAppSelector(({ common }) => [
-    common.chosenId,
-    common[common.selectType],
-    common.users,
-  ]);
   const companies = useAppSelector(companySelector);
 
   return (
@@ -19,8 +14,7 @@ const Export = () => {
         onClick={() => {
           const { filename, content } = generateExcelFileStructureForTransfer(
             companies,
-            getEntityTitle(titleLookupArray, chosenId as number),
-            users
+            getEntityTitle()
           );
           XLSX.writeFile(content, filename);
         }}

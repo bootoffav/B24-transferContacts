@@ -13,12 +13,14 @@ enum Stage {
   transferred,
 }
 
+const selectType = ["users", "companyCountryList", "departments"] as const;
+
 export interface CommonState {
   stage: Stage;
   users: User[];
   transferredAmount: number;
-  selectType: "users" | "companyCountryList";
-  chosenId?: number;
+  selectType: typeof selectType[number];
+  chosenId: number[];
   companyCountryList: Country[];
   contactCountryList: Country[];
   modalHidden: boolean;
@@ -41,6 +43,7 @@ const initialState: CommonState = {
   transferredAmount: 0,
   linkedInOnly: false,
   departments: {},
+  chosenId: [],
 };
 
 const commonSlice = createSlice({
@@ -74,7 +77,10 @@ const commonSlice = createSlice({
     ) => {
       state.selectType = payload;
     },
-    setChosenId: (state, { payload }: PayloadAction<number | undefined>) => {
+    setChosenId: (
+      state,
+      { payload }: PayloadAction<CommonState["chosenId"]>
+    ) => {
       state.chosenId = payload;
     },
     hideModal: (state, { payload }: PayloadAction<boolean>) => {
@@ -105,7 +111,7 @@ const commonSlice = createSlice({
         ];
       })
       .addCase(fetchDepartments.fulfilled, (state, { payload }) => {
-        state.departments = payload;
+        Object.assign(state.departments, { none: [0, []] }, payload);
       });
   },
 });

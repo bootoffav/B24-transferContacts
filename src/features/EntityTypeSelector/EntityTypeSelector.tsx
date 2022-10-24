@@ -10,7 +10,7 @@ export default function EntityTypeSelector() {
         defaultValue="users"
         onChange={({ target: { value } }) => {
           dispatch(setSelectType(value as CommonState["selectType"]));
-          dispatch(setChosenId());
+          dispatch(setChosenId([]));
         }}
       >
         <option value="users">Manager</option>
