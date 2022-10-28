@@ -1,13 +1,13 @@
-import { useAppSelector } from "app/hooks";
-import type { SyntheticEvent } from "react";
-import { Stage } from "app/commonSlice";
+import { useAppSelector, useAppDispatch } from "app/hooks";
+import { setStage, Stage } from "app/commonSlice";
 
 export default function ControlButton({
   clickHandler,
 }: {
-  clickHandler: ({ target }: SyntheticEvent) => void;
+  clickHandler: () => void;
 }) {
   const stage = useAppSelector(({ common: { stage } }) => stage);
+  const dispatch = useAppDispatch();
 
   let classType, label;
   switch (stage) {
@@ -21,7 +21,15 @@ export default function ControlButton({
       [classType, label] = ["is-primary", "Get companies"];
   }
   return (
-    <button className={`button ${classType}`} onClick={clickHandler}>
+    <button
+      disabled={label === "Cancelling..."}
+      className={`button ${classType}`}
+      onClick={
+        label === "STOP"
+          ? () => dispatch(setStage(Stage.cancelling))
+          : clickHandler
+      }
+    >
       {label}
     </button>
   );

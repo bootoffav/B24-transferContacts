@@ -11,9 +11,9 @@ import getDifferentResponsibles from "app/differentResponsibles";
 import getContactsNoCountries from "app/contactsNoCountries";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage } from "app/commonSlice";
-import type { SyntheticEvent } from "react";
 import { Contact, Company } from "../../types";
 import ControlButton from "./ControlButton";
+import { store } from "../../app/store";
 
 export default function GetCompanies() {
   const dispatch = useAppDispatch();
@@ -21,13 +21,8 @@ export default function GetCompanies() {
   const selectType = useAppSelector(({ common }) => common.selectType);
   const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
 
-  const clickHandler = async ({ target }: SyntheticEvent) => {
+  const clickHandler = async () => {
     if (chosenId) {
-      if ((target as HTMLButtonElement).innerHTML === "STOP") {
-        window.aborted = true;
-        dispatch(setStage(Stage.cancelling));
-        return;
-      }
       // set up initial state
       dispatch(setProcessedAmount(0));
       dispatch(setTotalAmount(0));
@@ -52,7 +47,7 @@ export default function GetCompanies() {
       for await (const company of getCompaniesWithRelatedEntities(
         rawCompanies
       )) {
-        companies = [...companies, company];
+        companies.push(company);
         dispatch(setProcessedAmount(1));
       }
 
@@ -82,10 +77,6 @@ async function* getCompaniesWithRelatedEntities(
   companies: Company[]
 ): AsyncGenerator<Company> {
   for (let company of companies) {
-    if (window.aborted) {
-      window.aborted = false;
-      return;
-    }
     await (() => new Promise((r) => setTimeout(r, 700)))();
 
     // step to add DEALS that belong to contact, add them to company instead.
@@ -123,5 +114,6 @@ async function* getCompaniesWithRelatedEntities(
       DEALS: uniqueDeals,
       LEADS: uniqueLeads,
     };
+    if (store.getState().common.stage === Stage.cancelling) break;
   }
 }
