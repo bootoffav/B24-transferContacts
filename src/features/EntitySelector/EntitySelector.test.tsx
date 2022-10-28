@@ -1,20 +1,52 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import EntitySelector from "./EntitySelector";
 import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import { store } from "../../app/store";
-import { fetchCountries } from "app/endpoint";
+import { fetchCountries, fetchDepartments, fetchUsers } from "app/endpoint";
+import { setSelectType } from "app/commonSlice";
 
-xtest("loads and check all options in place", async () => {
-  render(
-    <Provider store={store}>
-      <EntitySelector />
-    </Provider>
-  );
+jest.setTimeout(15000);
 
-  await store.dispatch(fetchCountries());
-  const countries = ["Russia", "Australia", "Austria"].sort();
-  // const options = screen.getAllByRole("option");
-  // expect(options.length).toBe(OPTION_TEXT.length);
-  // expect(options.map((option) => option.innerHTML).sort()).toEqual(OPTION_TEXT);
+describe("loads and check all options in place", function () {
+  beforeAll(async function () {
+    await store.dispatch(fetchCountries());
+    await store.dispatch(fetchUsers());
+    await store.dispatch(fetchDepartments());
+  });
+  beforeEach(() => {
+    render(
+      <Provider store={store}>
+        <EntitySelector />
+      </Provider>
+    );
+  });
+
+  test("checks user's select", async function () {
+    await waitFor(() => store.dispatch(setSelectType("users")));
+    const options = screen.getAllByRole("option");
+    expect(options.map((opt) => opt.innerHTML.trim())).toEqual(
+      expect.arrayContaining([
+        "Aleksei Butov",
+        "Igor Stoliarov",
+        "Vitaly Aliev",
+      ])
+    );
+  });
+
+  test("checks department's select", async function () {
+    await waitFor(() => store.dispatch(setSelectType("departments")));
+    const options = screen.getAllByRole("option");
+    expect(options.map((opt) => opt.innerHTML.trim())).toEqual(
+      expect.arrayContaining(["IT department", "XM Textiles"])
+    );
+  });
+
+  test("check countries' select", async function () {
+    await waitFor(() => store.dispatch(setSelectType("companyCountryList")));
+    const options = screen.getAllByRole("option");
+    expect(options.map((opt) => opt.innerHTML.trim())).toEqual(
+      expect.arrayContaining(["Albania", "Comoros", "Italy"])
+    );
+  });
 });

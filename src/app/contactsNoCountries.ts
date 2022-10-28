@@ -1,11 +1,11 @@
-import { Company, Contact, Country, TransferCountry } from "types";
+import { Contact, TransferCountry } from "types";
 import { COMPANY_COUNTRY_FIELD, CONTACT_COUNTRY_FIELD } from "./CONSTANTS";
+import { store } from "./store";
 
-export default function getContactsNoCountries(
-  companies: Company[],
-  companyCountryList: Country[],
-  contactCountryList: Country[]
-): TransferCountry {
+export default function getContactsNoCountries(): TransferCountry {
+  const { companies } = store.getState().company;
+  const { companyCountryList, contactCountryList } = store.getState().common;
+
   const transferCountry: TransferCountry = {};
 
   function addContactToTransferCountryList(

@@ -20,12 +20,6 @@ export default function GetCompanies() {
   const chosenId = useAppSelector(({ common }) => common.chosenId);
   const selectType = useAppSelector(({ common }) => common.selectType);
   const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
-  const contactCountryLIst = useAppSelector(
-    ({ common }) => common.contactCountryList
-  );
-  const companyCountryLIst = useAppSelector(
-    ({ common }) => common.companyCountryList
-  );
 
   const clickHandler = async ({ target }: SyntheticEvent) => {
     if (chosenId) {
@@ -74,11 +68,7 @@ export default function GetCompanies() {
       const differentResponsibles = getDifferentResponsibles(companies);
       dispatch(setDifferentResponsibles(differentResponsibles));
 
-      const contactsNoCountry = getContactsNoCountries(
-        companies,
-        companyCountryLIst,
-        contactCountryLIst
-      );
+      const contactsNoCountry = getContactsNoCountries();
       dispatch(setContactsNoCountries(contactsNoCountry));
       return;
     }
