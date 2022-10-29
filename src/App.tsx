@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { companySelector } from "features/List/CompanySelector";
 import { getEntityTitle } from "app/helpers";
 import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
+import ProgressNotifier from "features/ProgressNotifier/ProgressNotifier";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -58,13 +59,14 @@ export default function App() {
         <div className="column is-1 has-text-centered">
           <LinkedInOnly />
         </div>
-        <div className="column is-2">
+        <div className="column is-1">
           <GetCompanies />
         </div>
+        <ProgressNotifier />
       </header>
       <InfoBlock />
       {stage === Stage.linkedInOnlyScanFinished}
-      {(stage === Stage.scanFinished && (
+      {companies.length ? (
         <>
           <div className="columns">
             <CompanyFilter />
@@ -74,8 +76,9 @@ export default function App() {
             <List />
           </div>
         </>
-      )) ||
-        ""}
+      ) : (
+        <></>
+      )}
     </div>
   ) : (
     <>{loginWithRedirect()}</>
