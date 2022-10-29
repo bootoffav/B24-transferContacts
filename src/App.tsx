@@ -66,7 +66,8 @@ export default function App() {
       </header>
       <InfoBlock />
       {stage === Stage.linkedInOnlyScanFinished}
-      {companies.length ? (
+      {companies.length &&
+      ![Stage.linkedInOnlyScanFinished, Stage.initial].includes(stage) ? (
         <>
           <div className="columns">
             <CompanyFilter />

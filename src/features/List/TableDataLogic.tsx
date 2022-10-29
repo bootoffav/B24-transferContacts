@@ -1,10 +1,4 @@
-import type {
-  Contact,
-  TableDataStructure,
-  EntityType,
-  Company,
-  User,
-} from "types";
+import type { Contact, TableDataStructure, EntityType } from "types";
 import type { Cell } from "react-table";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -19,6 +13,7 @@ import {
   CONTACT_POSITION_FIELD,
   CONTACT_COUNTRY_FIELD,
 } from "app/CONSTANTS";
+import { store } from "app/store";
 
 function prepareContact({
   ID,
@@ -81,8 +76,11 @@ function contactCellRenderer(
   );
 }
 
-const formData = (companies: Company[], users: User[]): TableDataStructure =>
-  companies.map((company) => {
+// const formData = (companies: Company[], users: User[]): TableDataStructure => {
+const formData = (): TableDataStructure => {
+  const { companies } = store.getState().company;
+  const { users } = store.getState().common;
+  return companies.map((company) => {
     const responsibleForCompany = getUserNameById(
       users,
       company.ASSIGNED_BY_ID
@@ -110,6 +108,7 @@ const formData = (companies: Company[], users: User[]): TableDataStructure =>
       ),
     };
   });
+};
 
 const formColumns = (dispatch: Dispatch) => [
   {

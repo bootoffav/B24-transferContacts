@@ -14,6 +14,7 @@ import { setStage, Stage } from "app/commonSlice";
 import { Contact, Company } from "../../types";
 import ControlButton from "./ControlButton";
 import { store } from "../../app/store";
+import { setPageIndex } from "features/List/listSlice";
 
 export default function GetCompanies() {
   const dispatch = useAppDispatch();
@@ -26,9 +27,11 @@ export default function GetCompanies() {
       return alert(`choose entity first`);
     }
     // set up initial state
+    dispatch(setCompanies([]));
     dispatch(setProcessedAmount(0));
     dispatch(setTotalAmount(0));
     dispatch(setStage(Stage.gettingData));
+    dispatch(setPageIndex(0));
 
     // get companies
     const rawCompanies: Company[] = [];
@@ -49,7 +52,10 @@ export default function GetCompanies() {
     for await (const company of getCompaniesWithRelatedEntities(rawCompanies)) {
       companies = [...companies, company];
       dispatch(setProcessedAmount(1));
-      companies.length % 5 === 0 && pushChangesToStore(companies);
+      if (companies.length % 20 === 0) {
+        pushChangesToStore(companies);
+        await (() => new Promise((r) => setTimeout(r, 5000)))();
+      }
     }
     pushChangesToStore(companies);
     dispatch(setStage(Stage.scanFinished));
@@ -62,14 +68,13 @@ async function* getCompaniesWithRelatedEntities(
   companies: Company[]
 ): AsyncGenerator<Company> {
   for (let company of companies) {
-    await (() => new Promise((r) => setTimeout(r, 700)))();
-
     // step to add DEALS that belong to contact, add them to company instead.
     const contacts = await fetchRelatedEntities(company.ID, "contact");
-    await (() => new Promise((r) => setTimeout(r, 350)))();
+    await (() => new Promise((r) => setTimeout(r, 700)))();
     const companyDeals = await fetchRelatedEntities(company.ID, "deal");
-    await (() => new Promise((r) => setTimeout(r, 350)))();
+    await (() => new Promise((r) => setTimeout(r, 700)))();
     const companyLeads = await fetchRelatedEntities(company.ID, "lead");
+    await (() => new Promise((r) => setTimeout(r, 700)))();
 
     let allContactDeals: any[] = [];
     let allContactLeads: any[] = [];
@@ -78,6 +83,7 @@ async function* getCompaniesWithRelatedEntities(
         ...allContactDeals,
         ...(await fetchRelatedEntities(ID, "deal", "contact")),
       ];
+      await (() => new Promise((r) => setTimeout(r, 500)))();
       allContactLeads = [
         ...allContactLeads,
         ...(await fetchRelatedEntities(ID, "lead", "contact")),

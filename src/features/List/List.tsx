@@ -13,10 +13,6 @@ import { emailCell } from "app/CONSTANTS";
 const List = () => {
   const companies = useAppSelector(companySelector);
 
-  const { users } = useAppSelector(({ common }) => ({
-    users: common.users,
-  }));
-
   useEffect(() => {
     const uls = document.getElementsByClassName(emailCell);
     [...uls].forEach((ul, idx) => {
@@ -36,10 +32,10 @@ const List = () => {
   });
 
   const dispatch = useAppDispatch();
-  const data: TableDataStructure = useMemo(
-    () => formData(companies, users),
-    [companies, users]
-  );
+  const data: TableDataStructure = useMemo(() => {
+    Boolean(companies);
+    return formData();
+  }, [companies]);
   const columns = useMemo(() => formColumns(dispatch), [dispatch]);
 
   const pageSize = 20;
@@ -51,6 +47,7 @@ const List = () => {
       manualPagination: false,
       initialState: {
         pageSize,
+        pageIndex: useAppSelector(({ list }) => list.pageIndex),
       },
     },
     usePagination
@@ -68,8 +65,9 @@ const List = () => {
 
   const { canPreviousPage, canNextPage, pageOptions, nextPage, previousPage } =
     tableInstance;
+  // console.log(tableInstance.state.pageIndex);
   const naviProps: NaviProps = {
-    pageIndex,
+    // pageIndex,
     canPreviousPage,
     canNextPage,
     pageOptions,

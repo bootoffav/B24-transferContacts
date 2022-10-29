@@ -1,4 +1,6 @@
 import { TableInstance } from "react-table";
+import { useAppSelector, useAppDispatch } from "app/hooks";
+import { setPageIndex } from "./listSlice";
 
 export interface NaviProps {
   canPreviousPage: TableInstance["canPreviousPage"];
@@ -6,7 +8,6 @@ export interface NaviProps {
   pageOptions: TableInstance["pageOptions"];
   nextPage: TableInstance["nextPage"];
   previousPage: TableInstance["previousPage"];
-  pageIndex: TableInstance["state"]["pageIndex"];
 }
 
 export default function Navigation({
@@ -15,8 +16,10 @@ export default function Navigation({
   pageOptions,
   nextPage,
   previousPage,
-  pageIndex,
-}: NaviProps) {
+}: // pageIndex,
+NaviProps) {
+  const pageIndex = useAppSelector(({ list }) => list.pageIndex);
+  const dispatch = useAppDispatch();
   return (
     <nav
       className="pagination mx-auto"
@@ -29,7 +32,10 @@ export default function Navigation({
     >
       <button
         className="button bd-fat-button is-primary is-light"
-        onClick={() => previousPage()}
+        onClick={() => {
+          dispatch(setPageIndex(-1));
+          previousPage();
+        }}
         disabled={!canPreviousPage}
       >
         <i>←</i>
@@ -40,7 +46,10 @@ export default function Navigation({
       </strong>{" "}
       <button
         className="button bd-fat-button is-primary is-light"
-        onClick={() => nextPage()}
+        onClick={() => {
+          dispatch(setPageIndex(1));
+          nextPage();
+        }}
         disabled={!canNextPage}
       >
         <span className="mr-2">Next page</span>

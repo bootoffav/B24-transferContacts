@@ -11,10 +11,12 @@ interface ListSliceState {
     | typeof viewModeNoCountries
     | typeof viewModeWithLinkedIn
     | typeof viewModeContactsCountryNone;
+  pageIndex: number;
 }
 
 const initialState: ListSliceState = {
   viewMode: viewModeAll,
+  pageIndex: 0,
 };
 
 const listSlice = createSlice({
@@ -33,8 +35,14 @@ const listSlice = createSlice({
         state.viewMode = payload;
       }
     },
+    setPageIndex(
+      state,
+      { payload }: PayloadAction<ListSliceState["pageIndex"]>
+    ) {
+      state.pageIndex += payload;
+    },
   },
 });
 
-export const { setViewMode } = listSlice.actions;
+export const { setViewMode, setPageIndex } = listSlice.actions;
 export default listSlice;

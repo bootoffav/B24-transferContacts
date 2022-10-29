@@ -7,16 +7,12 @@ import { setContactsNoCountries } from "../../app/companySlice";
 export default function InfoBlock() {
   const {
     companies,
-    companiesTotalAmount,
-    companiesProcessedAmount,
     differentResponsibles,
     transferredAmount,
     noCountry,
     stage,
   } = useAppSelector(({ common, company }) => ({
     companies: company.companies,
-    companiesTotalAmount: company.totalAmount,
-    companiesProcessedAmount: company.processedAmount,
     differentResponsibles: company.differentResponsibles,
     noCountry: company.contactsNoCountries,
     transferredAmount: common.transferredAmount,
@@ -52,13 +48,11 @@ export default function InfoBlock() {
       output = (
         <>
           <span className="p-2">
-            {stage === Stage.gettingData ? "Getting data" : "Cancelling"}
+            {stage === Stage.gettingData
+              ? "Getting data (updated every 20 companies)"
+              : "Cancelling"}
           </span>
           <ClipLoader loading={true} />
-          <p className="p-2">
-            Processing {companiesProcessedAmount} of {companiesTotalAmount}{" "}
-            found companies
-          </p>
         </>
       );
       break;
