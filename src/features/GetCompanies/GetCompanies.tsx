@@ -22,52 +22,37 @@ export default function GetCompanies() {
   const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
 
   const clickHandler = async () => {
-    if (chosenId) {
-      // set up initial state
-      dispatch(setProcessedAmount(0));
-      dispatch(setTotalAmount(0));
-      dispatch(setStage(Stage.gettingData));
+    if (!chosenId.length) {
+      return alert(`choose entity first`);
+    }
+    // set up initial state
+    dispatch(setProcessedAmount(0));
+    dispatch(setTotalAmount(0));
+    dispatch(setStage(Stage.gettingData));
 
-      // get companies
-      const rawCompanies: Company[] = [];
-      for (const id of chosenId) {
-        const companiesOfSpecificUser = await fetchCompanies(id, selectType);
-        rawCompanies.push(...companiesOfSpecificUser);
-      }
+    // get companies
+    const rawCompanies: Company[] = [];
+    for (const id of chosenId) {
+      const companiesOfSpecificUser = await fetchCompanies(id, selectType);
+      rawCompanies.push(...companiesOfSpecificUser);
+    }
 
-      if (linkedInOnly) {
-        dispatch(setCompanies(rawCompanies));
-        dispatch(setStage(Stage.linkedInOnlyScanFinished));
-        return;
-      }
-      dispatch(setTotalAmount(rawCompanies.length));
-
-      //working on company related entities
-      let companies: Company[] = [];
-      for await (const company of getCompaniesWithRelatedEntities(
-        rawCompanies
-      )) {
-        companies.push(company);
-        dispatch(setProcessedAmount(1));
-      }
-
-      // sort companies alphabetically, case insensitive
-      companies.sort(({ TITLE: A }, { TITLE: B }) => {
-        A = A.toLowerCase();
-        B = B.toLowerCase();
-        return A > B ? 1 : A < B ? -1 : 0;
-      });
-
-      dispatch(setCompanies(companies));
-      dispatch(setStage(Stage.scanFinished));
-      const differentResponsibles = getDifferentResponsibles(companies);
-      dispatch(setDifferentResponsibles(differentResponsibles));
-
-      const contactsNoCountry = getContactsNoCountries();
-      dispatch(setContactsNoCountries(contactsNoCountry));
+    if (linkedInOnly) {
+      dispatch(setCompanies(rawCompanies));
+      dispatch(setStage(Stage.linkedInOnlyScanFinished));
       return;
     }
-    alert(`choose ${selectType} first`);
+    dispatch(setTotalAmount(rawCompanies.length));
+
+    //working on company related entities
+    let companies: Company[] = [];
+    for await (const company of getCompaniesWithRelatedEntities(rawCompanies)) {
+      companies = [...companies, company];
+      dispatch(setProcessedAmount(1));
+      companies.length % 5 === 0 && pushChangesToStore(companies);
+    }
+    pushChangesToStore(companies);
+    dispatch(setStage(Stage.scanFinished));
   };
 
   return <ControlButton clickHandler={clickHandler} />;
@@ -88,14 +73,14 @@ async function* getCompaniesWithRelatedEntities(
 
     let allContactDeals: any[] = [];
     let allContactLeads: any[] = [];
-    for (const contact of contacts) {
+    for (const { ID } of contacts) {
       allContactDeals = [
         ...allContactDeals,
-        ...(await fetchRelatedEntities(contact.ID, "deal", "contact")),
+        ...(await fetchRelatedEntities(ID, "deal", "contact")),
       ];
       allContactLeads = [
         ...allContactLeads,
-        ...(await fetchRelatedEntities(contact.ID, "lead", "contact")),
+        ...(await fetchRelatedEntities(ID, "lead", "contact")),
       ];
     }
     // exclude second copy of Leads & Deals that belong to Company and Contacts simultaniously
@@ -116,4 +101,19 @@ async function* getCompaniesWithRelatedEntities(
     };
     if (store.getState().common.stage === Stage.cancelling) break;
   }
+}
+
+function pushChangesToStore(companies: Company[]) {
+  // sort companies alphabetically, case insensitive
+  companies.sort(({ TITLE: A }, { TITLE: B }) => {
+    A = A.toLowerCase();
+    B = B.toLowerCase();
+    return A > B ? 1 : A < B ? -1 : 0;
+  });
+  store.dispatch(setCompanies(companies));
+  const differentResponsibles = getDifferentResponsibles(companies);
+  store.dispatch(setDifferentResponsibles(differentResponsibles));
+
+  const contactsNoCountry = getContactsNoCountries();
+  store.dispatch(setContactsNoCountries(contactsNoCountry));
 }

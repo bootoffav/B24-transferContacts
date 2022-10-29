@@ -72,7 +72,7 @@ const fetchCompanies = async (
 
 const fetchRelatedEntities = async (
   entityId: number,
-  entityType: EntityType,
+  entityType: Extract<EntityType, "contact" | "deal" | "lead">,
   headEntity: "company" | "contact" = "company"
 ): Promise<Contact[] | Deal[]> => {
   const select =
