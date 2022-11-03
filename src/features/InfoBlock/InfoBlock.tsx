@@ -106,6 +106,11 @@ export default function InfoBlock() {
     case Stage.linkedInOnlyScanFinished:
       output = "LinkedIn list ready";
       break;
+    case Stage.stuck:
+      output = (
+        <p className="has-text-danger">Network error - report stopped!</p>
+      );
+      break;
     case Stage.transferring:
       output = (
         <>

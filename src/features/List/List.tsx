@@ -65,9 +65,7 @@ const List = () => {
 
   const { canPreviousPage, canNextPage, pageOptions, nextPage, previousPage } =
     tableInstance;
-  // console.log(tableInstance.state.pageIndex);
   const naviProps: NaviProps = {
-    // pageIndex,
     canPreviousPage,
     canNextPage,
     pageOptions,

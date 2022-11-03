@@ -11,6 +11,7 @@ enum Stage {
   linkedInOnlyScanFinished,
   transferring,
   transferred,
+  stuck,
 }
 
 const selectType = ["users", "companyCountryList", "departments"] as const;

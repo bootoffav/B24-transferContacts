@@ -70,6 +70,84 @@ const fetchCompanies = async (
   return companies;
 };
 
+async function batchFetch(
+  companies: Company[],
+  headEntity: "company" | "contact" = "company"
+): Promise<Company[]> {
+  function formRequestBody() {
+    return companies.reduce((acc, { ID: id }) => {
+      return Object.assign(
+        acc,
+        ...["contact", "deal", "lead"].map((entityType) => {
+          return {
+            [`${entityType}_${id}`]:
+              `crm.${entityType}.list?` +
+              stringify({
+                filter: { [`${headEntity.toUpperCase()}_ID`]: id },
+                select:
+                  entityType === "contact"
+                    ? [
+                        "*",
+                        CONTACT_POSITION_FIELD,
+                        CONTACT_COUNTRY_FIELD,
+                        "EMAIL",
+                      ]
+                    : ["*"],
+              }),
+          };
+        })
+      );
+    }, {});
+  }
+
+  return (
+    fetch(`${endpoint}${userId}/${webhookToken}/batch`, {
+      method: "POST",
+      body: stringify({
+        halt: 0,
+        cmd: formRequestBody(),
+      }),
+    })
+      .then((r) => r.json())
+      .then(({ result: { result } }) => {
+        const acc: {
+          [key: string]: {
+            CONTACTS: Contact[];
+            LEADS: (Contact | Deal)[];
+            DEALS: (Contact | Deal)[];
+          };
+        } = {};
+        return Object.entries(result).reduce((acc, [key, value]) => {
+          const [type, companyId] = key.split("_");
+          acc[companyId] = acc[companyId] ?? {};
+          // @ts-expect-error
+          acc[companyId][`${type.toUpperCase()}S`] = value;
+          return acc;
+        }, acc);
+      })
+      // rename EMAIL to EMAILS
+      .then((result) => {
+        for (const prop in result) {
+          result[prop].CONTACTS = result[prop].CONTACTS.map(
+            (contact: Contact & { EMAIL?: Contact["EMAILS"] }) => {
+              delete Object.assign(contact, { EMAILS: contact.EMAIL || [] })[
+                "EMAIL"
+              ];
+              return contact;
+            }
+          );
+        }
+        return result;
+      })
+      .then((result) =>
+        companies.map((company) => ({
+          ...company,
+          ...result[company.ID],
+        }))
+      )
+  );
+}
+
 const fetchRelatedEntities = async (
   entityId: number,
   entityType: Extract<EntityType, "contact" | "deal" | "lead">,
@@ -300,4 +378,5 @@ export {
   changePosition,
   updateContactEmails,
   transferCountry,
+  batchFetch,
 };
