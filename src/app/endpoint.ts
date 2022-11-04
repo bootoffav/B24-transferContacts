@@ -71,14 +71,15 @@ const fetchCompanies = async (
 };
 
 async function batchFetch(
-  companies: Company[],
+  companiesId: Company["ID"][],
+  entityToRequest: ("contact" | "deal" | "lead")[],
   headEntity: "company" | "contact" = "company"
-): Promise<Company[]> {
+): Promise<any> {
   function formRequestBody() {
-    return companies.reduce((acc, { ID: id }) => {
+    return companiesId.reduce((acc, id) => {
       return Object.assign(
         acc,
-        ...["contact", "deal", "lead"].map((entityType) => {
+        ...entityToRequest.map((entityType) => {
           return {
             [`${entityType}_${id}`]:
               `crm.${entityType}.list?` +
@@ -100,52 +101,46 @@ async function batchFetch(
     }, {});
   }
 
-  return (
-    fetch(`${endpoint}${userId}/${webhookToken}/batch`, {
-      method: "POST",
-      body: stringify({
-        halt: 0,
-        cmd: formRequestBody(),
-      }),
-    })
-      .then((r) => r.json())
-      .then(({ result: { result } }) => {
-        const acc: {
-          [key: string]: {
-            CONTACTS: Contact[];
-            LEADS: (Contact | Deal)[];
-            DEALS: (Contact | Deal)[];
-          };
-        } = {};
-        return Object.entries(result).reduce((acc, [key, value]) => {
-          const [type, companyId] = key.split("_");
-          acc[companyId] = acc[companyId] ?? {};
-          // @ts-expect-error
-          acc[companyId][`${type.toUpperCase()}S`] = value;
-          return acc;
-        }, acc);
-      })
-      // rename EMAIL to EMAILS
-      .then((result) => {
-        for (const prop in result) {
-          result[prop].CONTACTS = result[prop].CONTACTS.map(
-            (contact: Contact & { EMAIL?: Contact["EMAILS"] }) => {
-              delete Object.assign(contact, { EMAILS: contact.EMAIL || [] })[
-                "EMAIL"
-              ];
-              return contact;
-            }
-          );
+  const {
+    result: { result: rawResult },
+  } = await fetch(`${endpoint}${userId}/${webhookToken}/batch`, {
+    method: "POST",
+    body: stringify({
+      halt: 0,
+      cmd: formRequestBody(),
+    }),
+  }).then((r) => r.json());
+  const acc: {
+    [key: string]: {
+      CONTACTS: Contact[];
+      LEADS: (Contact | Deal)[];
+      DEALS: (Contact | Deal)[];
+    };
+  } = {};
+
+  const result = Object.entries(rawResult).reduce((acc, [key, value]) => {
+    const [type, companyId] = key.split("_");
+    acc[companyId] = acc[companyId] ?? {};
+    // @ts-expect-error
+    acc[companyId][`${type.toUpperCase()}S`] = value;
+    return acc;
+  }, acc);
+
+  // rename EMAIL to EMAILS
+  if (headEntity === "company") {
+    for (const prop in result) {
+      result[prop].CONTACTS = result[prop].CONTACTS.map(
+        (contact: Contact & { EMAIL?: Contact["EMAILS"] }) => {
+          delete Object.assign(contact, { EMAILS: contact.EMAIL || [] })[
+            "EMAIL"
+          ];
+          return contact;
         }
-        return result;
-      })
-      .then((result) =>
-        companies.map((company) => ({
-          ...company,
-          ...result[company.ID],
-        }))
-      )
-  );
+      );
+    }
+  }
+
+  return result;
 }
 
 const fetchRelatedEntities = async (

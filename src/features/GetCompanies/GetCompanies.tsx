@@ -80,25 +80,26 @@ async function* getCompaniesWithRelatedEntities(
   companies: Company[]
 ): AsyncGenerator<Company> {
   for (const chunkOfCompanies of getChunkOfCompanies(companies)) {
-    // await (() => new Promise((r) => setTimeout(r, 700)))();
-
     // step to add DEALS that belong to contact, add them to company instead.
-    const companiesWithContactsLeadDeals: Company[] = await batchFetch(
-      chunkOfCompanies
+    const chunkOfCompaniesId = chunkOfCompanies.map(({ ID }) => ID);
+
+    const companiesContactsLeadsDeals: Company[] = await batchFetch(
+      chunkOfCompaniesId,
+      ["contact", "deal", "lead"]
     );
-    for (const company of companiesWithContactsLeadDeals) {
+
+    const companiesWithContactsLeadsDeals = chunkOfCompanies.map((company) => ({
+      ...company,
+      ...companiesContactsLeadsDeals[company.ID],
+    }));
+
+    for (const company of companiesWithContactsLeadsDeals) {
       let allContactDeals: any[] = [];
       let allContactLeads: any[] = [];
       for (const { ID } of company.CONTACTS) {
-        allContactDeals = [
-          ...allContactDeals,
-          ...(await fetchRelatedEntities(ID, "deal", "contact")),
-        ];
-        await (() => new Promise((r) => setTimeout(r, 500)))();
-        allContactLeads = [
-          ...allContactLeads,
-          ...(await fetchRelatedEntities(ID, "lead", "contact")),
-        ];
+        const batchResult = await batchFetch([ID], ["deal", "lead"], "contact");
+        allContactDeals = [...allContactDeals, ...batchResult[ID].DEALS];
+        allContactLeads = [...allContactLeads, ...batchResult[ID].LEADS];
       }
       // exclude second copy of Leads & Deals that belong to Company and Contacts simultaniously
       const uniqueLeads = unionBy(
@@ -111,7 +112,6 @@ async function* getCompaniesWithRelatedEntities(
       );
       yield {
         ...company,
-        // CONTACTS: contacts as Contact[],
         DEALS: uniqueDeals,
         LEADS: uniqueLeads,
       };
