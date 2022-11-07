@@ -96,11 +96,15 @@ async function* getCompaniesWithRelatedEntities(
     for (const company of companiesWithContactsLeadsDeals) {
       let allContactDeals: any[] = [];
       let allContactLeads: any[] = [];
-      for (const { ID } of company.CONTACTS) {
-        const batchResult = await batchFetch([ID], ["deal", "lead"], "contact");
-        allContactDeals = [...allContactDeals, ...batchResult[ID].DEALS];
-        allContactLeads = [...allContactLeads, ...batchResult[ID].LEADS];
-      }
+      const IDs = company.CONTACTS.map(({ ID }) => ID);
+      const batchResult = await batchFetch(IDs, ["deal", "lead"], "contact");
+      Object.entries(batchResult).forEach(function ([
+        _,
+        { DEALS, LEADS },
+      ]: any) {
+        allContactDeals = [...allContactDeals, ...DEALS];
+        allContactLeads = [...allContactLeads, ...LEADS];
+      });
       // exclude second copy of Leads & Deals that belong to Company and Contacts simultaniously
       const uniqueLeads = unionBy(
         [...company.LEADS, ...allContactLeads],
