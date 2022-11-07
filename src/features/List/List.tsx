@@ -32,10 +32,10 @@ const List = () => {
   });
 
   const dispatch = useAppDispatch();
-  const data: TableDataStructure = useMemo(() => {
-    Boolean(companies);
-    return formData();
-  }, [companies]);
+  const data: TableDataStructure = useMemo(
+    () => formData(companies),
+    [companies]
+  );
   const columns = useMemo(() => formColumns(dispatch), [dispatch]);
 
   const pageSize = 20;

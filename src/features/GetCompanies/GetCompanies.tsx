@@ -1,5 +1,5 @@
 import { unionBy } from "lodash";
-import { batchFetch, fetchCompanies, fetchRelatedEntities } from "app/endpoint";
+import { batchFetch, fetchCompanies } from "app/endpoint";
 import {
   setCompanies,
   setDifferentResponsibles,
@@ -11,7 +11,7 @@ import getDifferentResponsibles from "app/differentResponsibles";
 import getContactsNoCountries from "app/contactsNoCountries";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage } from "app/commonSlice";
-import { Company } from "../../types";
+import { Company, Contact } from "../../types";
 import ControlButton from "./ControlButton";
 import { store } from "../../app/store";
 import { setPageIndex } from "features/List/listSlice";
@@ -50,17 +50,13 @@ export default function GetCompanies() {
 
       //working on company related entities
       let companies: Company[] = [];
-      for await (const company of getCompaniesWithRelatedEntities(
+      for await (const chunkOfReadyCompanies of getCompaniesWithRelatedEntities(
         rawCompanies
       )) {
-        companies = [...companies, company];
-        dispatch(setProcessedAmount(1));
-        if (companies.length % 20 === 0) {
-          pushChangesToStore(companies);
-          await (() => new Promise((r) => setTimeout(r, 5000)))();
-        }
+        companies = [...companies, ...chunkOfReadyCompanies];
+        dispatch(setProcessedAmount(chunkOfReadyCompanies.length));
+        pushChangesToStore(companies);
       }
-      pushChangesToStore(companies);
       dispatch(setStage(Stage.scanFinished));
     } catch (error) {
       dispatch(setStage(Stage.stuck));
@@ -78,7 +74,7 @@ function* getChunkOfCompanies(companies: Company[], chunkSize = 15) {
 
 async function* getCompaniesWithRelatedEntities(
   companies: Company[]
-): AsyncGenerator<Company> {
+): AsyncGenerator<Company[]> {
   for (const chunkOfCompanies of getChunkOfCompanies(companies)) {
     // step to add DEALS that belong to contact, add them to company instead.
     const chunkOfCompaniesId = chunkOfCompanies.map(({ ID }) => ID);
@@ -93,32 +89,52 @@ async function* getCompaniesWithRelatedEntities(
       ...companiesContactsLeadsDeals[company.ID],
     }));
 
-    for (const company of companiesWithContactsLeadsDeals) {
-      let allContactDeals: any[] = [];
-      let allContactLeads: any[] = [];
-      const IDs = company.CONTACTS.map(({ ID }) => ID);
-      const batchResult = await batchFetch(IDs, ["deal", "lead"], "contact");
+    for (const chunkOfCompanies of getChunkOfCompanies(
+      companiesWithContactsLeadsDeals
+    )) {
+      const companyContactsMap = new Map<Company["ID"], Contact["ID"][]>();
+
+      const contactsIDs: Contact["ID"][] = [];
+      chunkOfCompanies.forEach(({ ID, CONTACTS }) => {
+        const contactIds = CONTACTS.map(({ ID }) => ID);
+        contactsIDs.push(...contactIds);
+        companyContactsMap.set(ID, contactIds);
+      });
+      const batchResult = await batchFetch(
+        contactsIDs,
+        ["deal", "lead"],
+        "contact"
+      );
       Object.entries(batchResult).forEach(function ([
-        _,
+        contactId,
         { DEALS, LEADS },
       ]: any) {
-        allContactDeals = [...allContactDeals, ...DEALS];
-        allContactLeads = [...allContactLeads, ...LEADS];
+        // find company to which contact applies
+        let companyId: number;
+        for (const [
+          curCompanyId,
+          contactsIds,
+        ] of companyContactsMap.entries()) {
+          if (contactsIds.includes(contactId)) {
+            companyId = curCompanyId;
+            break;
+          }
+        }
+        // prone to error
+        const idx = companiesWithContactsLeadsDeals.findIndex(
+          ({ ID }) => ID === companyId
+        );
+        companiesWithContactsLeadsDeals[idx].DEALS = unionBy(
+          [...companiesWithContactsLeadsDeals[idx].DEALS, ...DEALS],
+          ({ ID }) => ID
+        );
+        companiesWithContactsLeadsDeals[idx].LEADS = unionBy(
+          [...companiesWithContactsLeadsDeals[idx].LEADS, ...LEADS],
+          ({ ID }) => ID
+        );
       });
-      // exclude second copy of Leads & Deals that belong to Company and Contacts simultaniously
-      const uniqueLeads = unionBy(
-        [...company.LEADS, ...allContactLeads],
-        ({ ID }) => ID
-      );
-      const uniqueDeals = unionBy(
-        [...company.DEALS, ...allContactDeals],
-        ({ ID }) => ID
-      );
-      yield {
-        ...company,
-        DEALS: uniqueDeals,
-        LEADS: uniqueLeads,
-      };
+
+      yield companiesWithContactsLeadsDeals;
       if (store.getState().common.stage === Stage.cancelling) break;
     }
   }

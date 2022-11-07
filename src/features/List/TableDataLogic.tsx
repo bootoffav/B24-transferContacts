@@ -1,4 +1,4 @@
-import type { Contact, TableDataStructure, EntityType } from "types";
+import type { Contact, Company, TableDataStructure, EntityType } from "types";
 import type { Cell } from "react-table";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -77,8 +77,7 @@ function contactCellRenderer(
 }
 
 // const formData = (companies: Company[], users: User[]): TableDataStructure => {
-const formData = (): TableDataStructure => {
-  const { companies } = store.getState().company;
+const formData = (companies: Company[]): TableDataStructure => {
   const { users } = store.getState().common;
   return companies.map((company) => {
     const responsibleForCompany = getUserNameById(
