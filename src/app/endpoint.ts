@@ -212,12 +212,22 @@ async function changePosition(id: Contact["ID"], position = "test") {
   });
 }
 
-async function* transferEntity(differentResponsibles: Transfer) {
+async function* transferEntity(
+  differentResponsibles: Transfer,
+  transferType: RootState["transferButton"]["transferType"]
+) {
+  // TO-DO: apply types
+  const convertedTransferTypes =
+    transferType === "all"
+      ? ["CONTACTS", "LEADS", "DEALS"]
+      : [transferType.toUpperCase()];
+
   for (const responsibleId in differentResponsibles) {
-    for (const entitySet of ["CONTACTS", "LEADS", "DEALS"] as const) {
-      for (const entityId of differentResponsibles[responsibleId][entitySet]) {
+    for (const entityType of convertedTransferTypes) {
+      // @ts-ignore
+      for (const entityId of differentResponsibles[responsibleId][entityType]) {
         yield await fetch(
-          `${endpoint}${userId}/${webhookToken}/crm.${entitySet
+          `${endpoint}${userId}/${webhookToken}/crm.${entityType
             .toLowerCase()
             .slice(0, -1)}.update`,
           {

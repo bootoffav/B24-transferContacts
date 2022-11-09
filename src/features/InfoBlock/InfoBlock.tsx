@@ -1,8 +1,10 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
-import { transferEntity, transferCountry } from "../../app/endpoint";
-import { setStage, setTransferredAmount, Stage } from "../../app/commonSlice";
+import { transferCountry } from "../../app/endpoint";
+import { setStage, Stage } from "../../app/commonSlice";
 import { setContactsNoCountries } from "../../app/companySlice";
+import TransferButton from "features/TransferButton/TransferButton";
+import { differentResponsiblesAmount } from "features/helpers";
 
 export default function InfoBlock() {
   const {
@@ -18,22 +20,14 @@ export default function InfoBlock() {
     transferredAmount: common.transferredAmount,
     stage: common.stage,
   }));
+  const { transferType } = useAppSelector(
+    ({ transferButton }) => transferButton
+  );
 
   const dispatch = useAppDispatch();
 
   function noCountriesAmount() {
     return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
-  }
-
-  function differentResponsiblesAmount() {
-    let amount = 0;
-    for (const responsible in differentResponsibles) {
-      amount = Object.values(differentResponsibles[responsible]).reduce(
-        (acc, set) => set.length + acc,
-        0
-      );
-    }
-    return amount;
   }
 
   let output: string | JSX.Element = "";
@@ -62,27 +56,10 @@ export default function InfoBlock() {
           <div>
             <p>
               Found {companies.length} companies,{" "}
-              {differentResponsiblesAmount()} diff. responsibles for contacts,
-              leads & deals
+              {differentResponsiblesAmount(differentResponsibles)} diff.
+              responsibles for contacts, leads & deals
             </p>
-            {companies.length ? (
-              <button
-                className="button ml-2 is-success is-small is-light"
-                onClick={async () => {
-                  dispatch(setStage(Stage.transferring));
-                  // eslint-disable-next-line
-                  for await (let _ of transferEntity(differentResponsibles)) {
-                    dispatch(setTransferredAmount(1));
-                  }
-                  dispatch(setStage(Stage.transferred));
-                  dispatch(setTransferredAmount(0));
-                }}
-              >
-                FIX THEM ALL AT ONCE!
-              </button>
-            ) : (
-              ""
-            )}
+            <TransferButton />
           </div>
           <div>
             <p>
@@ -115,8 +92,10 @@ export default function InfoBlock() {
       output = (
         <>
           <span className="p-2">
-            Transferring {transferredAmount} of {differentResponsiblesAmount()}{" "}
-            contacts to responsibles of their companies.
+            Transferring {transferredAmount} of{" "}
+            {differentResponsiblesAmount(differentResponsibles, transferType)}{" "}
+            {transferType === "all" ? "entities" : transferType} to responsibles
+            of their companies.
             {}
           </span>
           <ClipLoader loading={true} />
