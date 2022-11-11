@@ -1,4 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAction } from "@reduxjs/toolkit";
+
+const sliceName = "transferButton";
+
+const resetState = createAction(`${sliceName}/reset`);
 
 const allTransferTypes = ["contacts", "leads", "deals", "all"] as const;
 
@@ -11,8 +15,8 @@ const initialState: TransferButtonState = {
 };
 
 const transferButtonSlice = createSlice({
-  name: "transferButton",
-  initialState,
+  name: sliceName,
+  initialState: { ...initialState },
   reducers: {
     setTransferType: (
       state,
@@ -23,8 +27,11 @@ const transferButtonSlice = createSlice({
       }
     },
   },
+  extraReducers: {
+    [resetState.toString()]: () => ({ ...initialState }),
+  },
 });
 
 export const { setTransferType } = transferButtonSlice.actions;
-export { allTransferTypes };
+export { allTransferTypes, resetState };
 export default transferButtonSlice;
