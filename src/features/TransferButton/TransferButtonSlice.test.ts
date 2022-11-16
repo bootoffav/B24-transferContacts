@@ -1,63 +1,65 @@
 import "@testing-library/jest-dom";
 import { store } from "../../app/store";
 import transferButtonSlice, {
-  setTransferType,
+  setTransferEntityType,
   resetState,
 } from "./TransferButtonSlice";
 
 describe("check TransferButtonSlice of redux store", function () {
   test("checks initial state set properly defined", function () {
-    const { transferType } = transferButtonSlice.getInitialState();
+    const { transferEntityType, transferType } =
+      transferButtonSlice.getInitialState();
+    expect(transferEntityType).toBeDefined();
+    expect(transferEntityType).toBe("all");
     expect(transferType).toBeDefined();
-    expect(transferType).toBe("all");
-  });
-
-  test("checks correct transferTypes can be set", function () {
-    store.dispatch(resetState());
-
-    // valid cases
-    store.dispatch(setTransferType("contacts"));
-    expect(store.getState().transferButton.transferType).toBe("contacts");
-
-    store.dispatch(setTransferType("all"));
-    expect(store.getState().transferButton.transferType).toBe("all");
-
-    store.dispatch(setTransferType("leads"));
-    expect(store.getState().transferButton.transferType).toBe("leads");
-
-    store.dispatch(setTransferType("deals"));
-    expect(store.getState().transferButton.transferType).toBe("deals");
-  });
-
-  test("check incorrect values cannot be set", function () {
-    store.dispatch(resetState());
-    // @ts-expect-error
-    store.dispatch(setTransferType("deal"));
-    expect(store.getState().transferButton.transferType).toBe(
-      transferButtonSlice.getInitialState().transferType
-    );
-
-    // @ts-expect-error
-    store.dispatch(setTransferType("something"));
-    expect(store.getState().transferButton.transferType).toBe(
-      transferButtonSlice.getInitialState().transferType
-    );
-
-    // @ts-expect-error
-    store.dispatch(setTransferType(""));
-    expect(store.getState().transferButton.transferType).toBe(
-      transferButtonSlice.getInitialState().transferType
-    );
+    expect(transferType).toBe("entity");
   });
 
   test("state is properly reset", function () {
-    // ARRANGE
-    store.dispatch(setTransferType("deals"));
-    //ACT
+    store.dispatch(setTransferEntityType("deals"));
     store.dispatch(resetState());
-    // ASSERT
     expect(store.getState().transferButton).toEqual(
       transferButtonSlice.getInitialState()
+    );
+  });
+});
+
+describe("check transferEntityType field behaviour", function () {
+  test("checks correct transferEntityTypes can be set", function () {
+    store.dispatch(resetState());
+
+    // valid cases
+    store.dispatch(setTransferEntityType("contacts"));
+    expect(store.getState().transferButton.transferEntityType).toBe("contacts");
+
+    store.dispatch(setTransferEntityType("all"));
+    expect(store.getState().transferButton.transferEntityType).toBe("all");
+
+    store.dispatch(setTransferEntityType("leads"));
+    expect(store.getState().transferButton.transferEntityType).toBe("leads");
+
+    store.dispatch(setTransferEntityType("deals"));
+    expect(store.getState().transferButton.transferEntityType).toBe("deals");
+  });
+
+  test("check incorrect values for transferEntityType cannot be set", function () {
+    store.dispatch(resetState());
+    // @ts-expect-error
+    store.dispatch(setTransferEntityType("deal"));
+    expect(store.getState().transferButton.transferEntityType).toBe(
+      transferButtonSlice.getInitialState().transferEntityType
+    );
+
+    // @ts-expect-error
+    store.dispatch(setTransferEntityType("something"));
+    expect(store.getState().transferButton.transferEntityType).toBe(
+      transferButtonSlice.getInitialState().transferEntityType
+    );
+
+    // @ts-expect-error
+    store.dispatch(setTransferEntityType(""));
+    expect(store.getState().transferButton.transferEntityType).toBe(
+      transferButtonSlice.getInitialState().transferEntityType
     );
   });
 });

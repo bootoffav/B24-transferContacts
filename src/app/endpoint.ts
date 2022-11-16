@@ -214,7 +214,7 @@ async function changePosition(id: Contact["ID"], position = "test") {
 
 async function* transferEntity(
   differentResponsibles: Transfer,
-  transferType: RootState["transferButton"]["transferType"]
+  transferType: RootState["transferButton"]["transferEntityType"]
 ) {
   // TO-DO: apply types
   const convertedTransferTypes =

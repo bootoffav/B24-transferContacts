@@ -1,9 +1,9 @@
 import { Transfer } from "types";
-import { allTransferTypes } from "./TransferButton/TransferButtonSlice";
+import { allTransferEntityTypes } from "./TransferButton/TransferButtonSlice";
 
 function differentResponsiblesAmount(
   differentResponsibles: Transfer,
-  transferType?: typeof allTransferTypes[number]
+  transferType?: typeof allTransferEntityTypes[number]
 ) {
   let amount = 0;
 

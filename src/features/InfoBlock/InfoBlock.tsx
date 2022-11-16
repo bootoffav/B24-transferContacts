@@ -5,23 +5,16 @@ import { setStage, Stage } from "../../app/commonSlice";
 import { setContactsNoCountries } from "../../app/companySlice";
 import TransferButton from "features/TransferButton/TransferButton";
 import { differentResponsiblesAmount } from "features/helpers";
+import Transferring from "features/Transferring/Transferring";
 
 export default function InfoBlock() {
-  const {
-    companies,
-    differentResponsibles,
-    transferredAmount,
-    noCountry,
-    stage,
-  } = useAppSelector(({ common, company }) => ({
-    companies: company.companies,
-    differentResponsibles: company.differentResponsibles,
-    noCountry: company.contactsNoCountries,
-    transferredAmount: common.transferredAmount,
-    stage: common.stage,
-  }));
-  const { transferType } = useAppSelector(
-    ({ transferButton }) => transferButton
+  const { companies, differentResponsibles, noCountry, stage } = useAppSelector(
+    ({ common, company }) => ({
+      companies: company.companies,
+      differentResponsibles: company.differentResponsibles,
+      noCountry: company.contactsNoCountries,
+      stage: common.stage,
+    })
   );
 
   const dispatch = useAppDispatch();
@@ -69,6 +62,7 @@ export default function InfoBlock() {
             <button
               className="button ml-2 is-success is-small is-light"
               onClick={async () => {
+                dispatch(setStage(Stage.transferring));
                 await transferCountry(noCountry);
                 dispatch(setStage(Stage.transferred));
                 dispatch(setContactsNoCountries([]));
@@ -89,18 +83,7 @@ export default function InfoBlock() {
       );
       break;
     case Stage.transferring:
-      output = (
-        <>
-          <span className="p-2">
-            Transferring {transferredAmount} of{" "}
-            {differentResponsiblesAmount(differentResponsibles, transferType)}{" "}
-            {transferType === "all" ? "entities" : transferType} to responsibles
-            of their companies.
-            {}
-          </span>
-          <ClipLoader loading={true} />
-        </>
-      );
+      output = <Transferring />;
       break;
     case Stage.transferred:
       output = (

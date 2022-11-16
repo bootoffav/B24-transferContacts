@@ -2,19 +2,25 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage, setTransferredAmount } from "app/commonSlice";
 import { transferEntity } from "app/endpoint";
 import { differentResponsiblesAmount } from "features/helpers";
-import { setTransferType, allTransferTypes } from "./TransferButtonSlice";
+import {
+  setTransferEntityType,
+  allTransferEntityTypes,
+} from "./TransferButtonSlice";
 
 export default function TransferButton() {
   const dispatch = useAppDispatch();
   const { differentResponsibles } = useAppSelector(({ company }) => company);
-  const { transferType } = useAppSelector(
+  const { transferEntityType } = useAppSelector(
     ({ transferButton }) => transferButton
   );
 
   const handler = async () => {
     dispatch(setStage(Stage.transferring));
     // eslint-disable-next-line
-    for await (let _ of transferEntity(differentResponsibles, transferType)) {
+    for await (let _ of transferEntity(
+      differentResponsibles,
+      transferEntityType
+    )) {
       dispatch(setTransferredAmount(1));
     }
     dispatch(setStage(Stage.transferred));
@@ -24,7 +30,9 @@ export default function TransferButton() {
   const handleSelectChange = ({
     currentTarget: { value },
   }: React.SyntheticEvent<HTMLSelectElement>) => {
-    dispatch(setTransferType(value as typeof allTransferTypes[number]));
+    dispatch(
+      setTransferEntityType(value as typeof allTransferEntityTypes[number])
+    );
   };
 
   return differentResponsiblesAmount(differentResponsibles) ? (
@@ -33,11 +41,15 @@ export default function TransferButton() {
         <div className="select is-small">
           <select
             name="transferType"
-            defaultValue={transferType}
+            defaultValue={transferEntityType}
             onChange={handleSelectChange}
           >
-            {allTransferTypes.map((type) => (
-              <option key={type} value={type} selected={type === transferType}>
+            {allTransferEntityTypes.map((type) => (
+              <option
+                key={type}
+                value={type}
+                selected={type === transferEntityType}
+              >
                 process {type}
               </option>
             ))}
