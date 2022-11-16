@@ -51,5 +51,9 @@
     "@types/lodash": "^4.14.182",
     "@types/react-redux": "^7.1.7",
     "@types/react-table": "^7.7.12"
+  },
+  "volta": {
+    "node": "18.12.1",
+    "yarn": "3.3.0"
   }
 }
