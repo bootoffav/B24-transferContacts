@@ -5,16 +5,14 @@ const sliceName = "transferButton";
 const resetState = createAction(`${sliceName}/reset`);
 
 const allTransferEntityTypes = ["contacts", "leads", "deals", "all"] as const;
-// const transferType: "entity" | "country" = "entity" as const;
 
 interface TransferButtonState {
   transferEntityType: typeof allTransferEntityTypes[number];
-  transferType: "entity" | "country";
+  transferType?: "responsible" | "country";
 }
 
 const initialState: TransferButtonState = {
   transferEntityType: "all",
-  transferType: "entity",
 };
 
 const transferButtonSlice = createSlice({
@@ -29,12 +27,19 @@ const transferButtonSlice = createSlice({
         state.transferEntityType = payload;
       }
     },
+    setTransferType: (
+      state,
+      { payload }: PayloadAction<TransferButtonState["transferType"]>
+    ) => {
+      state.transferType = payload;
+    },
   },
   extraReducers: {
     [resetState.toString()]: () => ({ ...initialState }),
   },
 });
 
-export const { setTransferEntityType } = transferButtonSlice.actions;
+export const { setTransferEntityType, setTransferType } =
+  transferButtonSlice.actions;
 export { allTransferEntityTypes, resetState };
 export default transferButtonSlice;

@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 import { store } from "../../app/store";
 import transferButtonSlice, {
   setTransferEntityType,
+  setTransferType,
   resetState,
 } from "./TransferButtonSlice";
 
@@ -11,8 +12,7 @@ describe("check TransferButtonSlice of redux store", function () {
       transferButtonSlice.getInitialState();
     expect(transferEntityType).toBeDefined();
     expect(transferEntityType).toBe("all");
-    expect(transferType).toBeDefined();
-    expect(transferType).toBe("entity");
+    expect(transferType).toBeUndefined();
   });
 
   test("state is properly reset", function () {
@@ -24,7 +24,7 @@ describe("check TransferButtonSlice of redux store", function () {
   });
 });
 
-describe("check transferEntityType field behaviour", function () {
+describe("check transferEntityType behaviour", function () {
   test("checks correct transferEntityTypes can be set", function () {
     store.dispatch(resetState());
 
@@ -61,5 +61,14 @@ describe("check transferEntityType field behaviour", function () {
     expect(store.getState().transferButton.transferEntityType).toBe(
       transferButtonSlice.getInitialState().transferEntityType
     );
+  });
+});
+
+describe("check transferType manipulations", function () {
+  test("transferType proper values can be set", function () {
+    store.dispatch(setTransferType("responsible"));
+    expect(store.getState().transferButton.transferType).toBe("responsible");
+    store.dispatch(setTransferType("country"));
+    expect(store.getState().transferButton.transferType).toBe("country");
   });
 });
