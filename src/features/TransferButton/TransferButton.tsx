@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage, setTransferredAmount } from "app/commonSlice";
 import { transferEntity } from "app/endpoint";
-import { differentResponsiblesAmount } from "features/helpers";
+import { differentResponsiblesAmount } from "app/helpers";
 import {
   setTransferEntityType,
   allTransferEntityTypes,

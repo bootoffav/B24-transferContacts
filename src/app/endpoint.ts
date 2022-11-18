@@ -253,23 +253,31 @@ async function* transferEntity(
   yield { done: true };
 }
 
-async function transferCountry(noCountry: TransferCountry) {
+async function* transferCountry(noCountry: TransferCountry) {
   for (const countryId in noCountry) {
     for (const contactId of noCountry[countryId]) {
-      await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
-        method: "POST",
-        body: stringify({
-          id: contactId,
-          fields: {
-            [CONTACT_COUNTRY_FIELD]: countryId,
-          },
-          params: { REGISTER_SONET_EVENT: "Y" },
-        }),
-      })
-        .then((r) => r.json())
-        .catch(console.log);
+      try {
+        const res = await fetch(
+          `${endpoint}${userId}/${webhookToken}/crm.contact.update`,
+          {
+            method: "POST",
+            body: stringify({
+              id: contactId,
+              fields: {
+                [CONTACT_COUNTRY_FIELD]: countryId,
+              },
+              params: { REGISTER_SONET_EVENT: "Y" },
+            }),
+          }
+        );
+        await res.json();
+        yield { done: false };
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
+  yield { done: true };
 }
 
 const fetchDepartments = createAsyncThunk(

@@ -1,5 +1,5 @@
 import { useAppSelector } from "app/hooks";
-import { differentResponsiblesAmount } from "features/helpers";
+import { differentResponsiblesAmount } from "app/helpers";
 import ClipLoader from "react-spinners/ClipLoader";
 
 export default function Transferring() {

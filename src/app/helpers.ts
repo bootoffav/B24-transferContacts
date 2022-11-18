@@ -1,5 +1,6 @@
-import type { User, Country } from "types";
+import type { User, Country, Transfer, TransferCountry } from "types";
 import { store } from "app/store";
+import { allTransferEntityTypes } from "features/TransferButton/TransferButtonSlice";
 
 function getEntityTitle(): string {
   const { common } = store.getState();
@@ -25,4 +26,34 @@ function getEntityTitle(): string {
   }
 }
 
-export { getEntityTitle };
+function differentResponsiblesAmount(
+  differentResponsibles: Transfer,
+  transferType?: typeof allTransferEntityTypes[number]
+) {
+  let amount = 0;
+
+  switch (transferType) {
+    case "all":
+    case undefined:
+      for (const responsible in differentResponsibles) {
+        amount = Object.values(differentResponsibles[responsible]).reduce(
+          (acc, set) => set.length + acc,
+          0
+        );
+      }
+      break;
+    default:
+      for (const responsible in differentResponsibles) {
+        amount +=
+          // @ts-ignore
+          differentResponsibles[responsible][transferType.toUpperCase()].length;
+      }
+  }
+  return amount;
+}
+
+function noCountriesAmount(noCountry: TransferCountry) {
+  return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
+}
+
+export { getEntityTitle, differentResponsiblesAmount, noCountriesAmount };

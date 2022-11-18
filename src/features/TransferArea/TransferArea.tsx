@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { transferCountry } from "../../app/endpoint";
-import { setStage, Stage } from "../../app/commonSlice";
+import { setStage, Stage, setTransferredAmount } from "../../app/commonSlice";
 import { setContactsNoCountries } from "../../app/companySlice";
 import TransferButton from "features/TransferButton/TransferButton";
-import { differentResponsiblesAmount } from "features/helpers";
+import { differentResponsiblesAmount, noCountriesAmount } from "app/helpers";
 
 export default function TransferArea() {
   const dispatch = useAppDispatch();
@@ -15,12 +15,24 @@ export default function TransferArea() {
     })
   );
 
-  function noCountriesAmount() {
-    return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
+  async function transferCountryButtonHandler() {
+    dispatch(setStage(Stage.transferring));
+    dispatch(setTransferredAmount(0));
+    const transferCountryIter = transferCountry(noCountry);
+
+    while (true) {
+      const { done } = await transferCountryIter.next();
+      if (done) break;
+      dispatch(setTransferredAmount(1));
+    }
+
+    dispatch(setStage(Stage.transferred));
+    dispatch(setContactsNoCountries([]));
   }
 
   return (
     <div className="is-flex is-justify-content-space-around">
+      {/* block 1 */}
       <div>
         <p>
           Found {companies.length} companies,{" "}
@@ -29,18 +41,16 @@ export default function TransferArea() {
         </p>
         <TransferButton />
       </div>
+
+      {/* block 2 */}
       <div>
         <p>
-          {noCountriesAmount()} contacts have not set up its country or set NONE
+          {noCountriesAmount(noCountry)} contacts have not set up its country or
+          set NONE
         </p>
         <button
           className="button ml-2 is-success is-small is-light"
-          onClick={async () => {
-            dispatch(setStage(Stage.transferring));
-            await transferCountry(noCountry);
-            dispatch(setStage(Stage.transferred));
-            dispatch(setContactsNoCountries([]));
-          }}
+          onClick={transferCountryButtonHandler}
         >
           APPLY COMPANY COUNTRY TO THEM
         </button>
