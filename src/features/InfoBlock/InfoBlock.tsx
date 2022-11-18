@@ -1,11 +1,8 @@
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import ClipLoader from "react-spinners/ClipLoader";
-import { transferCountry } from "../../app/endpoint";
-import { setStage, Stage } from "../../app/commonSlice";
-import { setContactsNoCountries } from "../../app/companySlice";
-import TransferButton from "features/TransferButton/TransferButton";
-import { differentResponsiblesAmount } from "features/helpers";
+import { Stage } from "../../app/commonSlice";
 import Transferring from "features/Transferring/Transferring";
+import TransferArea from "features/TransferArea/TransferArea";
 
 export default function InfoBlock() {
   const { companies, differentResponsibles, noCountry, stage } = useAppSelector(
@@ -16,12 +13,6 @@ export default function InfoBlock() {
       stage: common.stage,
     })
   );
-
-  const dispatch = useAppDispatch();
-
-  function noCountriesAmount() {
-    return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
-  }
 
   let output: string | JSX.Element = "";
 
@@ -44,35 +35,7 @@ export default function InfoBlock() {
       );
       break;
     case Stage.scanFinished:
-      output = (
-        <div className="is-flex is-justify-content-space-around">
-          <div>
-            <p>
-              Found {companies.length} companies,{" "}
-              {differentResponsiblesAmount(differentResponsibles)} diff.
-              responsibles for contacts, leads & deals
-            </p>
-            <TransferButton />
-          </div>
-          <div>
-            <p>
-              {noCountriesAmount()} contacts have not set up its country or set
-              NONE
-            </p>
-            <button
-              className="button ml-2 is-success is-small is-light"
-              onClick={async () => {
-                dispatch(setStage(Stage.transferring));
-                await transferCountry(noCountry);
-                dispatch(setStage(Stage.transferred));
-                dispatch(setContactsNoCountries([]));
-              }}
-            >
-              APPLY COMPANY COUNTRY TO THEM
-            </button>
-          </div>
-        </div>
-      );
+      output = <TransferArea />;
       break;
     case Stage.linkedInOnlyScanFinished:
       output = "LinkedIn list ready";
