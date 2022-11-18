@@ -226,26 +226,31 @@ async function* transferEntity(
     for (const entityType of convertedTransferTypes) {
       // @ts-ignore
       for (const entityId of differentResponsibles[responsibleId][entityType]) {
-        yield await fetch(
-          `${endpoint}${userId}/${webhookToken}/crm.${entityType
-            .toLowerCase()
-            .slice(0, -1)}.update`,
-          {
-            method: "POST",
-            body: stringify({
-              id: entityId,
-              fields: {
-                ASSIGNED_BY_ID: responsibleId,
-              },
-              params: { REGISTER_SONET_EVENT: "Y" },
-            }),
-          }
-        )
-          .then((r) => r.json())
-          .catch(console.log);
+        try {
+          const res = await fetch(
+            `${endpoint}${userId}/${webhookToken}/crm.${entityType
+              .toLowerCase()
+              .slice(0, -1)}.update`,
+            {
+              method: "POST",
+              body: stringify({
+                id: entityId,
+                fields: {
+                  ASSIGNED_BY_ID: responsibleId,
+                },
+                params: { REGISTER_SONET_EVENT: "Y" },
+              }),
+            }
+          );
+          await res.json();
+          yield { done: false };
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
   }
+  yield { done: true };
 }
 
 async function transferCountry(noCountry: TransferCountry) {
