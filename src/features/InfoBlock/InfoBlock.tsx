@@ -5,14 +5,9 @@ import Transferring from "features/Transferring/Transferring";
 import TransferArea from "features/TransferArea/TransferArea";
 
 export default function InfoBlock() {
-  const { companies, differentResponsibles, noCountry, stage } = useAppSelector(
-    ({ common, company }) => ({
-      companies: company.companies,
-      differentResponsibles: company.differentResponsibles,
-      noCountry: company.contactsNoCountries,
-      stage: common.stage,
-    })
-  );
+  const { stage } = useAppSelector(({ common }) => ({
+    stage: common.stage,
+  }));
 
   let output: string | JSX.Element = "";
 
