@@ -16,17 +16,13 @@ export default function TransferButton() {
 
   const handler = async () => {
     dispatch(setStage(Stage.transferring));
-
-    const transferEntityIter = transferEntity(
+    // eslint-disable-next-line
+    for await (let _ of transferEntity(
       differentResponsibles,
       transferEntityType
-    );
-    while (true) {
-      let { done } = await transferEntityIter.next();
-      if (done) break;
+    )) {
       dispatch(setTransferredAmount(1));
     }
-
     dispatch(setStage(Stage.transferred));
     dispatch(setTransferredAmount(0));
   };

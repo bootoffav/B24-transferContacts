@@ -226,58 +226,45 @@ async function* transferEntity(
     for (const entityType of convertedTransferTypes) {
       // @ts-ignore
       for (const entityId of differentResponsibles[responsibleId][entityType]) {
-        try {
-          const res = await fetch(
-            `${endpoint}${userId}/${webhookToken}/crm.${entityType
-              .toLowerCase()
-              .slice(0, -1)}.update`,
-            {
-              method: "POST",
-              body: stringify({
-                id: entityId,
-                fields: {
-                  ASSIGNED_BY_ID: responsibleId,
-                },
-                params: { REGISTER_SONET_EVENT: "Y" },
-              }),
-            }
-          );
-          await res.json();
-          yield { done: false };
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    }
-  }
-  yield { done: true };
-}
-
-async function* transferCountry(noCountry: TransferCountry) {
-  for (const countryId in noCountry) {
-    for (const contactId of noCountry[countryId]) {
-      try {
-        const res = await fetch(
-          `${endpoint}${userId}/${webhookToken}/crm.contact.update`,
+        yield await fetch(
+          `${endpoint}${userId}/${webhookToken}/crm.${entityType
+            .toLowerCase()
+            .slice(0, -1)}.update`,
           {
             method: "POST",
             body: stringify({
-              id: contactId,
+              id: entityId,
               fields: {
-                [CONTACT_COUNTRY_FIELD]: countryId,
+                ASSIGNED_BY_ID: responsibleId,
               },
               params: { REGISTER_SONET_EVENT: "Y" },
             }),
           }
-        );
-        await res.json();
-        yield { done: false };
-      } catch (e) {
-        console.log(e);
+        )
+          .then((r) => r.json())
+          .catch(console.log);
       }
     }
   }
-  yield { done: true };
+}
+
+async function transferCountry(noCountry: TransferCountry) {
+  for (const countryId in noCountry) {
+    for (const contactId of noCountry[countryId]) {
+      await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
+        method: "POST",
+        body: stringify({
+          id: contactId,
+          fields: {
+            [CONTACT_COUNTRY_FIELD]: countryId,
+          },
+          params: { REGISTER_SONET_EVENT: "Y" },
+        }),
+      })
+        .then((r) => r.json())
+        .catch(console.log);
+    }
+  }
 }
 
 const fetchDepartments = createAsyncThunk(

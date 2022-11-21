@@ -1,4 +1,4 @@
-import type { User, Country, Transfer, TransferCountry } from "types";
+import type { User, Country, Transfer } from "types";
 import { store } from "app/store";
 import { allTransferEntityTypes } from "features/TransferButton/TransferButtonSlice";
 
@@ -52,8 +52,4 @@ function differentResponsiblesAmount(
   return amount;
 }
 
-function noCountriesAmount(noCountry: TransferCountry) {
-  return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
-}
-
-export { getEntityTitle, differentResponsiblesAmount, noCountriesAmount };
+export { getEntityTitle, differentResponsiblesAmount };
