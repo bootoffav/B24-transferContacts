@@ -1,6 +1,9 @@
-import type { User, Country, Transfer } from "types";
+import type { User, Country, Transfer, TransferCountry } from "types";
 import { store } from "app/store";
-import { allTransferEntityTypes } from "features/TransferButton/TransferButtonSlice";
+import {
+  allTransferEntityTypes,
+  TransferButtonState,
+} from "features/TransferButton/TransferButtonSlice";
 
 function getEntityTitle(): string {
   const { common } = store.getState();
@@ -26,30 +29,37 @@ function getEntityTitle(): string {
   }
 }
 
-function differentResponsiblesAmount(
-  differentResponsibles: Transfer,
-  transferType?: typeof allTransferEntityTypes[number]
+function getAmountToTransfer(
+  transferDO: Transfer | TransferCountry,
+  transferType: TransferButtonState["transferType"] & string,
+  transferEntityType?: typeof allTransferEntityTypes[number]
 ) {
   let amount = 0;
 
-  switch (transferType) {
-    case "all":
-    case undefined:
-      for (const responsible in differentResponsibles) {
-        amount = Object.values(differentResponsibles[responsible]).reduce(
-          (acc, set) => set.length + acc,
-          0
-        );
-      }
-      break;
-    default:
-      for (const responsible in differentResponsibles) {
-        amount +=
-          // @ts-ignore
-          differentResponsibles[responsible][transferType.toUpperCase()].length;
-      }
+  if (transferType === "country") {
+    return Object.values(transferDO).reduce((acc, set) => acc + set.length, 0);
+  }
+
+  if (transferType === "responsible") {
+    switch (transferEntityType) {
+      case "all":
+      case undefined:
+        for (const responsible in transferDO) {
+          amount = Object.values(transferDO[responsible]).reduce(
+            (acc, set) => set.length + acc,
+            0
+          );
+        }
+        break;
+      default:
+        for (const responsible in transferDO) {
+          amount +=
+            // @ts-ignore
+            transferDO[responsible][transferEntityType.toUpperCase()].length;
+        }
+    }
   }
   return amount;
 }
 
-export { getEntityTitle, differentResponsiblesAmount };
+export { getEntityTitle, getAmountToTransfer };

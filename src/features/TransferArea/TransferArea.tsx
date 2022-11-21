@@ -1,9 +1,10 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { transferCountry } from "../../app/endpoint";
-import { setStage, Stage } from "../../app/commonSlice";
+import { setStage, setTransferredAmount, Stage } from "../../app/commonSlice";
 import { setContactsNoCountries } from "../../app/companySlice";
 import TransferButton from "features/TransferButton/TransferButton";
-import { differentResponsiblesAmount } from "app/helpers";
+import { getAmountToTransfer } from "app/helpers";
+import { setTransferType } from "features/TransferButton/TransferButtonSlice";
 
 export default function TransferArea() {
   const dispatch = useAppDispatch();
@@ -24,7 +25,7 @@ export default function TransferArea() {
       <div>
         <p>
           Found {companies.length} companies,{" "}
-          {differentResponsiblesAmount(differentResponsibles)} diff.
+          {getAmountToTransfer(differentResponsibles, "responsible")} diff.
           responsibles for contacts, leads & deals
         </p>
         <TransferButton />
@@ -37,8 +38,14 @@ export default function TransferArea() {
           className="button ml-2 is-success is-small is-light"
           onClick={async () => {
             dispatch(setStage(Stage.transferring));
-            await transferCountry(noCountry);
+            dispatch(setTransferType("country"));
+            dispatch(setTransferredAmount(0));
+            // eslint-disable-next-line
+            for await (let _ of transferCountry(noCountry)) {
+              dispatch(setTransferredAmount(1));
+            }
             dispatch(setStage(Stage.transferred));
+            dispatch(setTransferredAmount(0));
             dispatch(setContactsNoCountries([]));
           }}
         >

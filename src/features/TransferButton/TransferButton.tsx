@@ -1,10 +1,11 @@
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setStage, Stage, setTransferredAmount } from "app/commonSlice";
 import { transferEntity } from "app/endpoint";
-import { differentResponsiblesAmount } from "app/helpers";
+import { getAmountToTransfer } from "app/helpers";
 import {
   setTransferEntityType,
   allTransferEntityTypes,
+  setTransferType,
 } from "./TransferButtonSlice";
 
 export default function TransferButton() {
@@ -16,6 +17,8 @@ export default function TransferButton() {
 
   const handler = async () => {
     dispatch(setStage(Stage.transferring));
+    dispatch(setTransferType("responsible"));
+    dispatch(setTransferredAmount(0));
     // eslint-disable-next-line
     for await (let _ of transferEntity(
       differentResponsibles,
@@ -35,7 +38,7 @@ export default function TransferButton() {
     );
   };
 
-  return differentResponsiblesAmount(differentResponsibles) ? (
+  return getAmountToTransfer(differentResponsibles, "responsible") ? (
     <div className="is-flex is-justify-content-center field has-addons">
       <div className="control">
         <div className="select is-small">

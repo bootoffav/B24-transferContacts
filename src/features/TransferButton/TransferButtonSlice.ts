@@ -6,7 +6,7 @@ const resetState = createAction(`${sliceName}/reset`);
 
 const allTransferEntityTypes = ["contacts", "leads", "deals", "all"] as const;
 
-interface TransferButtonState {
+export interface TransferButtonState {
   transferEntityType: typeof allTransferEntityTypes[number];
   transferType?: "responsible" | "country";
 }

@@ -248,7 +248,7 @@ async function* transferEntity(
   }
 }
 
-async function transferCountry(noCountry: TransferCountry) {
+async function* transferCountry(noCountry: TransferCountry) {
   for (const countryId in noCountry) {
     for (const contactId of noCountry[countryId]) {
       await fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
@@ -263,6 +263,7 @@ async function transferCountry(noCountry: TransferCountry) {
       })
         .then((r) => r.json())
         .catch(console.log);
+      yield;
     }
   }
 }
