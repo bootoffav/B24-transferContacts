@@ -17,6 +17,8 @@ import { companySelector } from "features/List/CompanySelector";
 import { getEntityTitle } from "app/helpers";
 import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
 import ProgressNotifier from "features/ProgressNotifier/ProgressNotifier";
+import Options from "features/Options/Options";
+import { includeCheckboxes } from "features/Options/OptionsSlice";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -58,6 +60,13 @@ export default function App() {
         </div>
         <div className="column is-1 has-text-centered">
           <LinkedInOnly />
+        </div>
+        <div className="column is-1 has-text-centered">
+          {includeCheckboxes.map((type) => (
+            <div>
+              <Options type={type} />
+            </div>
+          ))}
         </div>
         <div className="column is-1">
           <GetCompanies />
