@@ -38,7 +38,7 @@ describe("loads and check all options in place", function () {
     await waitFor(() => store.dispatch(setSelectType("departments")));
     const options = screen.getAllByRole("option");
     expect(options.map((opt) => opt.innerHTML.trim())).toEqual(
-      expect.arrayContaining(["IT department", "XM Textiles"])
+      expect.arrayContaining(["IT", "XM Textiles"])
     );
   });
 
