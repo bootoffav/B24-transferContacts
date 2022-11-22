@@ -63,7 +63,7 @@ export default function App() {
         </div>
         <div className="column is-1 has-text-centered">
           {includeCheckboxes.map((type) => (
-            <div>
+            <div key={type}>
               <Options type={type} />
             </div>
           ))}
