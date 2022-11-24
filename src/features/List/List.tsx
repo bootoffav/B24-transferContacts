@@ -12,9 +12,6 @@ import { emailCell } from "app/CONSTANTS";
 
 const List = () => {
   const companies = useAppSelector(companySelector);
-  const { includeDeals, includeLeads } = useAppSelector(
-    ({ options }) => options
-  );
 
   useEffect(() => {
     const uls = document.getElementsByClassName(emailCell);
@@ -42,7 +39,7 @@ const List = () => {
   const columns = useMemo(
     () => formColumns(dispatch),
     // eslint-disable-next-line
-    [dispatch, includeDeals, includeLeads]
+    [dispatch, companies]
   );
 
   const pageSize = 20;
