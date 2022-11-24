@@ -1,6 +1,11 @@
 import { setChosenId, setSelectType } from "app/commonSlice";
+import { setCheckboxOption } from "features/Options/OptionsSlice";
 import { fetchCountries, fetchDepartments, fetchUsers } from "app/endpoint";
-import { getEntityTitle, getAmountToTransfer } from "app/helpers";
+import {
+  getEntityTitle,
+  getAmountToTransfer,
+  getOptionalEntitiesToFetch,
+} from "app/helpers";
 import { store } from "../../app/store";
 
 jest.setTimeout(10000);
@@ -81,5 +86,33 @@ describe("check getAmountToTransfer", function () {
     expect(
       getAmountToTransfer(differentResponsibles, "responsible", "leads")
     ).toBe(2);
+  });
+});
+
+describe("check getEntities function", function () {
+  test("gets correct set of entities to fetch no modification in store", function () {
+    expect(getOptionalEntitiesToFetch().length).toBe(2);
+    expect(getOptionalEntitiesToFetch()).toEqual(
+      expect.arrayContaining(["deal", "lead"])
+    );
+  });
+
+  test("leads excluded", function () {
+    store.dispatch(
+      setCheckboxOption({ what: "includeLeads", newValue: false })
+    );
+    const entities = getOptionalEntitiesToFetch();
+    expect(entities.length).toBe(1);
+    expect(entities).toEqual(expect.arrayContaining(["deal"]));
+    expect(entities).not.toEqual(expect.arrayContaining(["lead"]));
+  });
+
+  test("deals excluded", function () {
+    store.dispatch(
+      setCheckboxOption({ what: "includeDeals", newValue: false })
+    );
+    const entities = getOptionalEntitiesToFetch();
+    expect(entities.length).toBe(0);
+    expect(entities).not.toEqual(expect.arrayContaining(["deal"]));
   });
 });

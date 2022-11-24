@@ -1,9 +1,16 @@
-import type { User, Country, Transfer, TransferCountry } from "types";
+import type {
+  User,
+  Country,
+  Transfer,
+  TransferCountry,
+  EntitiesToFetch,
+} from "types";
 import { store } from "app/store";
 import {
   allTransferEntityTypes,
   TransferButtonState,
 } from "features/TransferButton/TransferButtonSlice";
+import { OptionsState } from "features/Options/OptionsSlice";
 
 function getEntityTitle(): string {
   const { common } = store.getState();
@@ -62,4 +69,19 @@ function getAmountToTransfer(
   return amount;
 }
 
-export { getEntityTitle, getAmountToTransfer };
+function getOptionalEntitiesToFetch() {
+  const map = new Map<keyof OptionsState, EntitiesToFetch[number]>([
+    ["includeLeads", "lead"],
+    ["includeDeals", "deal"],
+  ]);
+
+  let entitiesToFetch: EntitiesToFetch = [];
+  for (const [prop, param] of map) {
+    entitiesToFetch = store.getState().options[prop]
+      ? [...entitiesToFetch, param]
+      : entitiesToFetch;
+  }
+  return entitiesToFetch;
+}
+
+export { getEntityTitle, getAmountToTransfer, getOptionalEntitiesToFetch };

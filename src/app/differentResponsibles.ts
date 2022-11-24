@@ -1,4 +1,5 @@
 import { Company, Transfer } from "../types";
+import { getOptionalEntitiesToFetch } from "./helpers";
 
 function getDifferentContactResponsibles(companies: Company[]): Transfer {
   const acc: Transfer = {};
@@ -9,7 +10,13 @@ function getDifferentContactResponsibles(companies: Company[]): Transfer {
       LEADS: [],
     };
 
-    (["CONTACTS", "DEALS", "LEADS"] as const).forEach((entitySet) => {
+    const entities = [
+      "CONTACTS",
+      ...getOptionalEntitiesToFetch().map(
+        (entity) => `${entity.toUpperCase()}S`
+      ),
+    ] as ("CONTACTS" | "DEALS" | "LEADS")[];
+    entities.forEach((entitySet) => {
       company[entitySet].forEach((entity) => {
         if (company.ASSIGNED_BY_ID !== entity.ASSIGNED_BY_ID) {
           acc[company.ASSIGNED_BY_ID][entitySet].push(entity.ID);

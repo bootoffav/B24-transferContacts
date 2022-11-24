@@ -1,4 +1,10 @@
-import type { Contact, Company, TableDataStructure, EntityType } from "types";
+import type {
+  Contact,
+  Company,
+  TableDataStructure,
+  EntityType,
+  EntitiesToFetch,
+} from "types";
 import type { Cell } from "react-table";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -14,6 +20,7 @@ import {
   CONTACT_COUNTRY_FIELD,
 } from "app/CONSTANTS";
 import { store } from "app/store";
+import { getOptionalEntitiesToFetch } from "app/helpers";
 
 function prepareContact({
   ID,
@@ -76,7 +83,6 @@ function contactCellRenderer(
   );
 }
 
-// const formData = (companies: Company[], users: User[]): TableDataStructure => {
 const formData = (companies: Company[]): TableDataStructure => {
   const { users } = store.getState().common;
   return companies.map((company) => {
@@ -94,79 +100,83 @@ const formData = (companies: Company[]): TableDataStructure => {
       contactPosition: company.CONTACTS.map(
         ({ [CONTACT_POSITION_FIELD]: position, ID }) => [position ?? "--", ID]
       ),
-      deal: company.DEALS.map(({ ID, TITLE }) => [TITLE, ID]),
-      lead: company.LEADS.map(({ ID, TITLE }) => [TITLE, ID]),
       responsibleForContact: company.CONTACTS.map((contact) =>
         getUserNameById(users, contact.ASSIGNED_BY_ID)
       ),
-      responsibleForDeal: company.DEALS.map((deal) =>
+      deal: company.DEALS?.map(({ ID, TITLE }) => [TITLE, ID]),
+      lead: company.LEADS?.map(({ ID, TITLE }) => [TITLE, ID]),
+      responsibleForDeal: company.DEALS?.map((deal) =>
         getUserNameById(users, deal.ASSIGNED_BY_ID)
       ),
-      responsibleForLead: company.LEADS.map((lead) =>
+      responsibleForLead: company.LEADS?.map((lead) =>
         getUserNameById(users, lead.ASSIGNED_BY_ID)
       ),
     };
   });
 };
 
-const formColumns = (dispatch: Dispatch) => [
-  {
-    Header: "#",
-  },
-  {
-    Header: "Company",
-    accessor: "company",
-    Cell: ({ value }: Cell) => formLink(value, "company"),
-  },
-  {
-    Header: "LinkedIn",
-    accessor: "linkedin",
-  },
-  {
-    Header: "Contact",
-    accessor: "contact",
-    Cell: (cell: Cell) => contactCellRenderer(cell, dispatch),
-  },
-  {
-    Header: "Contact emails",
-    accessor: "emails",
-    Cell: contactEmailCellRenderer,
-  },
-  {
-    Header: "Position",
-    accessor: "contactPosition",
-    Cell: getSubRows,
-  },
-  {
-    Header: "Resp. for company",
-    accessor: "responsibleForCompany",
-  },
-  {
-    Header: "Resp. for contact",
-    accessor: "responsibleForContact",
-    Cell: getSubRows,
-  },
-  {
-    Header: "Lead",
-    accessor: "lead",
-    Cell: getSubRows,
-  },
-  {
-    Header: "Resp. for lead",
-    accessor: "responsibleForLead",
-    Cell: getSubRows,
-  },
-  {
-    Header: "Deal",
-    accessor: "deal",
-    Cell: getSubRows,
-  },
-  {
-    Header: "Resp. for deal",
-    accessor: "responsibleForDeal",
-    Cell: getSubRows,
-  },
-];
+const formColumns = (dispatch: Dispatch) => {
+  function formOptionalColumnPair(oc: EntitiesToFetch[number]) {
+    const capitalizedOc = oc.charAt(0).toUpperCase() + oc.substring(1);
+
+    return [
+      {
+        Header: capitalizedOc,
+        accessor: oc,
+        Cell: getSubRows,
+      },
+      {
+        Header: `Resp. for ${oc}`,
+        accessor: `responsibleFor${capitalizedOc}`,
+        Cell: getSubRows,
+      },
+    ];
+  }
+
+  const baseColumns = [
+    {
+      Header: "#",
+    },
+    {
+      Header: "Company",
+      accessor: "company",
+      Cell: ({ value }: Cell) => formLink(value, "company"),
+    },
+    {
+      Header: "LinkedIn",
+      accessor: "linkedin",
+    },
+    {
+      Header: "Contact",
+      accessor: "contact",
+      Cell: (cell: Cell) => contactCellRenderer(cell, dispatch),
+    },
+    {
+      Header: "Contact emails",
+      accessor: "emails",
+      Cell: contactEmailCellRenderer,
+    },
+    {
+      Header: "Position",
+      accessor: "contactPosition",
+      Cell: getSubRows,
+    },
+    {
+      Header: "Resp. for company",
+      accessor: "responsibleForCompany",
+    },
+    {
+      Header: "Resp. for contact",
+      accessor: "responsibleForContact",
+      Cell: getSubRows,
+    },
+  ];
+
+  return getOptionalEntitiesToFetch().reduce(
+    (columns, oc) => [...columns, ...formOptionalColumnPair(oc)],
+    baseColumns
+  );
+};
 
 function getSubRows({
   value,

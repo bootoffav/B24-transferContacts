@@ -9,6 +9,7 @@ import {
   EntityType,
   TransferCountry,
   Departments,
+  EntitiesToFetch,
 } from "../types";
 import { CommonState } from "./commonSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -72,14 +73,14 @@ const fetchCompanies = async (
 
 async function batchFetch(
   companiesId: Company["ID"][],
-  entityToRequest: ("contact" | "deal" | "lead")[],
+  entityToFetch: (EntitiesToFetch[number] | "contact")[],
   headEntity: "company" | "contact" = "company"
 ): Promise<any> {
   function formRequestBody() {
     return companiesId.reduce((acc, id) => {
       return Object.assign(
         acc,
-        ...entityToRequest.map((entityType) => {
+        ...entityToFetch.map((entityType) => {
           return {
             [`${entityType}_${id}`]:
               `crm.${entityType}.list?` +

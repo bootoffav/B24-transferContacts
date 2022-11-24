@@ -88,11 +88,12 @@ export type TableDataStructure = {
   contact: [string, number, number][];
   emails: Contact["EMAILS"][];
   contactPosition: [string, number][];
-  deal: (string | number)[][];
-  lead: (string | number)[][];
+  deal?: (string | number)[][];
+  lead?: (string | number)[][];
   responsibleForContact: string[];
-  responsibleForDeal: string[];
-  responsibleForLead: string[];
+  responsibleForDeal?: string[];
+  responsibleForLead?: string[];
 }[];
 
+export type EntitiesToFetch = ("deal" | "lead")[];
 export type EntityType = "company" | "contact" | "deal" | "lead";

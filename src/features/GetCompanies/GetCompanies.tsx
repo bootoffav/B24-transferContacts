@@ -15,6 +15,7 @@ import { Company, Contact } from "../../types";
 import ControlButton from "./ControlButton";
 import { store } from "../../app/store";
 import { setPageIndex } from "features/List/listSlice";
+import { getOptionalEntitiesToFetch } from "app/helpers";
 
 export default function GetCompanies() {
   const dispatch = useAppDispatch();
@@ -59,6 +60,7 @@ export default function GetCompanies() {
       }
       dispatch(setStage(Stage.scanFinished));
     } catch (error) {
+      console.error(error);
       dispatch(setStage(Stage.stuck));
     }
   };
@@ -79,18 +81,20 @@ async function* getCompaniesWithRelatedEntities(
     // step to add DEALS that belong to contact, add them to company instead.
     const chunkOfCompaniesId = chunkOfCompanies.map(({ ID }) => ID);
 
-    const companiesContactsLeadsDeals: Company[] = await batchFetch(
+    const companiesContactsOptionalEntities: Company[] = await batchFetch(
       chunkOfCompaniesId,
-      ["contact", "deal", "lead"]
+      ["contact", ...getOptionalEntitiesToFetch()]
     );
 
-    const companiesWithContactsLeadsDeals = chunkOfCompanies.map((company) => ({
-      ...company,
-      ...companiesContactsLeadsDeals[company.ID],
-    }));
+    const companiesWithContactsOptionalEntities = chunkOfCompanies.map(
+      (company) => ({
+        ...company,
+        ...companiesContactsOptionalEntities[company.ID],
+      })
+    );
 
     for (const chunkOfCompanies of getChunkOfCompanies(
-      companiesWithContactsLeadsDeals
+      companiesWithContactsOptionalEntities
     )) {
       const companyContactsMap = new Map<Company["ID"], Contact["ID"][]>();
 
@@ -100,9 +104,10 @@ async function* getCompaniesWithRelatedEntities(
         contactsIDs.push(...contactIds);
         companyContactsMap.set(ID, contactIds);
       });
+
       const batchResult = await batchFetch(
         contactsIDs,
-        ["deal", "lead"],
+        getOptionalEntitiesToFetch(),
         "contact"
       );
       Object.entries(batchResult).forEach(function ([
@@ -121,20 +126,24 @@ async function* getCompaniesWithRelatedEntities(
           }
         }
         // prone to error
-        const idx = companiesWithContactsLeadsDeals.findIndex(
+        const idx = companiesWithContactsOptionalEntities.findIndex(
           ({ ID }) => ID === companyId
         );
-        companiesWithContactsLeadsDeals[idx].DEALS = unionBy(
-          [...companiesWithContactsLeadsDeals[idx].DEALS, ...DEALS],
-          ({ ID }) => ID
-        );
-        companiesWithContactsLeadsDeals[idx].LEADS = unionBy(
-          [...companiesWithContactsLeadsDeals[idx].LEADS, ...LEADS],
-          ({ ID }) => ID
-        );
+        if (DEALS) {
+          companiesWithContactsOptionalEntities[idx].DEALS = unionBy(
+            [...companiesWithContactsOptionalEntities[idx].DEALS, ...DEALS],
+            ({ ID }) => ID
+          );
+        }
+        if (LEADS) {
+          companiesWithContactsOptionalEntities[idx].LEADS = unionBy(
+            [...companiesWithContactsOptionalEntities[idx].LEADS, ...LEADS],
+            ({ ID }) => ID
+          );
+        }
       });
 
-      yield companiesWithContactsLeadsDeals;
+      yield companiesWithContactsOptionalEntities;
       if (store.getState().common.stage === Stage.cancelling) break;
     }
   }
