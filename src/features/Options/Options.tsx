@@ -1,11 +1,11 @@
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { setCheckboxOption, OptionsState } from "./OptionsSlice";
 
-interface Options {
+interface IOptions {
   type: keyof OptionsState & string;
 }
 
-export default function Options({ type }: Options) {
+export default function Options({ type }: IOptions) {
   const labels = new Map<keyof OptionsState & string, string>([
     ["includeDeals", "Include deals"],
     ["includeLeads", "Include leads"],
