@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
-import EntityTypeSelector from "./EntityTypeSelector";
-import "@testing-library/jest-dom";
+import EntityTypeSelector, {
+  OPTION_TEXT_MAP,
+  renderOptions,
+} from "./EntityTypeSelector";
 import { Provider } from "react-redux";
 import { store } from "../../app/store";
+import { selectType } from "app/commonSlice";
 
 test("loads and check all options in place", async () => {
   render(
@@ -11,8 +14,10 @@ test("loads and check all options in place", async () => {
     </Provider>
   );
 
-  const OPTION_TEXT = ["Manager", "Country", "Departments"].sort();
-  const options = screen.getAllByRole("option");
-  expect(options.length).toBe(OPTION_TEXT.length);
-  expect(options.map((option) => option.innerHTML).sort()).toEqual(OPTION_TEXT);
+  expect(screen.getAllByRole("option").length).toBe(selectType.length);
+
+  for (const type of selectType) {
+    const option = screen.getByTestId(type);
+    expect(option).toHaveTextContent(OPTION_TEXT_MAP.get(type)!);
+  }
 });

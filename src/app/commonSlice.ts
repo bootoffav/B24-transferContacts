@@ -126,5 +126,5 @@ export const {
   setContactIdForEmails,
   setLinkedInOnly,
 } = commonSlice.actions;
-export { Stage };
+export { Stage, selectType };
 export default commonSlice;
