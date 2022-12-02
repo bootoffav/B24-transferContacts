@@ -144,7 +144,7 @@ async function* getCompaniesWithRelatedEntities(
       });
 
       yield companiesWithContactsOptionalEntities;
-      if (store.getState().common.stage === Stage.cancelling) break;
+      if (store.getState().common.stage === Stage.cancelling) return;
     }
   }
 }

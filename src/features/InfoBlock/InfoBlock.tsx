@@ -21,9 +21,7 @@ export default function InfoBlock() {
       output = (
         <>
           <span className="p-2">
-            {stage === Stage.gettingData
-              ? "Getting data (updated every 20 companies)"
-              : "Cancelling"}
+            {stage === Stage.gettingData ? "Getting data" : "Cancelling"}
           </span>
           <ClipLoader loading={true} />
         </>
