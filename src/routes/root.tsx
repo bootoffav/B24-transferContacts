@@ -48,7 +48,7 @@ export default function Root() {
   return isAuthenticated ? (
     <div className="m-4">
       <header className="columns is-flex is-align-items-center is-justify-content-center">
-        <LinkSwitcher />
+        {stage === Stage.scanFinished && <LinkSwitcher />}
         <div className="column is-2">
           <span className="is-pulled-right">Choose:</span>
         </div>
