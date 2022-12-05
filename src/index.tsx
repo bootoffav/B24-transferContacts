@@ -1,9 +1,24 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
-import { store } from "./app/store";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Summary from "./features/Summary/Summary";
+import ErrorPage from "features/ErrorPage/ErrorPage";
+import { store } from "app/store";
+import Root from "./routes/Root";
 import { Provider } from "react-redux";
 import { Auth0Provider } from "@auth0/auth0-react";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "summary",
+    element: <Summary />,
+  },
+]);
 
 const root = createRoot(document.getElementById("root")!);
 root.render(
@@ -14,7 +29,7 @@ root.render(
       redirectUri={window.location.origin}
     >
       <Provider store={store}>
-        <App />
+        <RouterProvider router={router} />
       </Provider>
     </Auth0Provider>
   </React.StrictMode>

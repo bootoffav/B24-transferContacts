@@ -1,4 +1,4 @@
-import DepartmentSummary, { findCompaniesByUser } from "./DepartmentSummary";
+import DepartmentSummary, { findCompaniesByUser } from "./Summary";
 import { companies } from "tests/mocks/companies";
 
 describe("tests Department summary functionality", function () {

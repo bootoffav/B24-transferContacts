@@ -1,5 +1,5 @@
 import { setSelectType, setChosenId, selectType } from "app/commonSlice";
-import { useAppDispatch, useAppSelector } from "app/hooks";
+import { useAppDispatch } from "app/hooks";
 import { CommonState } from "app/commonSlice";
 
 const OPTION_TEXT_MAP = new Map([
@@ -9,7 +9,6 @@ const OPTION_TEXT_MAP = new Map([
 ]);
 
 export default function EntityTypeSelector() {
-  const { selectType } = useAppSelector(({ common }) => common);
   const dispatch = useAppDispatch();
 
   return (

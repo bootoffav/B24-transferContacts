@@ -6,7 +6,7 @@ function findCompaniesByUser(companies: Company[], userId: number) {
   return companies.filter(({ ASSIGNED_BY_ID }) => +ASSIGNED_BY_ID === userId);
 }
 
-export default function DepartmentSummary() {
+export default function Summary() {
   const { chosenId, users } = useAppSelector(({ common }) => common);
   const { companies } = useAppSelector(({ company }) => company);
 

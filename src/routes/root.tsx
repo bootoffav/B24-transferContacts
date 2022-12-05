@@ -7,7 +7,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
 import Export from "features/Export/Export";
-import "./styles.scss";
+import "../styles.scss";
 import { ClipLoader } from "react-spinners";
 import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
@@ -19,8 +19,9 @@ import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
 import ProgressNotifier from "features/ProgressNotifier/ProgressNotifier";
 import Options from "features/Options/Options";
 import { includeCheckboxes } from "features/Options/OptionsSlice";
+import { Link } from "react-router-dom";
 
-export default function App() {
+export default function Root() {
   const dispatch = useAppDispatch();
   const stage = useAppSelector(({ common }) => common.stage);
   const companies = useAppSelector(companySelector);
