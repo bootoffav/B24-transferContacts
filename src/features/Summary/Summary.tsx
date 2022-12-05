@@ -8,7 +8,9 @@ function findCompaniesByUser(companies: Company[], userId: number) {
 
 export default function Summary() {
   const { chosenId, users } = useAppSelector(({ common }) => common);
-  const { companies } = useAppSelector(({ company }) => company);
+  const { companies, differentResponsibles } = useAppSelector(
+    ({ company }) => company
+  );
 
   return (
     <div className="column is-half is-offset-one-quarter">
@@ -16,19 +18,26 @@ export default function Summary() {
         <thead>
           <tr>
             <th>
-              <abbr title="Responsible for company">Manager</abbr>
+              <abbr title="Responsible">Manager</abbr>
             </th>
             <th>Companies</th>
+            <th>diff. responsible for contacts</th>
+            <th>diff. responsible for leads</th>
+            <th>diff. responsible for deals</th>
           </tr>
         </thead>
         <tbody>
           {chosenId.map((userId) => {
             const user = getUserNameById(users, userId);
             const companiesOfUser = findCompaniesByUser(companies, userId);
+
             return (
               <tr key={userId}>
                 <th>{user}</th>
                 <td>{companiesOfUser.length}</td>
+                <td>{differentResponsibles[userId]?.CONTACTS.length}</td>
+                <td>{differentResponsibles[userId]?.LEADS.length}</td>
+                <td>{differentResponsibles[userId]?.DEALS.length}</td>
               </tr>
             );
           })}
