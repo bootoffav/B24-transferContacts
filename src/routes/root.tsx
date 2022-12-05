@@ -2,14 +2,11 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 import { Stage, setStage } from "app/commonSlice";
 import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
-import List from "features/List/List";
 import { useAuth0 } from "@auth0/auth0-react";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
-import Export from "features/Export/Export";
 import "../styles.scss";
 import { ClipLoader } from "react-spinners";
-import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
@@ -19,7 +16,8 @@ import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
 import ProgressNotifier from "features/ProgressNotifier/ProgressNotifier";
 import Options from "features/Options/Options";
 import { includeCheckboxes } from "features/Options/OptionsSlice";
-import { Link } from "react-router-dom";
+import { Outlet } from "react-router";
+import LinkSwitcher from "features/LinkSwitcher/LinkSwitcher";
 
 export default function Root() {
   const dispatch = useAppDispatch();
@@ -50,6 +48,7 @@ export default function Root() {
   return isAuthenticated ? (
     <div className="m-4">
       <header className="columns is-flex is-align-items-center is-justify-content-center">
+        <LinkSwitcher />
         <div className="column is-2">
           <span className="is-pulled-right">Choose:</span>
         </div>
@@ -75,20 +74,7 @@ export default function Root() {
         <ProgressNotifier />
       </header>
       <InfoBlock />
-      {stage === Stage.linkedInOnlyScanFinished}
-      {![Stage.linkedInOnlyScanFinished, Stage.initial].includes(stage) ? (
-        <>
-          <div className="columns">
-            <CompanyFilter />
-            <Export />
-          </div>
-          <div className="columns">
-            <List />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
+      <Outlet />
     </div>
   ) : (
     <>{loginWithRedirect()}</>

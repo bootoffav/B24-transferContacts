@@ -5,6 +5,7 @@ import Summary from "./features/Summary/Summary";
 import ErrorPage from "features/ErrorPage/ErrorPage";
 import { store } from "app/store";
 import Root from "./routes/Root";
+import Result from "./routes/Result";
 import { Provider } from "react-redux";
 import { Auth0Provider } from "@auth0/auth0-react";
 
@@ -13,10 +14,16 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: "summary",
-    element: <Summary />,
+    children: [
+      {
+        path: "/",
+        element: <Result />,
+      },
+      {
+        path: "summary",
+        element: <Summary />,
+      },
+    ],
   },
 ]);
 
