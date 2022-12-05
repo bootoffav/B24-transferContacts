@@ -1,15 +1,32 @@
+declare global {
+  var users: User[];
+  interface Window {
+    aborted?: boolean;
+  }
+}
+
+export interface Contact {
+  [CONTACT_POSITION_FIELD]: string;
+  [CONTACT_COUNTRY_FIELD]: number;
+  TITLE: string;
+  ASSIGNED_BY_ID: number;
+  ID: number;
+  NAME: string;
+  LAST_NAME: string;
+  EMAILS: {
+    ID: `${number}`;
+    VALUE_TYPE: "WORK" | "MAILING" | "OTHER" | "HOME";
+    VALUE: string;
+    TYPE_ID: "EMAIL";
+  }[];
+}
+
 import {
   COMPANY_COUNTRY_FIELD,
   CONTACT_COUNTRY_FIELD,
   CONTACT_POSITION_FIELD,
   LINKEDIN_ACCOUNT_FIELD,
-} from "./app/CONSTANTS";
-
-declare global {
-  interface Window {
-    aborted?: boolean;
-  }
-}
+} from "../app/CONSTANTS";
 
 export type Country = {
   value: string;
@@ -44,22 +61,6 @@ export interface Lead {
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;
-}
-
-export interface Contact {
-  [CONTACT_POSITION_FIELD]: string;
-  [CONTACT_COUNTRY_FIELD]: number;
-  TITLE: string;
-  ASSIGNED_BY_ID: number;
-  ID: number;
-  NAME: string;
-  LAST_NAME: string;
-  EMAILS: {
-    ID: `${number}`;
-    VALUE_TYPE: "WORK" | "MAILING" | "OTHER" | "HOME";
-    VALUE: string;
-    TYPE_ID: "EMAIL";
-  }[];
 }
 
 export interface Deal {

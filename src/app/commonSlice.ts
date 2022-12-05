@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Contact, Country, Departments, User } from "../types";
+import { Contact, Country, Departments, User } from "types";
 import { sort, splitActiveDismissed } from "../utils/users";
 import { fetchCountries, fetchDepartments, fetchUsers } from "./endpoint";
 
