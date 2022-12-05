@@ -1,5 +1,4 @@
 declare global {
-  var users: User[];
   interface Window {
     aborted?: boolean;
   }
