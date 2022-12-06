@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { setChosenId, setSelectType } from "app/commonSlice";
 import { setCheckboxOption } from "features/Options/OptionsSlice";
 import { fetchCountries, fetchDepartments, fetchUsers } from "app/endpoint";
@@ -7,6 +8,7 @@ import {
   getOptionalEntitiesToFetch,
 } from "app/helpers";
 import { store } from "../../app/store";
+import { differentResponsibles } from "tests/mocks/differentResponsibles";
 
 jest.setTimeout(10000);
 
@@ -46,47 +48,52 @@ jest.setTimeout(10000);
 // });
 
 describe("check getAmountToTransfer", function () {
-  test("correctly counts contacts has no countries", function () {
-    const contactsHasNoCountries1 = {
-      583: [27300],
-    };
-    expect(getAmountToTransfer(contactsHasNoCountries1, "country")).toBe(1);
+  // test("correctly counts contacts has no countries", function () {
+  //   const contactsHasNoCountries1 = {
+  //     583: [27300],
+  //   };
+  //   expect(getAmountToTransfer(contactsHasNoCountries1, "country")).toBe(1);
 
-    const contactsHasNoCountries2 = {
-      583: [27300, 11223, 40222, 45888, 10021],
-    };
-    expect(getAmountToTransfer(contactsHasNoCountries2, "country")).toBe(5);
+  //   const contactsHasNoCountries2 = {
+  //     583: [27300, 11223, 40222, 45888, 10021],
+  //   };
+  //   expect(getAmountToTransfer(contactsHasNoCountries2, "country")).toBe(5);
 
-    const contactsHasNoCountries3 = {
-      583: [],
-    };
-    expect(getAmountToTransfer(contactsHasNoCountries3, "country")).toBe(0);
+  //   const contactsHasNoCountries3 = {
+  //     583: [],
+  //   };
+  //   expect(getAmountToTransfer(contactsHasNoCountries3, "country")).toBe(0);
 
-    const contactsHasNoCountries4 = {};
-    expect(getAmountToTransfer(contactsHasNoCountries4, "country")).toBe(0);
-  });
-  test("correctly counts different responsibles", function () {
-    const differentResponsibles = {
-      5: {
-        CONTACTS: [32020],
-        DEALS: [3282],
-        LEADS: [92400, 107468],
-      },
-    };
-    expect(
-      getAmountToTransfer(differentResponsibles, "responsible", "contacts")
-    ).toBe(1);
+  //   const contactsHasNoCountries4 = {};
+  //   expect(getAmountToTransfer(contactsHasNoCountries4, "country")).toBe(0);
+  // });
+  describe("counts different respnsibles", function () {
+    test("counts different responbles for contacts", function () {
+      expect(
+        getAmountToTransfer(differentResponsibles, "responsible", "contacts")
+      ).toBe(120);
+    });
+
+    test("counts different responsibles for deals", function () {
+      expect(
+        getAmountToTransfer(differentResponsibles, "responsible", "deals")
+      ).toBe(13);
+    });
+
+    test("count different responsibles for leads", function () {
+      expect(
+        getAmountToTransfer(differentResponsibles, "responsible", "leads")
+      ).toBe(16);
+    });
+
+    xtest("count different responsibles for all", function () {});
     expect(
       getAmountToTransfer(differentResponsibles, "responsible", "all")
-    ).toBe(4);
-    expect(getAmountToTransfer(differentResponsibles, "responsible")).toBe(4);
-    expect(
-      getAmountToTransfer(differentResponsibles, "responsible", "deals")
-    ).toBe(1);
-    expect(
-      getAmountToTransfer(differentResponsibles, "responsible", "leads")
-    ).toBe(2);
+    ).toBe(149);
+    // expect(getAmountToTransfer(differentResponsibles, "responsible")).toBe(4);
   });
+
+  test("correctly counts different responsibles", function () {});
 });
 
 describe("check getEntities function", function () {
@@ -97,7 +104,7 @@ describe("check getEntities function", function () {
     );
   });
 
-  test("leads excluded", function () {
+  xtest("leads excluded", function () {
     store.dispatch(
       setCheckboxOption({ what: "includeLeads", newValue: false })
     );
@@ -107,7 +114,7 @@ describe("check getEntities function", function () {
     expect(entities).not.toEqual(expect.arrayContaining(["lead"]));
   });
 
-  test("deals excluded", function () {
+  xtest("deals excluded", function () {
     store.dispatch(
       setCheckboxOption({ what: "includeDeals", newValue: false })
     );

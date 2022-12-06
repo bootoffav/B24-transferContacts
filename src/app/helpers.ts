@@ -54,7 +54,7 @@ function getAmountToTransfer(
         for (const responsible in transferDO) {
           amount = Object.values(transferDO[responsible]).reduce(
             (acc, set) => set.length + acc,
-            0
+            amount
           );
         }
         break;
