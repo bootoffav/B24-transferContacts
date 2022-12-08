@@ -17,9 +17,7 @@ export default function Summary() {
       <table className="table is-fullwidth">
         <thead>
           <tr>
-            <th>
-              <abbr title="Responsible">Manager</abbr>
-            </th>
+            <th>Manager</th>
             <th>Companies</th>
             <th>diff. responsible for contacts</th>
             <th>diff. responsible for leads</th>

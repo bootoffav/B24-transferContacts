@@ -80,7 +80,7 @@ const List = () => {
   return (
     <div className="column is-fullwidth">
       <table
-        className="table is-bordered is-hoverable is-fullwidth"
+        className="table table-font-small is-bordered is-hoverable is-fullwidth"
         {...getTableProps()}
       >
         <thead>
