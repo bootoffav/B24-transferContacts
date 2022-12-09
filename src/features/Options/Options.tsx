@@ -1,3 +1,4 @@
+import { Stage } from "app/commonSlice";
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { setCheckboxOption, OptionsState } from "./OptionsSlice";
 
@@ -13,7 +14,17 @@ export default function Options({ type }: IOptions) {
 
   const dispatch = useAppDispatch();
   const checked = useAppSelector(({ options }) => options[type]);
-  const disabled = useAppSelector(({ common }) => common.linkedInOnly);
+  const disabled = useAppSelector(({ common }) => {
+    return (
+      common.linkedInOnly ||
+      ![
+        Stage.initial,
+        Stage.scanFinished,
+        Stage.stuck,
+        Stage.transferred,
+      ].includes(common.stage)
+    );
+  });
 
   return (
     <label

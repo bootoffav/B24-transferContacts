@@ -6,7 +6,13 @@ export default function LinkedInOnly() {
   const linkedInOnly = useAppSelector(({ common }) => common.linkedInOnly);
   const dispatch = useAppDispatch();
   const disabled = useAppSelector(
-    ({ common }) => common.stage === Stage.gettingData
+    ({ common: { stage } }) =>
+      ![
+        Stage.initial,
+        Stage.scanFinished,
+        Stage.stuck,
+        Stage.transferred,
+      ].includes(stage)
   );
 
   return (
