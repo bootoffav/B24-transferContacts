@@ -11,17 +11,20 @@ export default function Summary() {
   const { companies, differentResponsibles } = useAppSelector(
     ({ company }) => company
   );
+  const { includeDeals, includeLeads } = useAppSelector(
+    ({ options }) => options
+  );
 
   return (
     <div className="column is-half is-offset-one-quarter">
       <table className="table is-fullwidth">
-        <thead>
+        <thead role="thead">
           <tr>
             <th>Manager</th>
             <th>Companies</th>
             <th>diff. responsible for contacts</th>
-            <th>diff. responsible for leads</th>
-            <th>diff. responsible for deals</th>
+            {includeLeads && <th>diff. responsible for leads</th>}
+            {includeDeals && <th>diff. responsible for deals</th>}
           </tr>
         </thead>
         <tbody>
@@ -34,8 +37,12 @@ export default function Summary() {
                 <th>{user}</th>
                 <td>{companiesOfUser.length}</td>
                 <td>{differentResponsibles[userId]?.CONTACTS.length}</td>
-                <td>{differentResponsibles[userId]?.LEADS.length}</td>
-                <td>{differentResponsibles[userId]?.DEALS.length}</td>
+                {includeLeads && (
+                  <td>{differentResponsibles[userId]?.LEADS.length}</td>
+                )}
+                {includeDeals && (
+                  <td>{differentResponsibles[userId]?.DEALS.length}</td>
+                )}
               </tr>
             );
           })}
