@@ -18,7 +18,7 @@ export default function Summary() {
   return (
     <div className="column is-half is-offset-one-quarter">
       <table className="table is-fullwidth">
-        <thead role="thead">
+        <thead data-testid="thead">
           <tr>
             <th>Manager</th>
             <th>Companies</th>

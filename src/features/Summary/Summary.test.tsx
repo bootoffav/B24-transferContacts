@@ -22,7 +22,7 @@ describe("tests Department summary functionality", function () {
       );
       render(storeConnected(<Summary />));
 
-      expect(screen.getByRole("thead")).toHaveTextContent(
+      expect(screen.getByTestId("thead")).toHaveTextContent(
         "diff. responsible for leads"
       );
     });
@@ -33,7 +33,7 @@ describe("tests Department summary functionality", function () {
         setCheckboxOption({ what: "includeLeads", newValue: false })
       );
       render(storeConnected(<Summary />));
-      expect(screen.getByRole("thead")).not.toHaveTextContent(
+      expect(screen.getByTestId("thead")).not.toHaveTextContent(
         "diff. responsible for leads"
       );
     });
@@ -44,7 +44,7 @@ describe("tests Department summary functionality", function () {
         setCheckboxOption({ what: "includeDeals", newValue: true })
       );
       render(storeConnected(<Summary />));
-      expect(screen.getByRole("thead")).toHaveTextContent(
+      expect(screen.getByTestId("thead")).toHaveTextContent(
         "diff. responsible for deals"
       );
     });
@@ -55,7 +55,7 @@ describe("tests Department summary functionality", function () {
         setCheckboxOption({ what: "includeDeals", newValue: false })
       );
       render(storeConnected(<Summary />));
-      expect(screen.getByRole("thead")).not.toHaveTextContent(
+      expect(screen.getByTestId("thead")).not.toHaveTextContent(
         "diff. responsible for deals"
       );
     });
