@@ -2,11 +2,9 @@ import { useAppDispatch, useAppSelector } from "app/hooks";
 import { Stage, setStage } from "app/commonSlice";
 import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
-import { useAuth0 } from "@auth0/auth0-react";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
 import "../styles.scss";
-import { ClipLoader } from "react-spinners";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
@@ -24,8 +22,6 @@ export default function Root() {
   const stage = useAppSelector(({ common }) => common.stage);
   const companies = useAppSelector(companySelector);
 
-  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-
   useEffect(() => {
     if (stage === Stage.linkedInOnlyScanFinished) {
       const { filename, content } = generateExcelFileStructureLinkedInOnly(
@@ -37,15 +33,7 @@ export default function Root() {
     }
   }, [stage, companies, dispatch]);
 
-  if (isLoading) {
-    return (
-      <div className="centered is-flex is-justify-content-center">
-        <ClipLoader loading={true} size={300} />
-      </div>
-    );
-  }
-
-  return isAuthenticated ? (
+  return (
     <div className="m-4">
       <header className="columns is-flex is-align-items-center is-justify-content-center">
         {[Stage.scanFinished, Stage.cancelling, Stage.gettingData].includes(
@@ -78,7 +66,5 @@ export default function Root() {
       <InfoBlock />
       <Outlet />
     </div>
-  ) : (
-    <>{loginWithRedirect()}</>
   );
 }
