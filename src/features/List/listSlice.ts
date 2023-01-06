@@ -39,7 +39,8 @@ const listSlice = createSlice({
       state,
       { payload }: PayloadAction<ListSliceState["pageIndex"]>
     ) {
-      state.pageIndex += payload;
+      const result = state.pageIndex + payload;
+      state.pageIndex = result > 0 ? result : 0;
     },
   },
 });
