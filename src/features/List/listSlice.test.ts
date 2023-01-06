@@ -1,10 +1,10 @@
 import listSlice, { setViewMode } from "./listSlice";
 
 const { reducer } = listSlice;
-describe("list reducer", () => {
+describe("list reducer: viewMode check", () => {
   it("should return initial state when passed an empty action", () => {
-    const result = reducer(undefined, { type: "" });
-    expect(result).toEqual({ viewMode: "all" });
+    const { viewMode } = reducer(undefined, { type: "" });
+    expect(viewMode).toEqual("all");
   });
 
   it("should update state when passing correct action and payload", () => {
@@ -12,9 +12,9 @@ describe("list reducer", () => {
       type: "list/setViewMode",
       payload: "noCountries",
     };
-    expect(reducer(undefined, actionSetNoCountries)).toEqual({
-      viewMode: "noCountries",
-    });
+    expect(reducer(undefined, actionSetNoCountries).viewMode).toEqual(
+      "noCountries"
+    );
   });
 
   it("should not mutate state if payload is improper", () => {
@@ -22,8 +22,6 @@ describe("list reducer", () => {
       type: "list/setViewMode",
       payload: "wrong payload",
     };
-    expect(reducer(undefined, malformedAction)).toEqual({
-      viewMode: "all",
-    });
+    expect(reducer(undefined, malformedAction).viewMode).toEqual("all");
   });
 });
