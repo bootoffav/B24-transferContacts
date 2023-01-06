@@ -1,4 +1,4 @@
-import DepartmentSummary, { findCompaniesByUser } from "./Summary";
+import { findCompaniesByUser } from "./Summary";
 import { companies } from "tests/mocks/companies";
 import { store } from "app/store";
 import { setCheckboxOption } from "features/Options/OptionsSlice";

@@ -7,7 +7,9 @@ function findCompaniesByUser(companies: Company[], userId: number) {
 }
 
 export default function Summary() {
-  const { chosenId, users } = useAppSelector(({ common }) => common);
+  const { chosenId, users, selectType } = useAppSelector(
+    ({ common }) => common
+  );
   const { companies, differentResponsibles } = useAppSelector(
     ({ company }) => company
   );
@@ -20,7 +22,9 @@ export default function Summary() {
       <table className="table is-fullwidth">
         <thead data-testid="thead">
           <tr>
-            <th>Manager</th>
+            <th>
+              {selectType === "companyCountryList" ? "Country" : "Manager"}
+            </th>
             <th>Companies</th>
             <th>diff. responsible for contacts</th>
             {includeLeads && <th>diff. responsible for leads</th>}
