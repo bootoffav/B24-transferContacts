@@ -7,7 +7,7 @@ import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import ShowHideColumn from "./ShowHideColumn";
 import { formColumns, formData } from "./TableDataLogic";
-import { companySelector } from "./CompanySelector";
+import { companySelector } from "./companySelector";
 import { emailCell } from "app/CONSTANTS";
 
 const List = () => {

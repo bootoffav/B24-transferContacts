@@ -8,7 +8,7 @@ import "../styles.scss";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";
-import { companySelector } from "features/List/CompanySelector";
+import { companySelector } from "features/List/companySelector";
 import { getEntityTitle } from "app/helpers";
 import EntityTypeSelector from "features/EntityTypeSelector/EntityTypeSelector";
 import ProgressNotifier from "features/ProgressNotifier/ProgressNotifier";

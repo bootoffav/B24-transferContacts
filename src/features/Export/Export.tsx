@@ -1,7 +1,7 @@
 import { generateExcelFileStructureForTransfer } from "./ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useAppSelector } from "app/hooks";
-import { companySelector } from "features/List/CompanySelector";
+import { companySelector } from "features/List/companySelector";
 import { getEntityTitle } from "app/helpers";
 
 const Export = () => {
