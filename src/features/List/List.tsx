@@ -52,6 +52,7 @@ const List = () => {
       initialState: {
         pageSize,
         pageIndex: useAppSelector(({ list }) => list.pageIndex),
+        hiddenColumns: ["linkedin"],
       },
     },
     usePagination
@@ -93,15 +94,11 @@ const List = () => {
                   })}
                 >
                   {column.render("Header")}{" "}
-                  {column.id === "company" && (
+                  {["contact", "company"].includes(column.id) && (
                     <ShowHideColumn
-                      columnToOperate={"linkedin"}
-                      thc={toggleHideColumn}
-                    />
-                  )}
-                  {column.id === "contact" && (
-                    <ShowHideColumn
-                      columnToOperate={"emails"}
+                      columnToOperate={
+                        column.id === "contact" ? "emails" : "linkedin"
+                      }
                       thc={toggleHideColumn}
                     />
                   )}

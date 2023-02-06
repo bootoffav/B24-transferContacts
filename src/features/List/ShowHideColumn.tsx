@@ -1,24 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { TableInstance } from "react-table";
 
 export default function ShowHideColumn({
-  thc,
   columnToOperate,
+  thc,
 }: {
-  thc: TableInstance["toggleHideColumn"];
   columnToOperate: "emails" | "linkedin";
+  thc: TableInstance["toggleHideColumn"];
 }) {
   const [columnHidden, setColumnHidden] = useState(
     columnToOperate === "linkedin"
   );
 
-  useEffect(() => {
-    thc(columnToOperate, columnHidden);
-  }, [thc, columnHidden, columnToOperate]);
-
   return (
     <em
-      onClick={() => setColumnHidden(!columnHidden)}
+      onClick={() => {
+        thc(columnToOperate, !columnHidden);
+        setColumnHidden(!columnHidden);
+      }}
       className="is-underlined"
       style={{
         cursor: "pointer",
