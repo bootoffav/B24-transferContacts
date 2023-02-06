@@ -5093,10 +5093,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.5":
-  version: 1.11.6
-  resolution: "dayjs@npm:1.11.6"
-  checksum: 18bdfd927009b68eab08dca578e421d4a581cefcbe9337f54c5d9e0d941ffb6b221c4b2c1cab15cdd9d419940e768ac4c984531461a90bbe1c158b75fe160580
+"dayjs@npm:^1.11.7":
+  version: 1.11.7
+  resolution: "dayjs@npm:1.11.7"
+  checksum: 5003a7c1dd9ed51385beb658231c3548700b82d3548c0cfbe549d85f2d08e90e972510282b7506941452c58d32136d6362f009c77ca55381a09c704e9f177ebb
   languageName: node
   linkType: hard
 
@@ -10727,7 +10727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.2":
+"react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -10767,9 +10767,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:^8.0.4":
-  version: 8.0.4
-  resolution: "react-redux@npm:8.0.4"
+"react-redux@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "react-redux@npm:8.0.5"
   dependencies:
     "@babel/runtime": ^7.12.1
     "@types/hoist-non-react-statics": ^3.3.1
@@ -10795,7 +10795,7 @@ __metadata:
       optional: true
     redux:
       optional: true
-  checksum: fd940de6a691c734ea975cb73a4413ee6beadb48434d6306fc2edbcf40c0c8c6432b0008663372d01b3578c9381b0acae7766d9f2f5f5f61a0cdaf7abc5eab7d
+  checksum: a108f4f7ead6ac005e656d46051474a2bbdb31ede481bbbb3d8d779c1a35e1940b8655577cc5021313411864d305f67fc719aa48d6e5ed8288cf9cbe8b7042e4
   languageName: node
   linkType: hard
 
@@ -10819,7 +10819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:6, react-router@npm:6.4.4":
+"react-router@npm:6.4.4":
   version: 6.4.4
   resolution: "react-router@npm:6.4.4"
   dependencies:
@@ -10916,7 +10916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.2":
+"react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -12375,12 +12375,12 @@ __metadata:
     "@types/react-redux": ^7.1.7
     "@types/react-table": ^7.7.12
     bulma: ^0.9.4
-    dayjs: ^1.11.5
+    dayjs: ^1.11.7
     lodash: ^4.17.21
-    react: ^18.2
-    react-dom: ^18.2
-    react-redux: ^8.0.4
-    react-router: 6
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-redux: ^8.0.5
+    react-router: 6.4.4
     react-router-dom: 6
     react-scripts: 5.0.1
     react-spinners: ^0.13.4
