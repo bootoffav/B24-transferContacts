@@ -34,8 +34,8 @@ const transferButtonSlice = createSlice({
       state.transferType = payload;
     },
   },
-  extraReducers: {
-    [resetState.toString()]: () => ({ ...initialState }),
+  extraReducers: (builder) => {
+    builder.addCase(resetState.toString(), () => ({ ...initialState }));
   },
 });
 
