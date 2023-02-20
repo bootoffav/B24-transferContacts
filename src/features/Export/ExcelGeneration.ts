@@ -128,7 +128,7 @@ const generateExcelFileStructureForTransfer = (
 ) => {
   const { users } = store.getState().common;
   const totalAmountOfRows = companies.reduce(
-    (acc, { CONTACTS, DEALS, LEADS }) => {
+    (acc, { CONTACTS, DEALS = [], LEADS = [] }) => {
       const addAmount = Math.max(CONTACTS.length, DEALS.length, LEADS.length);
       return acc + (addAmount || 1);
     }, // 1 is for company itself
