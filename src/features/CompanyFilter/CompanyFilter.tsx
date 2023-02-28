@@ -12,7 +12,7 @@ export default function CompanyFilter() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="ml-3 buttons has-addons">
+    <div className="column buttons has-addons">
       <button
         className={`button is-light is-link ${
           viewMode === viewModeAll ? "is-active" : ""

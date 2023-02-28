@@ -79,7 +79,7 @@ const List = () => {
   };
 
   return (
-    <div className="column is-fullwidth">
+    <div className="column">
       <table
         className="table table-font-small is-bordered is-hoverable is-fullwidth"
         {...getTableProps()}
