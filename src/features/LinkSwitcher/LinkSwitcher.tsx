@@ -13,9 +13,5 @@ export default function LinkSwitcher() {
           label: "Main",
         };
 
-  return (
-    <div className="column">
-      <Link to={to}>{label}</Link>
-    </div>
-  );
+  return <Link to={to}>{label}</Link>;
 }

@@ -33,11 +33,13 @@ export default function Root() {
   }, [stage, companies, dispatch]);
 
   return (
-    <div className="is-flex is-flex-direction-column container is-fluid">
-      <header className="columns is-flex is-align-items-center is-justify-content-center">
-        {[Stage.scanFinished, Stage.cancelling, Stage.gettingData].includes(
-          stage
-        ) && <LinkSwitcher />}
+    <div className="py-1 is-flex is-flex-direction-column container is-fluid">
+      <header className="columns">
+        <div className="column is-1">
+          {[Stage.scanFinished, Stage.cancelling, Stage.gettingData].includes(
+            stage
+          ) && <LinkSwitcher />}
+        </div>
         <div className="column is-2">
           <span className="is-pulled-right">Choose:</span>
         </div>
