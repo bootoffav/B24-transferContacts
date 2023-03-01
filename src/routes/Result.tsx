@@ -6,8 +6,17 @@ import CompanyFilter from "features/CompanyFilter/CompanyFilter";
 import { useAppSelector } from "app/hooks";
 
 export default function Result() {
-  const stage = useAppSelector(({ common }) => common.stage);
-  return ![Stage.linkedInOnlyScanFinished, Stage.initial].includes(stage) ? (
+  const { stage, thereAreNoCompaniesToShow } = useAppSelector(
+    ({ common, company: { companies } }) => ({
+      stage: common.stage,
+      thereAreNoCompaniesToShow: companies.length === 0,
+    })
+  );
+
+  return thereAreNoCompaniesToShow ||
+    [Stage.linkedInOnlyScanFinished, Stage.initial].includes(stage) ? (
+    <></>
+  ) : (
     <>
       <div className="columns">
         <CompanyFilter />
@@ -18,7 +27,5 @@ export default function Result() {
       </div>
       <Footer />
     </>
-  ) : (
-    <></>
   );
 }
