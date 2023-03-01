@@ -2,6 +2,10 @@
 @import "bulma";
 @import "~@creativebulma/bulma-tooltip";
 
+body {
+  height: 100vh;
+}
+
 .centered {
   position: absolute;
   top: 50%;
@@ -11,4 +15,12 @@
 
 .table-font-small {
   font-size: x-small;
+}
+
+.column.buttons.has-addons {
+  margin-bottom: 0rem;
+}
+
+.attention {
+  color: #b52b3c;
 }

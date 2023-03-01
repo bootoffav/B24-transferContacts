@@ -4,7 +4,6 @@ import LinkedInOnly from "features/LinkedInOnly/LinkedInOnly";
 import InfoBlock from "features/InfoBlock/InfoBlock";
 import EntitySelector from "features/EntitySelector/EntitySelector";
 import GetCompanies from "features/GetCompanies/GetCompanies";
-import "../styles.scss";
 import { generateExcelFileStructureLinkedInOnly } from "features/Export/ExcelGeneration";
 import XLSX from "xlsx-js-style";
 import { useEffect } from "react";

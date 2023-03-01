@@ -1,5 +1,4 @@
 import type { TableDataStructure, EntityType } from "types";
-import styles from "./List.module.css";
 
 const applyStyle = (
   v: string,
@@ -8,7 +7,7 @@ const applyStyle = (
 ): string => {
   const noApplyStyleColumns = ["contactPosition"];
   if (noApplyStyleColumns.includes(columnId)) return "";
-  return responsibleForCompany !== v ? styles.attention : "";
+  return responsibleForCompany !== v ? "attention" : "";
 };
 
 const { REACT_APP_B24_ADDRESS: b24Address } = process.env;

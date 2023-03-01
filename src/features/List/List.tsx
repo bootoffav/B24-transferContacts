@@ -3,7 +3,6 @@ import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useTable, usePagination } from "react-table";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import type { TableDataStructure } from "../../types";
-import styles from "./List.module.css";
 import Navigation, { NaviProps } from "./Navigation";
 import ShowHideColumn from "./ShowHideColumn";
 import { formColumns, formData } from "./TableDataLogic";
@@ -125,23 +124,9 @@ const List = () => {
         </tbody>
       </table>
       <EmailFormChanger />
-      {footer}
       <Navigation {...naviProps} />
     </div>
   );
 };
-
-const footer = (
-  <footer>
-    <hr />
-    <div>
-      <span className={`ml-4 ${styles.attention}`}>*</span> - no country
-      assigned
-    </div>
-    <div className={`ml-4`}>
-      1 - CET: <b>c</b>hange <b>e</b>mail <b>t</b>ypes
-    </div>
-  </footer>
-);
 
 export default List;

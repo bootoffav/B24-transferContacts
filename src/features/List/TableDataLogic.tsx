@@ -10,7 +10,6 @@ import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { Dispatch } from "@reduxjs/toolkit";
 import { formLink, applyStyle } from "./utils";
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
-import styles from "./List.module.css";
 import { getUserNameById } from "utils/users";
 import Position from "../Position/Position";
 import {
@@ -65,7 +64,7 @@ function contactCellRenderer(
             <span>
               {formLink(v, id as EntityType)}
               {/* no country case */}
-              {v.at(-1) ? "" : <span className={styles.attention}>*</span>}
+              {v.at(-1) ? "" : <span className="attention">*</span>}
             </span>
             <span
               className="is-clickable"
