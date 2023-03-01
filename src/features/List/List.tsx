@@ -48,6 +48,7 @@ const List = () => {
       columns,
       data,
       manualPagination: false,
+      autoResetHiddenColumns: false,
       initialState: {
         pageSize,
         pageIndex: useAppSelector(({ list }) => list.pageIndex),

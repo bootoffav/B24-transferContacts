@@ -12,12 +12,14 @@ export default function ShowHideColumn({
     columnToOperate === "linkedin"
   );
 
+  const toggleVisibility = () => {
+    thc(columnToOperate, !columnHidden);
+    setColumnHidden(!columnHidden);
+  };
+
   return (
     <em
-      onClick={() => {
-        thc(columnToOperate, !columnHidden);
-        setColumnHidden(!columnHidden);
-      }}
+      onClick={toggleVisibility}
       className="is-underlined"
       style={{
         cursor: "pointer",

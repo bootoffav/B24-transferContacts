@@ -1,4 +1,4 @@
-import listSlice from "./listSlice";
+import listSlice, { viewModeAll } from "./listSlice";
 
 const { reducer } = listSlice;
 describe("list reducer: viewMode check", () => {
@@ -43,8 +43,10 @@ describe("list reducer: pageIndex check", () => {
     };
     expect(reducer(undefined, actionSetPageIndex10).pageIndex).toBe(10);
     expect(
-      reducer({ pageIndex: 30, viewMode: "all" }, actionSetPageIndexMinus10)
-        .pageIndex
+      reducer(
+        { pageIndex: 30, viewMode: viewModeAll },
+        actionSetPageIndexMinus10
+      ).pageIndex
     ).toBe(20);
   });
   it("should not be below zero", () => {
@@ -54,7 +56,7 @@ describe("list reducer: pageIndex check", () => {
     };
 
     expect(
-      reducer({ viewMode: "all", pageIndex: 0 }, actionSetPageIndexMinus1)
+      reducer({ viewMode: viewModeAll, pageIndex: 0 }, actionSetPageIndexMinus1)
         .pageIndex
     ).toBe(0);
   });
