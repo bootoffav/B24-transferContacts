@@ -33,7 +33,7 @@ export default function Root() {
   }, [stage, companies, dispatch]);
 
   return (
-    <div className="container is-fluid">
+    <div className="is-flex is-flex-direction-column container is-fluid">
       <header className="columns is-flex is-align-items-center is-justify-content-center">
         {[Stage.scanFinished, Stage.cancelling, Stage.gettingData].includes(
           stage
