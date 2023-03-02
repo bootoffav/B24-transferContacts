@@ -4,12 +4,14 @@ export const viewModeAll = "all";
 export const viewModeNoCountries = "noCountries";
 export const viewModeWithLinkedIn = "withLinkedIn";
 export const viewModeContactsCountryNone = "noCountry";
+export const viewModeDiffs = "diffs";
 
-interface ListSliceState {
+export interface ListSliceState {
   viewMode:
     | typeof viewModeAll
     | typeof viewModeNoCountries
     | typeof viewModeWithLinkedIn
+    | typeof viewModeDiffs
     | typeof viewModeContactsCountryNone;
   pageIndex: number;
 }
@@ -30,9 +32,12 @@ const listSlice = createSlice({
           viewModeNoCountries,
           viewModeWithLinkedIn,
           viewModeContactsCountryNone,
+          viewModeDiffs,
         ].includes(payload)
       ) {
         state.viewMode = payload;
+      } else {
+        throw new Error(`viewMode ${payload} does not exist`);
       }
     },
     setPageIndex(

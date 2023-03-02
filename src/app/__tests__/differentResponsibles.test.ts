@@ -1,4 +1,5 @@
 import getDifferentResponsibles from "app/differentResponsibles";
+import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
 
 const companies = [
   {
@@ -3205,4 +3206,10 @@ describe("differentResponsibles checks", () => {
       expect(amount).toBeGreaterThan(0);
     });
   });
+});
+
+it("companyHasDiffRespOfItsRelatedEntity check", () => {
+  // @ts-expect-error
+  const res = companyHasDiffRespOfItsRelatedEntity(companies[1]);
+  expect(res).toBe(true);
 });

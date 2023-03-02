@@ -5,54 +5,55 @@ import {
   viewModeNoCountries,
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
+  viewModeDiffs,
+  ListSliceState,
 } from "features/List/listSlice";
 
 export default function CompanyFilter() {
-  const viewMode = useAppSelector(({ list }) => list.viewMode);
+  const { viewMode: storeViewMode } = useAppSelector(({ list }) => list);
   const dispatch = useAppDispatch();
+
+  const filterOptions: {
+    label: string;
+    viewMode: ListSliceState["viewMode"];
+  }[] = [
+    {
+      label: "All",
+      viewMode: viewModeAll,
+    },
+    {
+      label: "Diffs",
+      viewMode: viewModeDiffs,
+    },
+    {
+      label: "No country (company)",
+      viewMode: viewModeNoCountries,
+    },
+    {
+      label: "No country (contact)",
+      viewMode: viewModeContactsCountryNone,
+    },
+    {
+      label: "With LinkedIn",
+      viewMode: viewModeWithLinkedIn,
+    },
+  ];
 
   return (
     <div className="column buttons has-addons">
-      <button
-        className={`button is-light is-link ${
-          viewMode === viewModeAll ? "is-active" : ""
-        }`}
-        onClick={() => {
-          dispatch(setViewMode(viewModeAll));
-        }}
-      >
-        All
-      </button>
-      <button
-        className={`button is-light is-link ${
-          viewMode === viewModeNoCountries ? "is-active" : ""
-        }`}
-        onClick={() => {
-          dispatch(setViewMode(viewModeNoCountries));
-        }}
-      >
-        No country (company)
-      </button>
-      <button
-        className={`button is-light is-link ${
-          viewMode === viewModeContactsCountryNone ? "is-active" : ""
-        }`}
-        onClick={() => {
-          dispatch(setViewMode(viewModeContactsCountryNone));
-        }}
-      >
-        No country (contact)
-      </button>
-      <button
-        className={`button is-light is-link ${
-          viewMode === viewModeWithLinkedIn ? "is-active" : ""
-        }`}
-        onClick={() => {
-          dispatch(setViewMode(viewModeWithLinkedIn));
-        }}
-      >
-        With LinkedIn
-      </button>
+      {filterOptions.map(({ viewMode, label }) => (
+        <button
+          key={viewMode}
+          className={`button is-light is-link${
+            storeViewMode === viewMode ? " is-active" : ""
+          }`}
+          onClick={() => {
+            dispatch(setViewMode(viewMode));
+          }}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 }

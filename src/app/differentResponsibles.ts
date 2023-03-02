@@ -28,4 +28,17 @@ function getDifferentResponsibles(companies: Company[]): Transfer {
   return acc;
 }
 
+export function companyHasDiffRespOfItsRelatedEntity(
+  company: Company
+): boolean {
+  for (const entityType of ["CONTACTS", "LEADS", "DEALS"] as const) {
+    for (const entitityOFAType of company[entityType]) {
+      if (company.ASSIGNED_BY_ID !== entitityOFAType.ASSIGNED_BY_ID)
+        return true;
+    }
+  }
+
+  return false;
+}
+
 export default getDifferentResponsibles;
