@@ -69,7 +69,7 @@ function getAmountToTransfer(
   return amount;
 }
 
-function getOptionalEntitiesToFetch() {
+function getOptionalEntitiesToFetch(): EntitiesToFetch {
   const map = new Map<keyof OptionsState, EntitiesToFetch[number]>([
     ["includeLeads", "lead"],
     ["includeDeals", "deal"],

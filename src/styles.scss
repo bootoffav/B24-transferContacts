@@ -1,7 +1,3 @@
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
-@import "bulma";
-@import "~@creativebulma/bulma-tooltip";
-
 div.container.is-fluid {
   height: 100vh;
 }
@@ -24,3 +20,9 @@ div.container.is-fluid {
 .attention {
   color: #b52b3c;
 }
+
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+
+$modal-content-width: 450px;
+@import "~bulma";
+@import "~@creativebulma/bulma-tooltip";

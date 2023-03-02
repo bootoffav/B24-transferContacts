@@ -69,7 +69,7 @@ export interface Deal {
 }
 
 // key is Responsible ID
-// value is array of Contacts ID that need to be transferred
+// value is array of Contacts, Leads, Deals IDs that need to be transferred
 export interface Transfer {
   [key: number]: {
     CONTACTS: number[];

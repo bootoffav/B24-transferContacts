@@ -4,22 +4,22 @@ import { getOptionalEntitiesToFetch } from "./helpers";
 function getDifferentResponsibles(companies: Company[]): Transfer {
   const acc: Transfer = {};
   companies.forEach((company) => {
-    const entities = [
+    const entityTypes = [
       "CONTACTS",
       ...getOptionalEntitiesToFetch().map(
         (entity) => `${entity.toUpperCase()}S`
       ),
     ] as ("CONTACTS" | "DEALS" | "LEADS")[];
 
-    entities.forEach((entitySet) => {
-      company[entitySet].forEach((entity) => {
+    entityTypes.forEach((entityType) => {
+      company[entityType].forEach((entity) => {
         if (company.ASSIGNED_BY_ID !== entity.ASSIGNED_BY_ID) {
           acc[company.ASSIGNED_BY_ID] ??= {
             CONTACTS: [],
             DEALS: [],
             LEADS: [],
           };
-          acc[company.ASSIGNED_BY_ID][entitySet].push(entity.ID);
+          acc[company.ASSIGNED_BY_ID][entityType].push(entity.ID);
         }
       });
     });
