@@ -6,6 +6,7 @@ import {
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
   viewModeDiffs,
+  viewModeCustom,
   ListSliceState,
 } from "features/List/listSlice";
 
@@ -37,18 +38,23 @@ export default function CompanyFilter() {
       label: "With LinkedIn",
       viewMode: viewModeWithLinkedIn,
     },
+    {
+      label: "Custom",
+      viewMode: viewModeCustom,
+    },
   ];
 
   return (
     <div className="column buttons has-addons">
       {filterOptions.map(({ viewMode, label }) => (
         <button
+          disabled={label === "Custom" && storeViewMode !== "custom"}
           key={viewMode}
           className={`button is-light is-link${
             storeViewMode === viewMode ? " is-active" : ""
           }`}
           onClick={() => {
-            dispatch(setViewMode(viewMode));
+            dispatch(setViewMode({ viewMode }));
           }}
         >
           {label}

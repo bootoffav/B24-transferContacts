@@ -5,6 +5,7 @@ import {
   viewModeWithLinkedIn,
   viewModeContactsCountryNone,
   viewModeDiffs,
+  viewModeCustom,
 } from "./listSlice";
 import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
@@ -45,6 +46,8 @@ export const companySelector = createSelector(
           return false;
         });
       case viewModeDiffs:
+        return companies.filter(companyHasDiffRespOfItsRelatedEntity);
+      case viewModeCustom:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
       default:
         return companies;

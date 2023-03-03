@@ -1,5 +1,8 @@
+import { Link } from "react-router-dom";
+import { setViewMode, viewModeCustom } from "features/List/listSlice";
+import type { ListSliceState } from "features/List/listSlice";
 import { Company, Transfer } from "types";
-import { useAppSelector } from "app/hooks";
+import { useAppSelector, useAppDispatch } from "app/hooks";
 import { getUserNameById } from "utils/users";
 import { getEntityTitle } from "app/helpers";
 import { store } from "app/store";
@@ -13,37 +16,60 @@ export default function Summary() {
   const { includeDeals, includeLeads } = useAppSelector(
     ({ options }) => options
   );
+  const dispatch = useAppDispatch();
+
+  const customLinkHandler = (
+    customViewEntityType: ListSliceState["customViewEntityType"]
+  ) => {
+    dispatch(setViewMode({ viewMode: viewModeCustom, customViewEntityType }));
+  };
 
   return (
-    <div className="column is-half is-offset-one-quarter">
-      <table className="table is-fullwidth">
-        <thead data-testid="thead">
-          <tr>
-            <th>
-              {selectType === "companyCountryList" ? "Country" : "Manager"}
-            </th>
-            <th>Companies</th>
-            <th>diff. responsible for contacts</th>
-            {includeLeads && <th>diff. responsible for leads</th>}
-            {includeDeals && <th>diff. responsible for deals</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {chosenId.map((entityId) => {
-            const { entity, companiesOfEntity, CONTACTS, LEADS, DEALS } =
-              getSummaryTableRow(entityId);
-            return (
-              <tr key={entity}>
-                <th>{entity}</th>
-                <td>{companiesOfEntity.length}</td>
-                <td>{CONTACTS.length}</td>
-                {includeLeads && <td>{LEADS.length}</td>}
-                {includeDeals && <td>{DEALS.length}</td>}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="columns">
+      <div className="column is-half is-offset-one-quarter">
+        <table className="table is-fullwidth">
+          <thead data-testid="thead">
+            <tr>
+              <th>
+                {selectType === "companyCountryList" ? "Country" : "Manager"}
+              </th>
+              <th>Companies</th>
+              <th>diff. responsible for contacts</th>
+              {includeLeads && <th>diff. responsible for leads</th>}
+              {includeDeals && <th>diff. responsible for deals</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {chosenId.map((entityId) => {
+              const { entity, companiesOfEntity, CONTACTS, LEADS, DEALS } =
+                getSummaryTableRow(entityId);
+              return (
+                <tr key={entity}>
+                  <th>{entity}</th>
+                  <td>{companiesOfEntity.length}</td>
+                  <td onClick={() => customLinkHandler("CONTACTS")}>
+                    {CONTACTS.length ? (
+                      <Link to="..">{CONTACTS.length}</Link>
+                    ) : (
+                      CONTACTS.length
+                    )}
+                  </td>
+                  {includeLeads && (
+                    <td onClick={() => customLinkHandler("LEADS")}>
+                      <Link to="..">{LEADS.length}</Link>
+                    </td>
+                  )}
+                  {includeDeals && (
+                    <td onClick={() => customLinkHandler("DEALS")}>
+                      <Link to="..">{DEALS.length}</Link>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -54,7 +80,7 @@ function getSummaryTableRow(entityId: number) {
   if (selectType === "companyCountryList") {
     return {
       entity: getEntityTitle(),
-      companiesOfEntity: companies,
+      companiesAmount: companies.length,
       ...Object.values(differentResponsibles).reduce(
         (acc, cur: Transfer[number]) => {
           for (const prop in cur) {
@@ -69,10 +95,10 @@ function getSummaryTableRow(entityId: number) {
 
   return {
     entity: getUserNameById(users, entityId),
-    companiesOfEntity: findCompaniesByUser(companies, entityId),
-    CONTACTS: differentResponsibles[entityId]?.CONTACTS || [],
-    LEADS: differentResponsibles[entityId]?.LEADS || [],
-    DEALS: differentResponsibles[entityId]?.DEALS || [],
+    companiesAmount: findCompaniesByUser(companies, entityId),
+    contactAmount: differentResponsibles[entityId]?.CONTACTS.length,
+    leadAmount: differentResponsibles[entityId]?.LEADS.length,
+    dealAmount: differentResponsibles[entityId]?.DEALS.length,
   };
 }
 

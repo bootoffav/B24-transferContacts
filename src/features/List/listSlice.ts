@@ -1,10 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 export const viewModeAll = "all";
 export const viewModeNoCountries = "noCountries";
 export const viewModeWithLinkedIn = "withLinkedIn";
 export const viewModeContactsCountryNone = "noCountry";
 export const viewModeDiffs = "diffs";
+export const viewModeCustom = "custom";
 
 export interface ListSliceState {
   viewMode:
@@ -12,8 +14,10 @@ export interface ListSliceState {
     | typeof viewModeNoCountries
     | typeof viewModeWithLinkedIn
     | typeof viewModeDiffs
+    | typeof viewModeCustom
     | typeof viewModeContactsCountryNone;
   pageIndex: number;
+  customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS";
 }
 
 const initialState: ListSliceState = {
@@ -25,7 +29,15 @@ const listSlice = createSlice({
   name: "list",
   initialState,
   reducers: {
-    setViewMode(state, { payload }: PayloadAction<ListSliceState["viewMode"]>) {
+    setViewMode(
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        viewMode: ListSliceState["viewMode"];
+        customViewEntityType?: ListSliceState["customViewEntityType"];
+      }>
+    ) {
       if (
         [
           viewModeAll,
@@ -33,9 +45,11 @@ const listSlice = createSlice({
           viewModeWithLinkedIn,
           viewModeContactsCountryNone,
           viewModeDiffs,
-        ].includes(payload)
+          viewModeCustom,
+        ].includes(payload.viewMode)
       ) {
-        state.viewMode = payload;
+        state.viewMode = payload.viewMode;
+        state.customViewEntityType = payload.customViewEntityType;
       } else {
         throw new Error(`viewMode ${payload} does not exist`);
       }

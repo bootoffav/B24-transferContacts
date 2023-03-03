@@ -1,5 +1,6 @@
 import { Company, Transfer } from "../types";
 import { getOptionalEntitiesToFetch } from "./helpers";
+import { store } from "app/store";
 
 function getDifferentResponsibles(companies: Company[]): Transfer {
   const acc: Transfer = {};
@@ -31,7 +32,11 @@ function getDifferentResponsibles(companies: Company[]): Transfer {
 export function companyHasDiffRespOfItsRelatedEntity(
   company: Company
 ): boolean {
-  for (const entityType of ["CONTACTS", "LEADS", "DEALS"] as const) {
+  const { customViewEntityType } = store.getState().list;
+  const entityTypes = customViewEntityType
+    ? [customViewEntityType]
+    : (["CONTACTS", "LEADS", "DEALS"] as const);
+  for (const entityType of entityTypes) {
     for (const entitityOFAType of company[entityType]) {
       if (company.ASSIGNED_BY_ID !== entitityOFAType.ASSIGNED_BY_ID)
         return true;
