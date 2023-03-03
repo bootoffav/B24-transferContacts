@@ -13,6 +13,7 @@ export const store = configureStore({
     transferButton: transferButton.reducer,
     options: options.reducer,
   },
+  devTools: process.env.NODE_ENV === "development",
 });
 
 export type AppDispatch = typeof store.dispatch;
