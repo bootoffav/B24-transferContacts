@@ -50,6 +50,7 @@ const listSlice = createSlice({
       ) {
         state.viewMode = payload.viewMode;
         state.customViewEntityType = payload.customViewEntityType;
+        state.pageIndex = 0;
       } else {
         throw new Error(`viewMode ${payload} does not exist`);
       }
