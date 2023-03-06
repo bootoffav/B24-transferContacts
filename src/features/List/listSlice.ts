@@ -21,7 +21,7 @@ export interface ListSliceState {
 }
 
 const initialState: ListSliceState = {
-  viewMode: viewModeAll,
+  viewMode: viewModeDiffs,
   pageIndex: 0,
 };
 

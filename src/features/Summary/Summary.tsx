@@ -41,27 +41,28 @@ export default function Summary() {
           </thead>
           <tbody>
             {chosenId.map((entityId) => {
-              const { entity, companiesOfEntity, CONTACTS, LEADS, DEALS } =
-                getSummaryTableRow(entityId);
+              const {
+                entity,
+                companiesAmount,
+                contactAmount,
+                leadAmount,
+                dealAmount,
+              } = getSummaryTableRow(entityId);
               return (
                 <tr key={entity}>
                   <th>{entity}</th>
-                  <td>{companiesOfEntity.length}</td>
+                  <td>{companiesAmount}</td>
                   <td onClick={() => customLinkHandler("CONTACTS")}>
-                    {CONTACTS.length ? (
-                      <Link to="..">{CONTACTS.length}</Link>
-                    ) : (
-                      CONTACTS.length
-                    )}
+                    {contactAmount ? <Link to="..">{contactAmount}</Link> : 0}
                   </td>
                   {includeLeads && (
                     <td onClick={() => customLinkHandler("LEADS")}>
-                      <Link to="..">{LEADS.length}</Link>
+                      {leadAmount ? <Link to="..">{leadAmount}</Link> : 0}
                     </td>
                   )}
                   {includeDeals && (
                     <td onClick={() => customLinkHandler("DEALS")}>
-                      <Link to="..">{DEALS.length}</Link>
+                      {dealAmount ? <Link to="..">{dealAmount}</Link> : 0}
                     </td>
                   )}
                 </tr>
@@ -78,24 +79,31 @@ function getSummaryTableRow(entityId: number) {
   const { selectType, users } = store.getState().common;
   const { differentResponsibles, companies } = store.getState().company;
   if (selectType === "companyCountryList") {
+    const {
+      CONTACTS: contactAmount,
+      LEADS: leadAmount,
+      DEALS: dealAmount,
+    } = Object.values(differentResponsibles).reduce(
+      (acc, cur: Transfer[number]) => {
+        for (const prop in cur) {
+          acc[prop] = acc[prop].concat(cur[prop as keyof typeof cur]).length;
+        }
+        return acc;
+      },
+      { contactAmount: 0, leadAmount: 0, dealAmount: 0 }
+    );
     return {
       entity: getEntityTitle(),
       companiesAmount: companies.length,
-      ...Object.values(differentResponsibles).reduce(
-        (acc, cur: Transfer[number]) => {
-          for (const prop in cur) {
-            acc[prop] = acc[prop].concat(cur[prop as keyof typeof cur]);
-          }
-          return acc;
-        },
-        { CONTACTS: [], LEADS: [], DEALS: [] }
-      ),
+      contactAmount,
+      leadAmount,
+      dealAmount,
     };
   }
 
   return {
     entity: getUserNameById(users, entityId),
-    companiesAmount: findCompaniesByUser(companies, entityId),
+    companiesAmount: findCompaniesByUser(companies, entityId).length,
     contactAmount: differentResponsibles[entityId]?.CONTACTS.length,
     leadAmount: differentResponsibles[entityId]?.LEADS.length,
     dealAmount: differentResponsibles[entityId]?.DEALS.length,
