@@ -18,6 +18,7 @@ export interface ListSliceState {
     | typeof viewModeContactsCountryNone;
   pageIndex: number;
   customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS";
+  customViewUserId?: number;
 }
 
 const initialState: ListSliceState = {
@@ -36,6 +37,7 @@ const listSlice = createSlice({
       }: PayloadAction<{
         viewMode: ListSliceState["viewMode"];
         customViewEntityType?: ListSliceState["customViewEntityType"];
+        customViewUserId?: ListSliceState["customViewUserId"];
       }>
     ) {
       if (
@@ -50,6 +52,7 @@ const listSlice = createSlice({
       ) {
         state.viewMode = payload.viewMode;
         state.customViewEntityType = payload.customViewEntityType;
+        state.customViewUserId = payload.customViewUserId;
         state.pageIndex = 0;
       } else {
         throw new Error(`viewMode ${payload} does not exist`);

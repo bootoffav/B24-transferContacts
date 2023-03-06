@@ -1,15 +1,12 @@
 import { Link } from "react-router-dom";
 import { setViewMode, viewModeCustom } from "features/List/listSlice";
 import type { ListSliceState } from "features/List/listSlice";
-import { Company, Transfer } from "types";
+import { Transfer } from "types";
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { getUserNameById } from "utils/users";
 import { getEntityTitle } from "app/helpers";
 import { store } from "app/store";
-
-function findCompaniesByUser(companies: Company[], userId: number) {
-  return companies.filter(({ ASSIGNED_BY_ID }) => +ASSIGNED_BY_ID === userId);
-}
+import companiesByUser from "utils/companiesByUser";
 
 export default function Summary() {
   const { chosenId, selectType } = useAppSelector(({ common }) => common);
@@ -19,9 +16,16 @@ export default function Summary() {
   const dispatch = useAppDispatch();
 
   const customLinkHandler = (
-    customViewEntityType: ListSliceState["customViewEntityType"]
+    customViewEntityType: ListSliceState["customViewEntityType"],
+    customViewUserId: ListSliceState["customViewUserId"]
   ) => {
-    dispatch(setViewMode({ viewMode: viewModeCustom, customViewEntityType }));
+    dispatch(
+      setViewMode({
+        viewMode: viewModeCustom,
+        customViewEntityType,
+        customViewUserId,
+      })
+    );
   };
 
   return (
@@ -40,28 +44,28 @@ export default function Summary() {
             </tr>
           </thead>
           <tbody>
-            {chosenId.map((entityId) => {
+            {chosenId.map((userId) => {
               const {
                 entity,
                 companiesAmount,
                 contactAmount,
                 leadAmount,
                 dealAmount,
-              } = getSummaryTableRow(entityId);
+              } = getSummaryTableRow(userId);
               return (
                 <tr key={entity}>
                   <th>{entity}</th>
                   <td>{companiesAmount}</td>
-                  <td onClick={() => customLinkHandler("CONTACTS")}>
+                  <td onClick={() => customLinkHandler("CONTACTS", userId)}>
                     {contactAmount ? <Link to="..">{contactAmount}</Link> : 0}
                   </td>
                   {includeLeads && (
-                    <td onClick={() => customLinkHandler("LEADS")}>
+                    <td onClick={() => customLinkHandler("LEADS", userId)}>
                       {leadAmount ? <Link to="..">{leadAmount}</Link> : 0}
                     </td>
                   )}
                   {includeDeals && (
-                    <td onClick={() => customLinkHandler("DEALS")}>
+                    <td onClick={() => customLinkHandler("DEALS", userId)}>
                       {dealAmount ? <Link to="..">{dealAmount}</Link> : 0}
                     </td>
                   )}
@@ -103,11 +107,11 @@ function getSummaryTableRow(entityId: number) {
 
   return {
     entity: getUserNameById(users, entityId),
-    companiesAmount: findCompaniesByUser(companies, entityId).length,
+    companiesAmount: companiesByUser(companies, entityId).length,
     contactAmount: differentResponsibles[entityId]?.CONTACTS.length,
     leadAmount: differentResponsibles[entityId]?.LEADS.length,
     dealAmount: differentResponsibles[entityId]?.DEALS.length,
   };
 }
 
-export { findCompaniesByUser, getSummaryTableRow };
+export { getSummaryTableRow };

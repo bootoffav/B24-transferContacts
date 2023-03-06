@@ -1,5 +1,3 @@
-import { findCompaniesByUser } from "./Summary";
-import { companies } from "tests/mocks/companies";
 import { store } from "app/store";
 import { setCheckboxOption } from "features/Options/OptionsSlice";
 import { render, screen } from "@testing-library/react";
@@ -7,13 +5,6 @@ import storeConnected from "tests/storeConnected";
 import Summary from "./Summary";
 
 describe("tests Department summary functionality", function () {
-  test("findCompaniesByUser", function () {
-    let companiesByUser = findCompaniesByUser(companies, 3728);
-    expect(companiesByUser.length).toBe(59);
-    companiesByUser = findCompaniesByUser(companies, 5196);
-    expect(companiesByUser.length).toBe(1);
-  });
-
   describe("properly show/hide (diff. responsible for leads, diff. responsible for deals) header columns", function () {
     // leads shown
     test("diff. responsible for leads shown", function () {
