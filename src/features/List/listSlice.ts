@@ -4,7 +4,6 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export const viewModeAll = "all";
 export const viewModeNoCountries = "noCountries";
 export const viewModeWithLinkedIn = "withLinkedIn";
-export const viewModeContactsCountryNone = "noCountry";
 export const viewModeDiffs = "diffs";
 export const viewModeCustom = "custom";
 
@@ -14,8 +13,7 @@ export interface ListSliceState {
     | typeof viewModeNoCountries
     | typeof viewModeWithLinkedIn
     | typeof viewModeDiffs
-    | typeof viewModeCustom
-    | typeof viewModeContactsCountryNone;
+    | typeof viewModeCustom;
   pageIndex: number;
   customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS";
   customViewUserId?: number;
@@ -45,7 +43,6 @@ const listSlice = createSlice({
           viewModeAll,
           viewModeNoCountries,
           viewModeWithLinkedIn,
-          viewModeContactsCountryNone,
           viewModeDiffs,
           viewModeCustom,
         ].includes(payload.viewMode)

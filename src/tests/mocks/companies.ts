@@ -1298,7 +1298,7 @@ export const companies: Company[] = [
         UTM_CONTENT: null,
         UTM_TERM: null,
         UF_CRM_1634268517946: null,
-        UF_CRM_1392197513: null,
+        UF_CRM_1392197513: "5732",
         EMAILS: [
           {
             ID: "266498",

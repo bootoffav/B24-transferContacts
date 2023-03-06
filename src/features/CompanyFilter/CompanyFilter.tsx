@@ -4,7 +4,6 @@ import {
   viewModeAll,
   viewModeNoCountries,
   viewModeWithLinkedIn,
-  viewModeContactsCountryNone,
   viewModeDiffs,
   viewModeCustom,
   ListSliceState,
@@ -27,12 +26,8 @@ export default function CompanyFilter() {
       viewMode: viewModeDiffs,
     },
     {
-      label: "No country (company)",
+      label: "No country (any contact)",
       viewMode: viewModeNoCountries,
-    },
-    {
-      label: "No country (contact)",
-      viewMode: viewModeContactsCountryNone,
     },
     {
       label: "With LinkedIn",

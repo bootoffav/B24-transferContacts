@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { transferCountry } from "../../app/endpoint";
 import { setStage, setTransferredAmount, Stage } from "../../app/commonSlice";
@@ -5,6 +6,12 @@ import { setContactsNoCountries } from "../../app/companySlice";
 import TransferButton from "features/TransferButton/TransferButton";
 import { getAmountToTransfer } from "app/helpers";
 import { setTransferType } from "features/TransferButton/TransferButtonSlice";
+import {
+  setViewMode,
+  viewModeAll,
+  viewModeDiffs,
+  viewModeCustom,
+} from "features/List/listSlice";
 
 export default function TransferArea() {
   const dispatch = useAppDispatch();
@@ -24,9 +31,62 @@ export default function TransferArea() {
     <div className="is-flex is-justify-content-space-around">
       <div>
         <p>
-          Found {companies.length} companies,{" "}
-          {getAmountToTransfer(differentResponsibles, "responsible")} diff.
-          responsibles for contacts, leads & deals
+          Found{" "}
+          <Link
+            to=""
+            onClick={() => dispatch(setViewMode({ viewMode: viewModeAll }))}
+          >
+            {companies.length}
+          </Link>{" "}
+          companies,{" "}
+          <Link
+            to=""
+            onClick={() => dispatch(setViewMode({ viewMode: viewModeDiffs }))}
+          >
+            {getAmountToTransfer(differentResponsibles, "responsible")}{" "}
+          </Link>
+          diff. responsibles for{" "}
+          <Link
+            to=""
+            onClick={() =>
+              dispatch(
+                setViewMode({
+                  viewMode: viewModeCustom,
+                  customViewEntityType: "CONTACTS",
+                })
+              )
+            }
+          >
+            contacts
+          </Link>
+          ,{" "}
+          <Link
+            to=""
+            onClick={() =>
+              dispatch(
+                setViewMode({
+                  viewMode: viewModeCustom,
+                  customViewEntityType: "LEADS",
+                })
+              )
+            }
+          >
+            leads
+          </Link>{" "}
+          &{" "}
+          <Link
+            to=""
+            onClick={() =>
+              dispatch(
+                setViewMode({
+                  viewMode: viewModeCustom,
+                  customViewEntityType: "DEALS",
+                })
+              )
+            }
+          >
+            deals
+          </Link>
         </p>
         <TransferButton />
       </div>

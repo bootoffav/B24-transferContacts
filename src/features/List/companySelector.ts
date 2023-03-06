@@ -3,7 +3,6 @@ import { RootState } from "app/store";
 import {
   viewModeNoCountries,
   viewModeWithLinkedIn,
-  viewModeContactsCountryNone,
   viewModeDiffs,
   viewModeCustom,
   ListSliceState,
@@ -22,14 +21,12 @@ export const companySelector = createSelector(
   }),
   ({ companies, list, contactCountryList }) => {
     switch (list.viewMode) {
-      case viewModeNoCountries:
-        return companyNoCountryView(companies);
-      case viewModeWithLinkedIn:
-        return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
-      case viewModeContactsCountryNone:
-        return contactsNoCountryView(companies, contactCountryList);
       case viewModeDiffs:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
+      case viewModeNoCountries:
+        return companyNoCountryView(companies, contactCountryList);
+      case viewModeWithLinkedIn:
+        return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       case viewModeCustom:
         return customViewCompanies(companies, list.customViewUserId);
       default:
@@ -38,35 +35,20 @@ export const companySelector = createSelector(
   }
 );
 
-function companyNoCountryView(companies: Company[]) {
+function companyNoCountryView(
+  companies: Company[],
+  contactCountryList?: Country[]
+) {
+  const noneCountryId =
+    contactCountryList?.find((country) => country.value === "none")?.ID ||
+    "5732";
+
   return companies.filter(
     ({ CONTACTS }) =>
       !CONTACTS.map((contact) => (contact as any)[CONTACT_COUNTRY_FIELD]).every(
-        (el) => el
+        (countryId) => countryId && countryId !== noneCountryId
       )
   );
-}
-
-function contactsNoCountryView(
-  companies: Company[],
-  contactCountryList: Country[]
-) {
-  return companies.filter((company) => {
-    for (const contact of company.CONTACTS) {
-      if (contact[CONTACT_COUNTRY_FIELD] === null) {
-        return true;
-      }
-      const contactCountry = contactCountryList.find(
-        ({ ID }) => ID === contact[CONTACT_COUNTRY_FIELD]
-      )?.value;
-
-      if (contactCountry === "none") {
-        return true;
-      }
-    }
-
-    return false;
-  });
 }
 
 function customViewCompanies(
@@ -77,3 +59,5 @@ function customViewCompanies(
     companyHasDiffRespOfItsRelatedEntity
   );
 }
+
+export { companyNoCountryView };
