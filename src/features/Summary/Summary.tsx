@@ -88,13 +88,13 @@ function getSummaryTableRow(entityId: number) {
       LEADS: leadAmount,
       DEALS: dealAmount,
     } = Object.values(differentResponsibles).reduce(
-      (acc, cur: Transfer[number]) => {
-        for (const prop in cur) {
-          acc[prop] = acc[prop].concat(cur[prop as keyof typeof cur]).length;
-        }
-        return acc;
+      (amounts, cur: Transfer[number]) => {
+        Object.keys(cur).forEach((entityType) => {
+          amounts[entityType] += cur[entityType as keyof typeof cur].length;
+        });
+        return amounts;
       },
-      { contactAmount: 0, leadAmount: 0, dealAmount: 0 }
+      { CONTACTS: 0, LEADS: 0, DEALS: 0 }
     );
     return {
       entity: getEntityTitle(),
