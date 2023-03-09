@@ -12,7 +12,7 @@ import {
   EntitiesToFetch,
 } from "../types";
 import { CommonState } from "./commonSlice";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { Store, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import {
   COMPANY_COUNTRY_FIELD,
@@ -293,11 +293,10 @@ const fetchDepartments = createAsyncThunk(
   },
   {
     condition: (_, { getState }) => {
-      const store = getState() as RootState;
-      return Boolean(
-        Object.keys(store.common.departments).length === 0 &&
-          store.common.users.length
-      );
+      const {
+        common: { departments, users },
+      } = getState() as RootState;
+      return Object.keys(departments).length === 0 && Boolean(users.length);
     },
   }
 );
