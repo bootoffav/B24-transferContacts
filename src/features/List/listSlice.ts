@@ -28,32 +28,45 @@ const listSlice = createSlice({
   name: "list",
   initialState,
   reducers: {
-    setViewMode(
-      state,
-      {
-        payload,
-      }: PayloadAction<{
-        viewMode: ListSliceState["viewMode"];
-        customViewEntityType?: ListSliceState["customViewEntityType"];
-        customViewUserId?: ListSliceState["customViewUserId"];
-      }>
-    ) {
-      if (
-        [
-          viewModeAll,
-          viewModeNoCountries,
-          viewModeWithLinkedIn,
-          viewModeDiffs,
-          viewModeCustom,
-        ].includes(payload.viewMode)
+    setViewMode: {
+      reducer(
+        state,
+        {
+          payload,
+        }: PayloadAction<{
+          viewMode: ListSliceState["viewMode"];
+          customViewEntityType?: ListSliceState["customViewEntityType"];
+          customViewUserId?: ListSliceState["customViewUserId"];
+        }>
       ) {
-        state.viewMode = payload.viewMode;
-        state.customViewEntityType = payload.customViewEntityType;
-        state.customViewUserId = payload.customViewUserId;
-        state.pageIndex = 0;
-      } else {
-        throw new Error(`viewMode ${payload} does not exist`);
-      }
+        if (
+          [
+            viewModeAll,
+            viewModeNoCountries,
+            viewModeWithLinkedIn,
+            viewModeDiffs,
+            viewModeCustom,
+          ].includes(payload.viewMode)
+        ) {
+          state.viewMode = payload.viewMode;
+          state.customViewEntityType = payload.customViewEntityType;
+          state.customViewUserId = payload.customViewUserId;
+          state.pageIndex = 0;
+        }
+      },
+      prepare(
+        viewMode: ListSliceState["viewMode"],
+        customViewEntityType?,
+        customViewUserId?
+      ) {
+        return {
+          payload: {
+            viewMode,
+            customViewEntityType,
+            customViewUserId,
+          },
+        };
+      },
     },
     setPageIndex(
       state,

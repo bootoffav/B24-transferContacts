@@ -32,58 +32,31 @@ export default function TransferArea() {
       <div>
         <p>
           Found{" "}
-          <Link
-            to=""
-            onClick={() => dispatch(setViewMode({ viewMode: viewModeAll }))}
-          >
+          <Link to="" onClick={() => dispatch(setViewMode(viewModeAll))}>
             {companies.length}
           </Link>{" "}
           companies,{" "}
-          <Link
-            to=""
-            onClick={() => dispatch(setViewMode({ viewMode: viewModeDiffs }))}
-          >
+          <Link to="" onClick={() => dispatch(setViewMode(viewModeDiffs))}>
             {getAmountToTransfer(differentResponsibles, "responsible")}{" "}
           </Link>
           diff. responsibles for{" "}
           <Link
             to=""
-            onClick={() =>
-              dispatch(
-                setViewMode({
-                  viewMode: viewModeCustom,
-                  customViewEntityType: "CONTACTS",
-                })
-              )
-            }
+            onClick={() => dispatch(setViewMode(viewModeCustom, "CONTACTS"))}
           >
             contacts
           </Link>
           ,{" "}
           <Link
             to=""
-            onClick={() =>
-              dispatch(
-                setViewMode({
-                  viewMode: viewModeCustom,
-                  customViewEntityType: "LEADS",
-                })
-              )
-            }
+            onClick={() => dispatch(setViewMode(viewModeCustom, "LEADS"))}
           >
             leads
           </Link>{" "}
           &{" "}
           <Link
             to=""
-            onClick={() =>
-              dispatch(
-                setViewMode({
-                  viewMode: viewModeCustom,
-                  customViewEntityType: "DEALS",
-                })
-              )
-            }
+            onClick={() => dispatch(setViewMode(viewModeCustom, "DEALS"))}
           >
             deals
           </Link>

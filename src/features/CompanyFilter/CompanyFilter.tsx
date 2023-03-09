@@ -49,7 +49,7 @@ export default function CompanyFilter() {
             storeViewMode === viewMode ? " is-active" : ""
           }`}
           onClick={() => {
-            dispatch(setViewMode({ viewMode }));
+            dispatch(setViewMode(viewMode));
           }}
         >
           {label}

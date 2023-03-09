@@ -20,11 +20,7 @@ export default function Summary() {
     customViewUserId: ListSliceState["customViewUserId"]
   ) => {
     dispatch(
-      setViewMode({
-        viewMode: viewModeCustom,
-        customViewEntityType,
-        customViewUserId,
-      })
+      setViewMode(viewModeCustom, customViewEntityType, customViewUserId)
     );
   };
 
