@@ -6,13 +6,14 @@ jest.setTimeout(10000);
 
 describe("test function that communicate with API", function () {
   test("checks fetchDepatments", async function () {
-    const departments: Departments = {
-      "IT department": [7, [5]],
+    const { getState, dispatch } = store;
+    const deps: Departments = {
+      IT: [7, [5]],
     };
-    await store.dispatch(fetchUsers());
-    await store.dispatch(fetchDepartments());
-    expect(store.getState().common.departments).toEqual(
-      expect.objectContaining(departments)
-    );
+    await dispatch(fetchUsers());
+    await dispatch(fetchDepartments());
+    const actualDeps = getState().common.departments;
+
+    expect(actualDeps).toEqual(expect.objectContaining(deps));
   });
 });
