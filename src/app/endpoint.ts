@@ -12,7 +12,7 @@ import {
   EntitiesToFetch,
 } from "../types";
 import { CommonState } from "./commonSlice";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { Store, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import {
   COMPANY_COUNTRY_FIELD,
