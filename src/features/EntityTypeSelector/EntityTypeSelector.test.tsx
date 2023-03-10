@@ -1,8 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import EntityTypeSelector, {
-  OPTION_TEXT_MAP,
-  renderOptions,
-} from "./EntityTypeSelector";
+import EntityTypeSelector, { OPTION_TEXT_MAP } from "./EntityTypeSelector";
 import { Provider } from "react-redux";
 import { store } from "../../app/store";
 import { selectType } from "app/commonSlice";
