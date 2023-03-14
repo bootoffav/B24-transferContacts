@@ -15,16 +15,26 @@ const optionsSlice = createSlice({
   name: "checkbox",
   initialState,
   reducers: {
-    setCheckboxOption: (
-      state,
-      {
-        payload,
-      }: PayloadAction<{
-        what: typeof includeCheckboxes[number];
-        newValue: boolean;
-      }>
-    ) => {
-      state[payload.what] = payload.newValue;
+    setCheckboxOption: {
+      reducer(
+        state,
+        {
+          payload,
+        }: PayloadAction<{
+          what: typeof includeCheckboxes[number];
+          newValue: boolean;
+        }>
+      ) {
+        state[payload.what] = payload.newValue;
+      },
+      prepare(what: typeof includeCheckboxes[number], newValue: boolean) {
+        return {
+          payload: {
+            what,
+            newValue,
+          },
+        };
+      },
     },
   },
 });

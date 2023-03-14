@@ -4,13 +4,12 @@ import { render, screen } from "@testing-library/react";
 import storeConnected from "tests/storeConnected";
 import Summary from "./Summary";
 
+const { dispatch } = store;
 describe("tests Department summary functionality", function () {
   describe("properly show/hide (diff. responsible for leads, diff. responsible for deals) header columns", function () {
     // leads shown
     test("diff. responsible for leads shown", function () {
-      store.dispatch(
-        setCheckboxOption({ what: "includeLeads", newValue: true })
-      );
+      dispatch(setCheckboxOption("includeLeads", true));
       render(storeConnected(<Summary />));
 
       expect(screen.getByTestId("thead")).toHaveTextContent(
@@ -20,9 +19,7 @@ describe("tests Department summary functionality", function () {
 
     // leads hidden
     test("diff. responsible for leads hidden", function () {
-      store.dispatch(
-        setCheckboxOption({ what: "includeLeads", newValue: false })
-      );
+      dispatch(setCheckboxOption("includeLeads", false));
       render(storeConnected(<Summary />));
       expect(screen.getByTestId("thead")).not.toHaveTextContent(
         "diff. responsible for leads"
@@ -31,9 +28,7 @@ describe("tests Department summary functionality", function () {
 
     //deals shown
     test("diff. responsible for deals shown", function () {
-      store.dispatch(
-        setCheckboxOption({ what: "includeDeals", newValue: true })
-      );
+      dispatch(setCheckboxOption("includeDeals", true));
       render(storeConnected(<Summary />));
       expect(screen.getByTestId("thead")).toHaveTextContent(
         "diff. responsible for deals"
@@ -42,9 +37,7 @@ describe("tests Department summary functionality", function () {
 
     //deals hidden
     test("diff. responsible for deals hidden", function () {
-      store.dispatch(
-        setCheckboxOption({ what: "includeDeals", newValue: false })
-      );
+      dispatch(setCheckboxOption("includeDeals", false));
       render(storeConnected(<Summary />));
       expect(screen.getByTestId("thead")).not.toHaveTextContent(
         "diff. responsible for deals"

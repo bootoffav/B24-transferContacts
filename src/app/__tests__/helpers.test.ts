@@ -7,45 +7,11 @@ import {
   getAmountToTransfer,
   getOptionalEntitiesToFetch,
 } from "app/helpers";
-import { store } from "../../app/store";
+import { store } from "app/store";
 import { differentResponsibles } from "tests/mocks/differentResponsibles";
 
+const { getState, dispatch } = store;
 jest.setTimeout(10000);
-
-// describe("it finds correct entity", function () {
-//   test("find correct user name", async function () {
-//     await store.dispatch(fetchUsers());
-//     store.dispatch(setSelectType("users"));
-
-//     store.dispatch(setChosenId([5]));
-//     expect(getEntityTitle()).toBe("Aleksei Butov");
-
-//     store.dispatch(setChosenId([7]));
-//     expect(getEntityTitle()).toBe("Igor Stoliarov");
-//   });
-
-//   test("find correct country", async function () {
-//     await store.dispatch(fetchCountries());
-//     store.dispatch(setSelectType("companyCountryList"));
-
-//     store.dispatch(setChosenId([875]));
-//     expect(getEntityTitle()).toBe("Albania");
-
-//     store.dispatch(setChosenId([1023]));
-//     expect(getEntityTitle()).toBe("Comoros");
-//   });
-
-//   test("find correct department", async function () {
-//     await store.dispatch(fetchDepartments());
-//     store.dispatch(setSelectType("departments"));
-
-//     store.dispatch(setChosenId([314, 181, 4416, 5126]));
-//     expect(getEntityTitle()).toBe("XM Textiles Spain");
-
-//     store.dispatch(setChosenId([5]));
-//     expect(getEntityTitle()).toBe("IT department");
-//   });
-// });
 
 describe("check getAmountToTransfer", function () {
   // test("correctly counts contacts has no countries", function () {
@@ -67,7 +33,7 @@ describe("check getAmountToTransfer", function () {
   //   const contactsHasNoCountries4 = {};
   //   expect(getAmountToTransfer(contactsHasNoCountries4, "country")).toBe(0);
   // });
-  describe("counts different respnsibles", function () {
+  describe("counts different responsibles", function () {
     test("counts different responbles for contacts", function () {
       expect(
         getAmountToTransfer(differentResponsibles, "responsible", "contacts")
@@ -86,39 +52,40 @@ describe("check getAmountToTransfer", function () {
       ).toBe(16);
     });
 
-    xtest("count different responsibles for all", function () {});
-    expect(
-      getAmountToTransfer(differentResponsibles, "responsible", "all")
-    ).toBe(149);
-    // expect(getAmountToTransfer(differentResponsibles, "responsible")).toBe(4);
+    test("count different responsibles for all", function () {
+      const result = getAmountToTransfer(
+        differentResponsibles,
+        "responsible",
+        "all"
+      );
+      expect(result).toBe(149);
+    });
   });
 
   test("correctly counts different responsibles", function () {});
 });
 
-describe("check getEntities function", function () {
+describe("check getOptionalEntitiesToFetch()", function () {
   test("gets correct set of entities to fetch no modification in store", function () {
-    expect(getOptionalEntitiesToFetch().length).toBe(2);
-    expect(getOptionalEntitiesToFetch()).toEqual(
-      expect.arrayContaining(["deal", "lead"])
-    );
+    const entities = getOptionalEntitiesToFetch();
+
+    expect(entities.length).toBe(2);
+    expect(entities).toEqual(expect.arrayContaining(["deal", "lead"]));
   });
 
-  xtest("leads excluded", function () {
-    store.dispatch(
-      setCheckboxOption({ what: "includeLeads", newValue: false })
-    );
+  test("gets optionalEntities leads excluded", function () {
+    dispatch(setCheckboxOption("includeLeads", false));
     const entities = getOptionalEntitiesToFetch();
+
     expect(entities.length).toBe(1);
     expect(entities).toEqual(expect.arrayContaining(["deal"]));
     expect(entities).not.toEqual(expect.arrayContaining(["lead"]));
   });
 
-  xtest("deals excluded", function () {
-    store.dispatch(
-      setCheckboxOption({ what: "includeDeals", newValue: false })
-    );
+  test("gets optionalEntities deals excluded", function () {
+    dispatch(setCheckboxOption("includeDeals", false));
     const entities = getOptionalEntitiesToFetch();
+
     expect(entities.length).toBe(0);
     expect(entities).not.toEqual(expect.arrayContaining(["deal"]));
   });
