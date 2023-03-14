@@ -7,22 +7,22 @@ interface IOptions {
 }
 
 export default function Options({ type }: IOptions) {
-  const labels = new Map<keyof OptionsState & string, string>([
+  const labels = new Map<keyof OptionsState, string>([
     ["includeDeals", "Include deals"],
     ["includeLeads", "Include leads"],
   ]);
 
   const dispatch = useAppDispatch();
   const checked = useAppSelector(({ options }) => options[type]);
-  const disabled = useAppSelector(({ common }) => {
+  const disabled = useAppSelector(({ common: { linkedInOnly, stage } }) => {
     return (
-      common.linkedInOnly ||
+      linkedInOnly ||
       ![
         Stage.initial,
         Stage.scanFinished,
         Stage.stuck,
         Stage.transferred,
-      ].includes(common.stage)
+      ].includes(stage)
     );
   });
 
@@ -36,13 +36,12 @@ export default function Options({ type }: IOptions) {
         type="checkbox"
         disabled={disabled}
         checked={checked}
-        onChange={({ currentTarget }) =>
-          dispatch(
-            setCheckboxOption({ what: type, newValue: currentTarget.checked })
-          )
+        className="mr-1"
+        onChange={({ currentTarget: { checked } }) =>
+          dispatch(setCheckboxOption(type, checked))
         }
-      />{" "}
-      {`${labels.get(type)}`}
+      />
+      {labels.get(type)}
     </label>
   );
 }
