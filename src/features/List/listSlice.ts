@@ -15,7 +15,7 @@ export interface ListSliceState {
     | typeof viewModeDiffs
     | typeof viewModeCustom;
   pageIndex: number;
-  customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS";
+  customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS" | "COMPANIES";
   customViewUserId?: number;
 }
 

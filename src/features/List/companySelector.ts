@@ -28,6 +28,8 @@ export const companySelector = createSelector(
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       case viewModeCustom:
+        if (list.customViewEntityType === "COMPANIES")
+          return companiesByUser(companies, list.customViewUserId!);
         return customViewCompanies(companies, list.customViewUserId);
       default:
         return companies;

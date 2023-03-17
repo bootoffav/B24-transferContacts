@@ -51,7 +51,13 @@ export default function Summary() {
               return (
                 <tr key={entity}>
                   <th>{entity}</th>
-                  <td>{companiesAmount}</td>
+                  <td onClick={() => customLinkHandler("COMPANIES", userId)}>
+                    {companiesAmount ? (
+                      <Link to="..">{companiesAmount}</Link>
+                    ) : (
+                      0
+                    )}
+                  </td>
                   <td onClick={() => customLinkHandler("CONTACTS", userId)}>
                     {contactAmount ? <Link to="..">{contactAmount}</Link> : 0}
                   </td>
