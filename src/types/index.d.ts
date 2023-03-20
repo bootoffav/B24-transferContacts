@@ -6,7 +6,7 @@ declare global {
 
 export interface Contact {
   [CONTACT_POSITION_FIELD]: string;
-  [CONTACT_COUNTRY_FIELD]: number;
+  [CONTACT_COUNTRY_FIELD]: `${number}`;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;
@@ -29,7 +29,7 @@ import {
 
 export type Country = {
   value: string;
-  ID: number;
+  ID: `${number}`;
 };
 
 export type Departments = {
@@ -47,7 +47,7 @@ export interface User {
 
 export interface Company {
   [LINKEDIN_ACCOUNT_FIELD]: string;
-  [COMPANY_COUNTRY_FIELD]: number;
+  [COMPANY_COUNTRY_FIELD]: `${number}`;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;

@@ -1,4 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAction,
+  PayloadAction,
+  AnyAction,
+} from "@reduxjs/toolkit";
 import { Contact, Country, Departments, User } from "types";
 import { sort, splitActiveDismissed } from "../utils/users";
 import { fetchCountries, fetchDepartments, fetchUsers } from "./endpoint";
@@ -15,6 +20,12 @@ enum Stage {
 }
 
 const selectType = ["users", "companyCountryList", "departments"] as const;
+
+const COUNTRY_LIST = "common/countryList";
+const setCountryList = createAction<[Country[], Country[]]>(COUNTRY_LIST);
+
+const setCountryListMatcher = (action: AnyAction): action is AnyAction =>
+  [COUNTRY_LIST, fetchCountries.fulfilled.toString()].includes(action.type);
 
 export interface CommonState {
   stage: Stage;
@@ -90,13 +101,6 @@ const commonSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(
-        fetchCountries.fulfilled,
-        (state, { payload: [companyCountryList, contactCountryList] }) => {
-          state.companyCountryList = companyCountryList;
-          state.contactCountryList = contactCountryList;
-        }
-      )
       .addCase(fetchUsers.fulfilled, (state, { payload: users }) => {
         users = splitActiveDismissed(sort(users));
         // add empty first
@@ -113,7 +117,14 @@ const commonSlice = createSlice({
       })
       .addCase(fetchDepartments.fulfilled, (state, { payload }) => {
         Object.assign(state.departments, { none: [0, []] }, payload);
-      });
+      })
+      .addMatcher(
+        setCountryListMatcher,
+        (state, { payload: [companyCountryList, contactCountryList] }) => {
+          state.companyCountryList = companyCountryList;
+          state.contactCountryList = contactCountryList;
+        }
+      );
   },
 });
 
@@ -126,5 +137,5 @@ export const {
   setContactIdForEmails,
   setLinkedInOnly,
 } = commonSlice.actions;
-export { Stage, selectType };
+export { Stage, selectType, setCountryList };
 export default commonSlice;

@@ -27,7 +27,10 @@ export const companySlice = createSlice({
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;
     },
-    setContactsNoCountries: (state, { payload }) => {
+    setContactsNoCountries: (
+      state,
+      { payload }: PayloadAction<TransferCountry>
+    ) => {
       state.contactsNoCountries = payload;
     },
     setTotalAmount: (state, { payload }: PayloadAction<number>) => {
