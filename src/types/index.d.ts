@@ -85,7 +85,7 @@ export interface TransferCountry {
 export type TableDataStructure = {
   company: [string, number];
   responsibleForCompany: string;
-  contact: [string, number, number][];
+  contact: [string, number, `${number}`][];
   emails: Contact["EMAILS"][];
   contactPosition: [string, number][];
   deal?: (string | number)[][];

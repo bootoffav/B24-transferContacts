@@ -11,6 +11,7 @@ import {
   viewModeAll,
   viewModeDiffs,
   viewModeCustom,
+  viewModeNoCountries,
 } from "features/List/listSlice";
 
 export default function TransferArea() {
@@ -65,7 +66,13 @@ export default function TransferArea() {
       </div>
       <div>
         <p>
-          {noCountriesAmount()} contacts have not set up its country or set NONE
+          <Link
+            to=""
+            onClick={() => dispatch(setViewMode(viewModeNoCountries))}
+          >
+            {noCountriesAmount()}
+          </Link>{" "}
+          contacts have not set up country
         </p>
         <button
           className="button ml-2 is-success is-small is-light"
