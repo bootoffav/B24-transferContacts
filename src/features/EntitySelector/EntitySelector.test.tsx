@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import EntitySelector from "./EntitySelector";
-import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import { store } from "../../app/store";
 import { fetchCountries, fetchDepartments, fetchUsers } from "app/endpoint";

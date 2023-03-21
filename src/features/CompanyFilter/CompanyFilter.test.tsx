@@ -1,6 +1,20 @@
 import CompanyFilter from "./CompanyFilter";
-import { createRoot } from "react-dom/client";
+import storeConnected from "tests/storeConnected";
+import { render, screen } from "@testing-library/react";
 
-it("renders CompanyFilter without crashing", () => {
-  createRoot(document.createElement("div")).render(<CompanyFilter />);
+const labels = [
+  "All",
+  "Diffs",
+  "No country (any contact)",
+  "No emails",
+  "With LinkedIn",
+  "Custom",
+] as const;
+
+it("rendering CompanyFilter: check buttons", () => {
+  render(storeConnected(<CompanyFilter />));
+  const elements = screen.getAllByRole("button");
+  elements.forEach(({ innerHTML }, i) => {
+    expect(innerHTML).toBe(labels[i]);
+  });
 });

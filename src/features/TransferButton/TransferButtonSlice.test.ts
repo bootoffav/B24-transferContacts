@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom";
 import { store } from "../../app/store";
 import transferButtonSlice, {
   setTransferEntityType,

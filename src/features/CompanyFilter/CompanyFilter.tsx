@@ -7,6 +7,7 @@ import {
   viewModeDiffs,
   viewModeCustom,
   ListSliceState,
+  viewModeNoEmail,
 } from "features/List/listSlice";
 
 export default function CompanyFilter() {
@@ -28,6 +29,10 @@ export default function CompanyFilter() {
     {
       label: "No country (any contact)",
       viewMode: viewModeNoCountries,
+    },
+    {
+      label: "No emails",
+      viewMode: viewModeNoEmail,
     },
     {
       label: "With LinkedIn",
