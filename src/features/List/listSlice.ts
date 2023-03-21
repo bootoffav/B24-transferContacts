@@ -6,6 +6,7 @@ export const viewModeNoCountries = "noCountries";
 export const viewModeWithLinkedIn = "withLinkedIn";
 export const viewModeDiffs = "diffs";
 export const viewModeCustom = "custom";
+export const viewModeNoEmail = "noEmail";
 
 export interface ListSliceState {
   viewMode:
@@ -13,6 +14,7 @@ export interface ListSliceState {
     | typeof viewModeNoCountries
     | typeof viewModeWithLinkedIn
     | typeof viewModeDiffs
+    | typeof viewModeNoEmail
     | typeof viewModeCustom;
   pageIndex: number;
   customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS" | "COMPANIES";
@@ -46,6 +48,7 @@ const listSlice = createSlice({
             viewModeWithLinkedIn,
             viewModeDiffs,
             viewModeCustom,
+            viewModeNoEmail,
           ].includes(payload.viewMode)
         ) {
           state.viewMode = payload.viewMode;

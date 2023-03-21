@@ -10,7 +10,7 @@ import {
 import { store } from "app/store";
 import { differentResponsibles } from "tests/mocks/differentResponsibles";
 
-const { getState, dispatch } = store;
+const { dispatch } = store;
 jest.setTimeout(10000);
 
 describe("check getAmountToTransfer", function () {

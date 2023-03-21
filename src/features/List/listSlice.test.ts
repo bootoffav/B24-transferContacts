@@ -8,8 +8,13 @@ describe("list reducer: viewMode check", () => {
   });
 
   it("should update state when passing correct action and payload", () => {
-    const result = reducer(undefined, setViewMode("noCountries")).viewMode;
-    expect(result).toEqual("noCountries");
+    // no countries
+    const noCountries = reducer(undefined, setViewMode("noCountries")).viewMode;
+    expect(noCountries).toEqual("noCountries");
+
+    // no email
+    const noEmails = reducer(undefined, setViewMode("noEmail")).viewMode;
+    expect(noEmails).toBe("noEmail");
   });
 });
 
