@@ -1,8 +1,6 @@
 import optionsSlice, { setCheckboxOption } from "./OptionsSlice";
-import { store } from "app/store";
 
-const { getState, dispatch } = store;
-
+const { reducer } = optionsSlice;
 describe("check optionsSlice state", function () {
   test("check initial state is correct", function () {
     const { includeDeals, includeLeads } = optionsSlice.getInitialState();
@@ -11,16 +9,28 @@ describe("check optionsSlice state", function () {
   });
 
   test("check setCheckboxtOption", function () {
-    dispatch(setCheckboxOption("includeDeals", true));
-    expect(getState().options.includeDeals).toBe(true);
+    var { includeDeals } = reducer(
+      undefined,
+      setCheckboxOption("includeDeals", true)
+    );
+    expect(includeDeals).toBe(true);
 
-    dispatch(setCheckboxOption("includeDeals", false));
-    expect(getState().options.includeDeals).toBe(false);
+    var { includeDeals } = reducer(
+      undefined,
+      setCheckboxOption("includeDeals", false)
+    );
+    expect(includeDeals).toBe(false);
 
-    dispatch(setCheckboxOption("includeLeads", true));
-    expect(getState().options.includeLeads).toBe(true);
+    var { includeLeads } = reducer(
+      undefined,
+      setCheckboxOption("includeLeads", true)
+    );
+    expect(includeLeads).toBe(true);
 
-    dispatch(setCheckboxOption("includeLeads", false));
-    expect(getState().options.includeDeals).toBe(false);
+    var { includeLeads } = reducer(
+      undefined,
+      setCheckboxOption("includeLeads", false)
+    );
+    expect(includeDeals).toBe(false);
   });
 });
