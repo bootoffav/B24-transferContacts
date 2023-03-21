@@ -6,6 +6,7 @@ import {
   viewModeDiffs,
   viewModeCustom,
   ListSliceState,
+  viewModeNoEmail,
 } from "./listSlice";
 import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
@@ -27,6 +28,8 @@ export const companySelector = createSelector(
         return companyNoCountryView(companies, contactCountryList);
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
+      case viewModeNoEmail:
+        return companies.filter(({ HAS_EMAIL }) => HAS_EMAIL === "N");
       case viewModeCustom:
         if (list.customViewEntityType === "COMPANIES")
           return companiesByUser(companies, list.customViewUserId!);

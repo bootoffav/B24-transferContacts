@@ -54,6 +54,7 @@ export interface Company {
   CONTACTS: Contact[];
   DEALS: Deal[];
   LEADS: Lead[];
+  HAS_EMAIL: "Y" | "N";
 }
 
 export interface Lead {
