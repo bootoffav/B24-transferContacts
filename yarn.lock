@@ -1703,6 +1703,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@creativebulma/bulma-badge@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@creativebulma/bulma-badge@npm:1.0.1"
+  checksum: 33c2189194da4253139da01624f4c7d5d4b7cfcc8f370fab41c2db75b2af45cf6884211f65d2a0b7bf8024c44d1fa889348b0041ee1dffd2d61e3f4d7476ef4c
+  languageName: node
+  linkType: hard
+
 "@creativebulma/bulma-tooltip@npm:^1.2.0":
   version: 1.2.0
   resolution: "@creativebulma/bulma-tooltip@npm:1.2.0"
@@ -18819,6 +18826,7 @@ __metadata:
   resolution: "transfer-contacts@workspace:."
   dependencies:
     "@auth0/auth0-react": ^2.0.0
+    "@creativebulma/bulma-badge": ^1.0.1
     "@creativebulma/bulma-tooltip": ^1.2.0
     "@fortawesome/fontawesome-free": ^6.2.1
     "@mdx-js/react": ^1.6.22
