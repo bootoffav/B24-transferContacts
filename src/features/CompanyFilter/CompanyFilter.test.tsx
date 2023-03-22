@@ -16,9 +16,7 @@ it("rendering CompanyFilter: check buttons", () => {
   for (const label of labels) {
     if (label === "No emails") {
       const el = screen.getByText(label);
-      expect(el.innerHTML).toContain(
-        '<span style="z-index: 5;" class="badge is-top is-warning">'
-      );
+      expect(el.innerHTML).toContain('<span class="badge is-top is-warning">');
     }
     expect(screen.getByText(label)).toHaveTextContent(label);
   }

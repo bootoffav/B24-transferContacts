@@ -29,7 +29,7 @@ export const companySelector = createSelector(
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       case viewModeNoEmail:
-        return companies.filter(({ HAS_EMAIL }) => HAS_EMAIL === "N");
+        return companySelectorNoEmail(companies);
       case viewModeCustom:
         if (list.customViewEntityType === "COMPANIES")
           return companiesByUser(companies, list.customViewUserId!);
@@ -39,6 +39,11 @@ export const companySelector = createSelector(
     }
   }
 );
+
+export function companySelectorNoEmail(companies: Company[]) {
+  console.log("runs");
+  return companies.filter(({ HAS_EMAIL }) => HAS_EMAIL === "N");
+}
 
 function companyNoCountryView(
   companies: Company[],
