@@ -13,8 +13,13 @@ const labels = [
 
 it("rendering CompanyFilter: check buttons", () => {
   render(storeConnected(<CompanyFilter />));
-  const elements = screen.getAllByRole("button");
-  elements.forEach(({ innerHTML }, i) => {
-    expect(innerHTML).toBe(labels[i]);
-  });
+  for (const label of labels) {
+    if (label === "No emails") {
+      const el = screen.getByText(label);
+      expect(el.innerHTML).toContain(
+        '<span style="z-index: 5;" class="badge is-top is-warning">'
+      );
+    }
+    expect(screen.getByText(label)).toHaveTextContent(label);
+  }
 });

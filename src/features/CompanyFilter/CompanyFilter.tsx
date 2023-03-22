@@ -1,4 +1,5 @@
 import { useAppSelector, useAppDispatch } from "app/hooks";
+import { companySelector } from "features/List/companySelector";
 import {
   setViewMode,
   viewModeAll,
@@ -57,9 +58,19 @@ export default function CompanyFilter() {
             dispatch(setViewMode(viewMode));
           }}
         >
+          {label === "No emails" && <Badge />}
           {label}
         </button>
       ))}
     </div>
   );
 }
+
+const Badge = () => {
+  const amount = useAppSelector(companySelector).length;
+  return (
+    <span style={{ zIndex: "5" }} className="badge is-top is-warning">
+      {amount}
+    </span>
+  );
+};
