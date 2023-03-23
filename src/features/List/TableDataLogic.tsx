@@ -53,23 +53,27 @@ function contactEmailCellRenderer({
 }
 
 function contactCellRenderer(
-  { value, column: { id } }: Cell<{}, TableDataStructure[number]["contact"]>,
+  {
+    value: contacts,
+    column: { id },
+  }: Cell<{}, TableDataStructure[number]["contact"]>,
   dispatch: Dispatch
 ) {
   return (
     <ul>
-      {value.map((v, index) => {
+      {contacts.map((contact, index) => {
+        debugger;
         return (
           <li key={index} className="is-flex is-justify-content-space-between">
             <span>
-              {formLink(v, id as EntityType)}
+              {formLink(contact, id as EntityType)}
               {/* no country case */}
-              {v.at(-1) ? "" : <span className="attention">*</span>}
+              {contact.at(-1) ? "" : <span className="attention">*</span>}
             </span>
             <span
               className="is-clickable"
               onClick={() => {
-                dispatch(setContactIdForEmails(v[1]));
+                dispatch(setContactIdForEmails(contact[1]));
                 dispatch(hideModal(false));
               }}
             >
