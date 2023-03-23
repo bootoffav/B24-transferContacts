@@ -58,7 +58,9 @@ export default function CompanyFilter() {
             dispatch(setViewMode(viewMode));
           }}
         >
-          {label !== "Custom" && <Badge viewMode={viewMode} />}
+          {![viewMode, storeViewMode].includes("custom") && (
+            <Badge viewMode={viewMode} />
+          )}
           {label}
         </button>
       ))}
