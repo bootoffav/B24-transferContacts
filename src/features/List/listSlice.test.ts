@@ -1,20 +1,23 @@
-import listSlice, { viewModeAll, setViewMode } from "./listSlice";
+import listSlice, { ViewMode, setViewMode } from "./listSlice";
 
 const { reducer } = listSlice;
 describe("list reducer: viewMode check", () => {
   it("should return initial state when passed an empty action", () => {
     const { viewMode } = reducer(undefined, { type: "" });
-    expect(viewMode).toEqual("diffs");
+    expect(viewMode).toEqual(ViewMode.diffs);
   });
 
   it("should update state when passing correct action and payload", () => {
     // no countries
-    const noCountries = reducer(undefined, setViewMode("noCountries")).viewMode;
-    expect(noCountries).toEqual("noCountries");
+    const noCountries = reducer(
+      undefined,
+      setViewMode(ViewMode.noCountries)
+    ).viewMode;
+    expect(noCountries).toBe(ViewMode.noCountries);
 
     // no email
-    const noEmails = reducer(undefined, setViewMode("noEmail")).viewMode;
-    expect(noEmails).toBe("noEmail");
+    const noEmails = reducer(undefined, setViewMode(ViewMode.noEmail)).viewMode;
+    expect(noEmails).toBe(ViewMode.noEmail);
   });
 });
 
@@ -36,7 +39,7 @@ describe("list reducer: pageIndex check", () => {
     expect(reducer(undefined, actionSetPageIndex10).pageIndex).toBe(10);
     expect(
       reducer(
-        { pageIndex: 30, viewMode: viewModeAll },
+        { pageIndex: 30, viewMode: ViewMode.all },
         actionSetPageIndexMinus10
       ).pageIndex
     ).toBe(20);
@@ -48,8 +51,10 @@ describe("list reducer: pageIndex check", () => {
     };
 
     expect(
-      reducer({ viewMode: viewModeAll, pageIndex: 0 }, actionSetPageIndexMinus1)
-        .pageIndex
+      reducer(
+        { viewMode: ViewMode.all, pageIndex: 0 },
+        actionSetPageIndexMinus1
+      ).pageIndex
     ).toBe(0);
   });
 });

@@ -6,13 +6,7 @@ import { setContactsNoCountries } from "../../app/companySlice";
 import TransferButton from "features/TransferButton/TransferButton";
 import { getAmountToTransfer } from "app/helpers";
 import { setTransferType } from "features/TransferButton/TransferButtonSlice";
-import {
-  setViewMode,
-  viewModeAll,
-  viewModeDiffs,
-  viewModeCustom,
-  viewModeNoCountries,
-} from "features/List/listSlice";
+import { setViewMode, ViewMode } from "features/List/listSlice";
 
 export default function TransferArea() {
   const dispatch = useAppDispatch();
@@ -33,31 +27,31 @@ export default function TransferArea() {
       <div>
         <p>
           Found{" "}
-          <Link to="" onClick={() => dispatch(setViewMode(viewModeAll))}>
+          <Link to="" onClick={() => dispatch(setViewMode(ViewMode.all))}>
             {companies.length}
           </Link>{" "}
           companies,{" "}
-          <Link to="" onClick={() => dispatch(setViewMode(viewModeDiffs))}>
+          <Link to="" onClick={() => dispatch(setViewMode(ViewMode.diffs))}>
             {getAmountToTransfer(differentResponsibles, "responsible")}{" "}
           </Link>
           diff. responsibles for{" "}
           <Link
             to=""
-            onClick={() => dispatch(setViewMode(viewModeCustom, "CONTACTS"))}
+            onClick={() => dispatch(setViewMode(ViewMode.custom, "CONTACTS"))}
           >
             contacts
           </Link>
           ,{" "}
           <Link
             to=""
-            onClick={() => dispatch(setViewMode(viewModeCustom, "LEADS"))}
+            onClick={() => dispatch(setViewMode(ViewMode.custom, "LEADS"))}
           >
             leads
           </Link>{" "}
           &{" "}
           <Link
             to=""
-            onClick={() => dispatch(setViewMode(viewModeCustom, "DEALS"))}
+            onClick={() => dispatch(setViewMode(ViewMode.custom, "DEALS"))}
           >
             deals
           </Link>
@@ -68,7 +62,7 @@ export default function TransferArea() {
         <p>
           <Link
             to=""
-            onClick={() => dispatch(setViewMode(viewModeNoCountries))}
+            onClick={() => dispatch(setViewMode(ViewMode.noCountries))}
           >
             {noCountriesAmount()}
           </Link>{" "}

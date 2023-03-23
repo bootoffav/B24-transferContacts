@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { setViewMode, viewModeCustom } from "features/List/listSlice";
+import { setViewMode, ViewMode } from "features/List/listSlice";
 import type { ListSliceState } from "features/List/listSlice";
 import { Transfer } from "types";
 import { useAppSelector, useAppDispatch } from "app/hooks";
@@ -20,7 +20,7 @@ export default function Summary() {
     customViewUserId: ListSliceState["customViewUserId"]
   ) => {
     dispatch(
-      setViewMode(viewModeCustom, customViewEntityType, customViewUserId)
+      setViewMode(ViewMode.custom, customViewEntityType, customViewUserId)
     );
   };
 

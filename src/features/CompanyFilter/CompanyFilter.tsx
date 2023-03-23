@@ -1,15 +1,6 @@
 import { useAppSelector, useAppDispatch } from "app/hooks";
 import { companySelector } from "features/List/companySelector";
-import {
-  setViewMode,
-  viewModeAll,
-  viewModeNoCountries,
-  viewModeWithLinkedIn,
-  viewModeDiffs,
-  viewModeCustom,
-  ListSliceState,
-  viewModeNoEmail,
-} from "features/List/listSlice";
+import { setViewMode, ListSliceState, ViewMode } from "features/List/listSlice";
 
 export default function CompanyFilter() {
   const { viewMode: storeViewMode } = useAppSelector(({ list }) => list);
@@ -21,27 +12,27 @@ export default function CompanyFilter() {
   }[] = [
     {
       label: "All",
-      viewMode: viewModeAll,
+      viewMode: ViewMode.all,
     },
     {
       label: "Diffs",
-      viewMode: viewModeDiffs,
+      viewMode: ViewMode.diffs,
     },
     {
       label: "No country (any contact)",
-      viewMode: viewModeNoCountries,
+      viewMode: ViewMode.noCountries,
     },
     {
       label: "No emails",
-      viewMode: viewModeNoEmail,
+      viewMode: ViewMode.noEmail,
     },
     {
       label: "With LinkedIn",
-      viewMode: viewModeWithLinkedIn,
+      viewMode: ViewMode.withLinkedIn,
     },
     {
       label: "Custom",
-      viewMode: viewModeCustom,
+      viewMode: ViewMode.custom,
     },
   ];
 
@@ -49,7 +40,7 @@ export default function CompanyFilter() {
     <div className="column buttons has-addons">
       {filterOptions.map(({ viewMode, label }) => (
         <button
-          disabled={label === "Custom" && storeViewMode !== "custom"}
+          disabled={label === "Custom" && storeViewMode !== ViewMode.custom}
           key={viewMode}
           className={`button is-light is-link${
             storeViewMode === viewMode ? " is-active" : ""
@@ -58,7 +49,7 @@ export default function CompanyFilter() {
             dispatch(setViewMode(viewMode));
           }}
         >
-          {![viewMode, storeViewMode].includes("custom") && (
+          {![viewMode, storeViewMode].includes(ViewMode.custom) && (
             <Badge viewMode={viewMode} />
           )}
           {label}

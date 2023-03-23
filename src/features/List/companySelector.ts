@@ -1,13 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
-import {
-  viewModeNoCountries,
-  viewModeWithLinkedIn,
-  viewModeDiffs,
-  viewModeCustom,
-  ListSliceState,
-  viewModeNoEmail,
-} from "./listSlice";
+import { ListSliceState, ViewMode } from "./listSlice";
 import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
 import companiesByUser from "utils/companiesByUser";
@@ -26,19 +19,19 @@ export const companySelector = createSelector(
   }),
   ({ companies, list, contactCountryList, viewModeArg }) => {
     switch (viewModeArg || list.viewMode) {
-      case viewModeDiffs:
+      case ViewMode.diffs:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
-      case viewModeNoCountries:
+      case ViewMode.noCountries:
         return companyNoCountryView(companies, contactCountryList);
-      case viewModeWithLinkedIn:
+      case ViewMode.withLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
-      case viewModeNoEmail:
+      case ViewMode.noEmail:
         return companies.filter(
           ({ HAS_EMAIL, CONTACTS }) =>
             HAS_EMAIL === "N" ||
             CONTACTS.some(({ HAS_EMAIL }) => HAS_EMAIL === "N")
         );
-      case viewModeCustom:
+      case ViewMode.custom:
         if (list.customViewEntityType === "COMPANIES")
           return companiesByUser(companies, list.customViewUserId!);
         return customViewCompanies(companies, list.customViewUserId);
