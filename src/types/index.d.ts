@@ -12,6 +12,7 @@ export interface Contact {
   ID: number;
   NAME: string;
   LAST_NAME: string;
+  HAS_EMAIL: "Y" | "N";
   EMAILS: {
     ID: `${number}`;
     VALUE_TYPE: "WORK" | "MAILING" | "OTHER" | "HOME";

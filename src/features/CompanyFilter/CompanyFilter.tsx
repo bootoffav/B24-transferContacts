@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "app/hooks";
-import { companySelectorNoEmail } from "features/List/companySelector";
+import { companySelector } from "features/List/companySelector";
 import {
   setViewMode,
   viewModeAll,
@@ -58,7 +58,7 @@ export default function CompanyFilter() {
             dispatch(setViewMode(viewMode));
           }}
         >
-          {label === "No emails" && <Badge />}
+          {label !== "Custom" && <Badge viewMode={viewMode} />}
           {label}
         </button>
       ))}
@@ -66,9 +66,9 @@ export default function CompanyFilter() {
   );
 }
 
-const Badge = () => {
+const Badge = ({ viewMode }: { viewMode: ListSliceState["viewMode"] }) => {
   const amount = useAppSelector(
-    ({ company: { companies } }) => companySelectorNoEmail(companies).length
+    (state) => companySelector(state, viewMode).length
   );
   return <span className="badge is-top is-warning">{amount}</span>;
 };

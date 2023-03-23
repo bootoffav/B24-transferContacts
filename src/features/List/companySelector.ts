@@ -14,14 +14,18 @@ import companiesByUser from "utils/companiesByUser";
 import { Company, Country } from "types";
 
 export const companySelector = createSelector(
-  ({ company, common, list }: RootState) => ({
+  (
+    { company, common, list }: RootState,
+    viewModeArg?: ListSliceState["viewMode"]
+  ) => ({
     companies: company.companies,
     companyCountryList: common.companyCountryList,
     contactCountryList: common.contactCountryList,
     list,
+    viewModeArg,
   }),
-  ({ companies, list, contactCountryList }) => {
-    switch (list.viewMode) {
+  ({ companies, list, contactCountryList, viewModeArg }) => {
+    switch (viewModeArg || list.viewMode) {
       case viewModeDiffs:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
       case viewModeNoCountries:
@@ -29,7 +33,11 @@ export const companySelector = createSelector(
       case viewModeWithLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       case viewModeNoEmail:
-        return companySelectorNoEmail(companies);
+        return companies.filter(
+          ({ HAS_EMAIL, CONTACTS }) =>
+            HAS_EMAIL === "N" ||
+            CONTACTS.some(({ HAS_EMAIL }) => HAS_EMAIL === "N")
+        );
       case viewModeCustom:
         if (list.customViewEntityType === "COMPANIES")
           return companiesByUser(companies, list.customViewUserId!);
@@ -39,11 +47,6 @@ export const companySelector = createSelector(
     }
   }
 );
-
-export function companySelectorNoEmail(companies: Company[]) {
-  console.log("runs");
-  return companies.filter(({ HAS_EMAIL }) => HAS_EMAIL === "N");
-}
 
 function companyNoCountryView(
   companies: Company[],

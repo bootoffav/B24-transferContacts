@@ -17,6 +17,6 @@ describe("companySelector", () => {
     dispatch(setViewMode(viewModeNoEmail));
 
     const amountOfCompaniesNoEmail = companySelector(getState()).length;
-    expect(amountOfCompaniesNoEmail).toBe(1);
+    expect(amountOfCompaniesNoEmail).toBe(5);
   });
 });

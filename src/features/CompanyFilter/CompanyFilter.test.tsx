@@ -14,7 +14,7 @@ const labels = [
 it("rendering CompanyFilter: check buttons", () => {
   render(storeConnected(<CompanyFilter />));
   for (const label of labels) {
-    if (label === "No emails") {
+    if (label !== "Custom") {
       const el = screen.getByText(label);
       expect(el.innerHTML).toContain('<span class="badge is-top is-warning">');
     }
