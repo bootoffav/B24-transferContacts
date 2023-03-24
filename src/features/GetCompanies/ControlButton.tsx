@@ -4,9 +4,9 @@ import { setStage, Stage } from "app/commonSlice";
 export default function ControlButton({
   clickHandler,
 }: {
-  clickHandler: () => void;
+  clickHandler: () => Promise<void>;
 }) {
-  const stage = useAppSelector(({ common: { stage } }) => stage);
+  const { stage } = useAppSelector(({ common }) => common);
   const dispatch = useAppDispatch();
 
   let classType, label;
@@ -25,7 +25,7 @@ export default function ControlButton({
       disabled={label === "Cancelling..."}
       className={`button ${classType}`}
       onClick={
-        label === "STOP"
+        stage === Stage.gettingData
           ? () => dispatch(setStage(Stage.cancelling))
           : clickHandler
       }

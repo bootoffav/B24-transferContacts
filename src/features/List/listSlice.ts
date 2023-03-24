@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export enum ViewMode {
+export const enum ViewMode {
   all = "all",
   noCountries = "noCountries",
   withLinkedIn = "withLinkedIn",
