@@ -62,7 +62,6 @@ function contactCellRenderer(
   return (
     <ul>
       {contacts.map((contact, index) => {
-        debugger;
         return (
           <li key={index} className="is-flex is-justify-content-space-between">
             <span>

@@ -43,9 +43,13 @@ export function companyHasDiffRespOfItsRelatedEntity(
     ? [customViewEntityType]
     : (["CONTACTS", "LEADS", "DEALS"] as const);
   for (const entityType of entityTypes) {
-    for (const entitityOFAType of company[entityType as IndexHelper]) {
-      if (company.ASSIGNED_BY_ID !== entitityOFAType.ASSIGNED_BY_ID)
-        return true;
+    try {
+      for (const entitityOFAType of company[entityType as IndexHelper]) {
+        if (company.ASSIGNED_BY_ID !== entitityOFAType.ASSIGNED_BY_ID)
+          return true;
+      }
+    } catch {
+      continue;
     }
   }
 
