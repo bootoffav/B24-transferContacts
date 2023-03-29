@@ -121,7 +121,11 @@ async function batchFetch(
 
   const result = Object.entries(rawResult).reduce((acc, [key, value]) => {
     const [type, companyId] = key.split("_");
-    acc[companyId] = acc[companyId] ?? {};
+    acc[companyId] = acc[companyId] ?? {
+      CONTACTS: [],
+      LEADS: [],
+      DEALS: [],
+    };
     // @ts-expect-error
     acc[companyId][`${type.toUpperCase()}S`] = value;
     return acc;
