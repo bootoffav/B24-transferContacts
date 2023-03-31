@@ -146,7 +146,7 @@ const formColumns = (dispatch: Dispatch) => {
       Cell: ({ value }: Cell) => formLink(value, "company"),
     },
     {
-      Header: "company emails",
+      Header: "Company emails",
       accessor: "companyEmails",
     },
     {

@@ -35,9 +35,11 @@ const fetchCompanies = async (
 ): Promise<Company[]> => {
   if (!chosenId) throw new Error("ID not specified");
 
-  function withDefaults(result: Company): Company {
-    result.EMAIL = result.EMAIL ?? [];
-    return result;
+  function withDefaults(result: Company[]) {
+    return result.map((company) => ({
+      ...company,
+      EMAIL: company.EMAIL ?? [],
+    }));
   }
 
   let filter;

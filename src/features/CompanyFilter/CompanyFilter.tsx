@@ -19,7 +19,7 @@ export default function CompanyFilter() {
       viewMode: ViewMode.diffs,
     },
     {
-      label: "No country (any contact)",
+      label: "No country",
       viewMode: ViewMode.noCountries,
     },
     {
@@ -52,7 +52,13 @@ export default function CompanyFilter() {
           {![viewMode, storeViewMode].includes(ViewMode.custom) && (
             <Badge viewMode={viewMode} />
           )}
-          {label}
+          {viewMode === ViewMode.noCountries ? (
+            <span data-tooltip={"no email in company or any its contact"}>
+              {label}
+            </span>
+          ) : (
+            label
+          )}
         </button>
       ))}
     </div>
