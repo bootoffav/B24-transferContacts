@@ -35,6 +35,11 @@ const fetchCompanies = async (
 ): Promise<Company[]> => {
   if (!chosenId) throw new Error("ID not specified");
 
+  function withDefaults(result: Company): Company {
+    result.EMAIL = result.EMAIL ?? [];
+    return result;
+  }
+
   let filter;
   switch (selectType) {
     case "companyCountryList":
@@ -48,7 +53,7 @@ const fetchCompanies = async (
 
   let companies: Company[] = [];
   let start = 0;
-  const select = ["*", LINKEDIN_ACCOUNT_FIELD, COMPANY_COUNTRY_FIELD];
+  const select = ["*", "EMAIL", LINKEDIN_ACCOUNT_FIELD, COMPANY_COUNTRY_FIELD];
   while (start !== undefined) {
     const [result, next] = await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.list`,
@@ -62,7 +67,7 @@ const fetchCompanies = async (
       }
     )
       .then((r) => r.json())
-      .then(({ result, next }) => [result, next]);
+      .then(({ result, next }) => [withDefaults(result), next]);
 
     companies = companies.concat(result);
     start = next;

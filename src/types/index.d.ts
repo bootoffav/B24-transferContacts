@@ -55,6 +55,10 @@ export interface Company {
   CONTACTS: Contact[];
   DEALS: Deal[];
   LEADS: Lead[];
+  EMAIL: {
+    ID: `${number}`;
+    VALUE: string;
+  }[];
   HAS_EMAIL: "Y" | "N";
 }
 
@@ -86,6 +90,7 @@ export interface TransferCountry {
 
 export type TableDataStructure = {
   company: [string, number];
+  companyEmails: string[];
   responsibleForCompany: string;
   contact: [string, number, `${number}`][];
   emails: Contact["EMAILS"][];

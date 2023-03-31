@@ -95,6 +95,7 @@ const formData = (companies: Company[]): TableDataStructure => {
 
     return {
       company: [company.TITLE, company.ID],
+      companyEmails: company.EMAIL.map((email) => email.VALUE),
       responsibleForCompany,
       linkedin: company[LINKEDIN_ACCOUNT_FIELD],
       contact: company.CONTACTS.map(prepareContact),
@@ -143,6 +144,10 @@ const formColumns = (dispatch: Dispatch) => {
       Header: "Company",
       accessor: "company",
       Cell: ({ value }: Cell) => formLink(value, "company"),
+    },
+    {
+      Header: "company emails",
+      accessor: "companyEmails",
     },
     {
       Header: "LinkedIn",
