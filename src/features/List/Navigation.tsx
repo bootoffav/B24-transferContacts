@@ -45,7 +45,7 @@ export default function Navigation({
         }}
         disabled={!canPreviousPage}
       >
-        <i>|←</i>
+        <i>\←</i>
         <span className="ml-2">First page</span>
       </button>
       <button
@@ -87,7 +87,7 @@ export default function Navigation({
         disabled={!canNextPage}
       >
         <span className="mr-2">Last page</span>
-        <i>→|</i>
+        <i>→\</i>
       </button>
     </nav>
   );
