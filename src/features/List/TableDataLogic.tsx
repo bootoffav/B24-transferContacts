@@ -152,6 +152,13 @@ const formColumns = (dispatch: Dispatch) => {
     {
       Header: "Company emails",
       accessor: "companyEmails",
+      Cell: ({ value }: Cell) => (
+        <ul>
+          {(value as string[]).map((email) => (
+            <li key={email}>{email}</li>
+          ))}
+        </ul>
+      ),
     },
     {
       Header: "Contact",
