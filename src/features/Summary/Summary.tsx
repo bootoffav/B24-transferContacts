@@ -2,27 +2,17 @@ import { Link } from "react-router-dom";
 import { setViewMode, ViewMode } from "features/List/listSlice";
 import type { ListSliceState } from "features/List/listSlice";
 import { Transfer } from "types";
-import { useAppSelector, useAppDispatch } from "app/hooks";
+import { useAppSelector } from "app/hooks";
 import { getUserNameById } from "utils/users";
 import { getEntityTitle } from "app/helpers";
 import { store } from "app/store";
 import companiesByUser from "utils/companiesByUser";
 
 export default function Summary() {
-  const { chosenId, selectType } = useAppSelector(({ common }) => common);
+  const { selectType } = useAppSelector(({ common }) => common);
   const { includeDeals, includeLeads } = useAppSelector(
     ({ options }) => options
   );
-  const dispatch = useAppDispatch();
-
-  const customLinkHandler = (
-    customViewEntityType: ListSliceState["customViewEntityType"],
-    customViewUserId: ListSliceState["customViewUserId"]
-  ) => {
-    dispatch(
-      setViewMode(ViewMode.custom, customViewEntityType, customViewUserId)
-    );
-  };
 
   return (
     <div className="columns">
@@ -39,51 +29,64 @@ export default function Summary() {
               {includeDeals && <th>diff. responsible for deals</th>}
             </tr>
           </thead>
-          <tbody>
-            {chosenId.map((userId) => {
-              const {
-                entity,
-                companiesAmount,
-                contactAmount,
-                leadAmount,
-                dealAmount,
-              } = getSummaryTableRow(userId);
-              return (
-                <tr key={entity}>
-                  <th>{entity}</th>
-                  <td onClick={() => customLinkHandler("COMPANIES", userId)}>
-                    {companiesAmount ? (
-                      <Link to="..">{companiesAmount}</Link>
-                    ) : (
-                      0
-                    )}
-                  </td>
-                  <td onClick={() => customLinkHandler("CONTACTS", userId)}>
-                    {contactAmount ? <Link to="..">{contactAmount}</Link> : 0}
-                  </td>
-                  {includeLeads && (
-                    <td onClick={() => customLinkHandler("LEADS", userId)}>
-                      {leadAmount ? <Link to="..">{leadAmount}</Link> : 0}
-                    </td>
-                  )}
-                  {includeDeals && (
-                    <td onClick={() => customLinkHandler("DEALS", userId)}>
-                      {dealAmount ? <Link to="..">{dealAmount}</Link> : 0}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
+          <tbody>{formSummaryBody()}</tbody>
         </table>
       </div>
     </div>
   );
 }
 
+/**
+ * Represents a body of Summary.
+ */
+function formSummaryBody() {
+  const {
+    common: { chosenId },
+    options: { includeDeals, includeLeads },
+  } = store.getState();
+
+  const customLinkHandler = (
+    customViewEntityType: ListSliceState["customViewEntityType"],
+    customViewUserId: ListSliceState["customViewId"]
+  ) => {
+    store.dispatch(
+      setViewMode(ViewMode.custom, customViewEntityType, customViewUserId)
+    );
+  };
+
+  return chosenId.map((id) => {
+    const { entity, companiesAmount, contactAmount, leadAmount, dealAmount } =
+      getSummaryTableRow(id);
+    return (
+      <tr key={entity}>
+        <th>{entity}</th>
+        <td onClick={() => customLinkHandler("COMPANIES", id)}>
+          {companiesAmount ? <Link to="..">{companiesAmount}</Link> : 0}
+        </td>
+        <td onClick={() => customLinkHandler("CONTACTS", id)}>
+          {contactAmount ? <Link to="..">{contactAmount}</Link> : 0}
+        </td>
+        {includeLeads && (
+          <td onClick={() => customLinkHandler("LEADS", id)}>
+            {leadAmount ? <Link to="..">{leadAmount}</Link> : 0}
+          </td>
+        )}
+        {includeDeals && (
+          <td onClick={() => customLinkHandler("DEALS", id)}>
+            {dealAmount ? <Link to="..">{dealAmount}</Link> : 0}
+          </td>
+        )}
+      </tr>
+    );
+  });
+}
+
 function getSummaryTableRow(entityId: number) {
-  const { selectType, users } = store.getState().common;
-  const { differentResponsibles, companies } = store.getState().company;
+  const {
+    common: { selectType, users },
+    company: { differentResponsibles, companies },
+  } = store.getState();
+
   if (selectType === "companyCountryList") {
     const {
       CONTACTS: contactAmount,
