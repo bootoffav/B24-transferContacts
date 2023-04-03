@@ -26,7 +26,7 @@ import {
   CONTACT_COUNTRY_FIELD,
   CONTACT_POSITION_FIELD,
   LINKEDIN_ACCOUNT_FIELD,
-} from "../app/CONSTANTS";
+} from "app/CONSTANTS";
 
 export type Country = {
   value: string;
