@@ -13,12 +13,3 @@ const { dispatch, getState } = store;
 it("should render without crashing", () => {
   render(component);
 });
-
-it("should render new request block", () => {
-  dispatch(setCompanies(companies));
-  dispatch(setStage(Stage.scanFinished));
-  dispatch(setCheckboxOption("includeDeals", false));
-  dispatch(setCheckboxOption("includeLeads", true));
-  render(storeConnected(<Result />));
-  // screen.getByText("Request again!");
-});

@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 const labels = [
   "All",
   "Diffs",
-  "No country (any contact)",
+  "No country",
   "No emails",
   "With LinkedIn",
   "Custom",
