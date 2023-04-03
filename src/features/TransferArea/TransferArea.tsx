@@ -10,13 +10,13 @@ import { setViewMode, ViewMode } from "features/List/listSlice";
 
 export default function TransferArea() {
   const dispatch = useAppDispatch();
-  const { companies, differentResponsibles, noCountry } = useAppSelector(
-    ({ company }) => ({
+  const { companies, differentResponsibles, noCountry, options } =
+    useAppSelector(({ company, options }) => ({
       companies: company.companies,
       differentResponsibles: company.differentResponsibles,
       noCountry: company.contactsNoCountries,
-    })
-  );
+      options,
+    }));
 
   function noCountriesAmount() {
     return Object.values(noCountry).reduce((acc, set) => acc + set.length, 0);
@@ -41,20 +41,22 @@ export default function TransferArea() {
           >
             contacts
           </Link>
-          ,{" "}
-          <Link
-            to=""
-            onClick={() => dispatch(setViewMode(ViewMode.custom, "LEADS"))}
-          >
-            leads
-          </Link>{" "}
-          &{" "}
-          <Link
-            to=""
-            onClick={() => dispatch(setViewMode(ViewMode.custom, "DEALS"))}
-          >
-            deals
-          </Link>
+          {options.includeLeads && (
+            <Link
+              to=""
+              onClick={() => dispatch(setViewMode(ViewMode.custom, "LEADS"))}
+            >
+              , leads
+            </Link>
+          )}
+          {options.includeDeals && (
+            <Link
+              to=""
+              onClick={() => dispatch(setViewMode(ViewMode.custom, "DEALS"))}
+            >
+              , deals
+            </Link>
+          )}
         </p>
         <TransferButton />
       </div>
