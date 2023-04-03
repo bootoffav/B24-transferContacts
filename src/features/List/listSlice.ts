@@ -58,10 +58,24 @@ const listSlice = createSlice({
     },
     setPageIndex(
       state,
-      { payload }: PayloadAction<ListSliceState["pageIndex"]>
+      {
+        payload,
+      }: PayloadAction<
+        | ListSliceState["pageIndex"]
+        | {
+            value: number;
+            options?: {
+              exact: boolean;
+            };
+          }
+      >
     ) {
-      const result = state.pageIndex + payload;
-      state.pageIndex = result > 0 ? result : 0;
+      if (typeof payload === "number") {
+        const result = state.pageIndex + payload;
+        state.pageIndex = result > 0 ? result : 0;
+        return;
+      }
+      if (payload.options?.exact) state.pageIndex = payload.value;
     },
   },
 });

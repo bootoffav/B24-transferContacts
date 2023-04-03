@@ -58,7 +58,7 @@ export default function CompanyFilter() {
         );
 
         return viewMode === ViewMode.noCountries ? (
-          <Tooltip>{buttonJSX}</Tooltip>
+          <Tooltip key={viewMode}>{buttonJSX}</Tooltip>
         ) : (
           buttonJSX
         );

@@ -21,6 +21,10 @@ div.container.is-fluid {
   color: #b52b3c;
 }
 
+.pagination {
+  width: 40%;
+}
+
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 
 $modal-content-width: 450px;

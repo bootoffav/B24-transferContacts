@@ -8,20 +8,20 @@ describe("correct columns received", function () {
   test("base columns + lead columns", function () {
     dispatch(setCheckboxOption("includeDeals", false));
     const testThis = formColumns(dispatch);
-    expect(testThis.length).toBe(10);
+    expect(testThis.length).toBe(11);
   });
 
   test("base columns + deal columns", function () {
     dispatch(setCheckboxOption("includeDeals", true));
     dispatch(setCheckboxOption("includeLeads", false));
     const testThis = formColumns(dispatch);
-    expect(testThis.length).toBe(10);
+    expect(testThis.length).toBe(11);
   });
 
   test("base columns + deal and lead columns", function () {
     dispatch(setCheckboxOption("includeDeals", true));
     dispatch(setCheckboxOption("includeLeads", true));
     const testThis = formColumns(store.dispatch);
-    expect(testThis.length).toBe(12);
+    expect(testThis.length).toBe(13);
   });
 });

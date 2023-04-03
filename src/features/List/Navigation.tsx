@@ -8,6 +8,7 @@ export interface NaviProps {
   pageOptions: TableInstance["pageOptions"];
   nextPage: TableInstance["nextPage"];
   previousPage: TableInstance["previousPage"];
+  gotoPage: TableInstance["gotoPage"];
 }
 
 export default function Navigation({
@@ -16,8 +17,8 @@ export default function Navigation({
   pageOptions,
   nextPage,
   previousPage,
-}: // pageIndex,
-NaviProps) {
+  gotoPage,
+}: NaviProps) {
   const pageIndex = useAppSelector(({ list }) => list.pageIndex);
   const dispatch = useAppDispatch();
   return (
@@ -26,10 +27,27 @@ NaviProps) {
       role="navigation"
       aria-label="pagination"
       style={{
-        width: "60%",
         display: `${pageOptions.length === 1 ? "none" : ""}`,
       }}
     >
+      <button
+        className="button bd-fat-button is-info is-light"
+        onClick={() => {
+          dispatch(
+            setPageIndex({
+              value: 0,
+              options: {
+                exact: true,
+              },
+            })
+          );
+          gotoPage(0);
+        }}
+        disabled={!canPreviousPage}
+      >
+        <i>←←</i>
+        <span className="ml-2">First page</span>
+      </button>
       <button
         className="button bd-fat-button is-primary is-light"
         onClick={() => {
@@ -54,6 +72,22 @@ NaviProps) {
       >
         <span className="mr-2">Next page</span>
         <i>→</i>
+      </button>
+      <button
+        className="button bd-fat-button is-info is-light"
+        onClick={() => {
+          dispatch(
+            setPageIndex({
+              value: pageOptions.length - 1,
+              options: { exact: true },
+            })
+          );
+          gotoPage(pageOptions.length - 1);
+        }}
+        disabled={!canNextPage}
+      >
+        <span className="mr-2">Last page</span>
+        <i>→→</i>
       </button>
     </nav>
   );

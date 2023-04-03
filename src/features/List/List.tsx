@@ -68,14 +68,21 @@ const List = () => {
     toggleHideColumn,
   } = tableInstance;
 
-  const { canPreviousPage, canNextPage, pageOptions, nextPage, previousPage } =
-    tableInstance;
+  const {
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    nextPage,
+    previousPage,
+    gotoPage,
+  } = tableInstance;
   const naviProps: NaviProps = {
     canPreviousPage,
     canNextPage,
     pageOptions,
     nextPage,
     previousPage,
+    gotoPage,
   };
 
   return (

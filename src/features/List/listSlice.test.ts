@@ -57,4 +57,18 @@ describe("list reducer: pageIndex check", () => {
       ).pageIndex
     ).toBe(0);
   });
+
+  it("should set exact value when optons exact specified", () => {
+    const actionSetExactValue = {
+      type: "list/setPageIndex",
+      payload: {
+        value: 15,
+        options: {
+          exact: true,
+        },
+      },
+    };
+    const pi = reducer(undefined, actionSetExactValue).pageIndex;
+    expect(pi).toBe(15);
+  });
 });
