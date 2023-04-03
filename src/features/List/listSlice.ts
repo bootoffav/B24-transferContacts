@@ -14,7 +14,7 @@ export interface ListSliceState {
   viewMode: ViewMode;
   pageIndex: number;
   customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS" | "COMPANIES";
-  customViewUserId?: number;
+  customViewId?: number;
 }
 
 const initialState: ListSliceState = {
@@ -34,24 +34,24 @@ const listSlice = createSlice({
         }: PayloadAction<{
           viewMode: ListSliceState["viewMode"];
           customViewEntityType?: ListSliceState["customViewEntityType"];
-          customViewUserId?: ListSliceState["customViewUserId"];
+          customViewId?: ListSliceState["customViewId"];
         }>
       ) {
         state.viewMode = payload.viewMode;
         state.customViewEntityType = payload.customViewEntityType;
-        state.customViewUserId = payload.customViewUserId;
+        state.customViewId = payload.customViewId;
         state.pageIndex = 0;
       },
       prepare(
         viewMode: ListSliceState["viewMode"],
         customViewEntityType?,
-        customViewUserId?
+        customViewId?
       ) {
         return {
           payload: {
             viewMode,
             customViewEntityType,
-            customViewUserId,
+            customViewId,
           },
         };
       },

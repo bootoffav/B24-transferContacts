@@ -4,6 +4,7 @@ import { ListSliceState, ViewMode } from "./listSlice";
 import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
 import companiesByUser from "utils/companiesByUser";
+import companiesByCountry from "utils/companiesByCountry";
 import { Company, Country } from "types";
 
 export const companySelector = createSelector(
@@ -14,10 +15,11 @@ export const companySelector = createSelector(
     companies: company.companies,
     companyCountryList: common.companyCountryList,
     contactCountryList: common.contactCountryList,
+    selectType: common.selectType,
     list,
     viewModeArg,
   }),
-  ({ companies, list, contactCountryList, viewModeArg }) => {
+  ({ companies, list, contactCountryList, viewModeArg, selectType }) => {
     switch (viewModeArg || list.viewMode) {
       case ViewMode.diffs:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
@@ -32,9 +34,13 @@ export const companySelector = createSelector(
             CONTACTS.some(({ HAS_EMAIL }) => HAS_EMAIL === "N")
         );
       case ViewMode.custom:
-        if (list.customViewEntityType === "COMPANIES")
-          return companiesByUser(companies, list.customViewUserId!);
-        return customViewCompanies(companies, list.customViewUserId);
+        companies =
+          selectType === "companyCountryList"
+            ? companiesByCountry(companies, list.customViewId!)
+            : companiesByUser(companies, list.customViewId!);
+        return list.customViewEntityType === "COMPANIES"
+          ? companies
+          : companies.filter(companyHasDiffRespOfItsRelatedEntity);
       default:
         return companies;
     }
@@ -54,15 +60,6 @@ function companyNoCountryView(
       !CONTACTS.map((contact) => (contact as any)[CONTACT_COUNTRY_FIELD]).every(
         (countryId) => countryId && countryId !== noneCountryId
       )
-  );
-}
-
-function customViewCompanies(
-  companies: Company[],
-  userId: ListSliceState["customViewUserId"]
-) {
-  return (userId ? companiesByUser(companies, userId) : companies).filter(
-    companyHasDiffRespOfItsRelatedEntity
   );
 }
 
