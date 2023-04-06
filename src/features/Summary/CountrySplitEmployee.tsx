@@ -2,14 +2,16 @@ import { useAppSelector } from "app/hooks";
 import type { Company } from "types";
 import { getUserNameById } from "utils/users";
 import { store } from "app/store";
-import { getSummaryTableRow } from "./Summary";
 
 type SplittedByEmployee = {
   [key: number]: Company[];
 };
 
 export default function CountrySplitEmployee() {
-  const { includeDeals, includeLeads, companies } = useAppSelector(
+  const {
+    // includeDeals, includeLeads,
+    companies,
+  } = useAppSelector(
     ({ options: { includeDeals, includeLeads }, company: { companies } }) => ({
       includeDeals,
       includeLeads,
