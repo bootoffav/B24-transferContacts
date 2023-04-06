@@ -7,14 +7,16 @@ import { getUserNameById } from "utils/users";
 import { getEntityTitle } from "app/helpers";
 import { store } from "app/store";
 import companiesByUser from "utils/companiesByUser";
+import CountrySplitEmployee from "./CountrySplitEmployee";
+import { Stage } from "app/commonSlice";
 
 export default function Summary() {
-  const { selectType } = useAppSelector(({ common }) => common);
+  const { selectType, stage } = useAppSelector(({ common }) => common);
   const { includeDeals, includeLeads } = useAppSelector(
     ({ options }) => options
   );
 
-  return (
+  return stage === Stage.scanFinished ? (
     <div className="columns">
       <div className="column is-half is-offset-one-quarter">
         <table className="table is-fullwidth">
@@ -31,8 +33,11 @@ export default function Summary() {
           </thead>
           <tbody>{formSummaryBody()}</tbody>
         </table>
+        {selectType === "companyCountryList" && <CountrySplitEmployee />}
       </div>
     </div>
+  ) : (
+    <></>
   );
 }
 
