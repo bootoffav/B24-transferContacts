@@ -6,6 +6,9 @@ import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles"
 import companiesByUser from "utils/companiesByUser";
 import companiesByCountry from "utils/companiesByCountry";
 import { Company, Country } from "types";
+import { CommonState } from "app/commonSlice";
+import type { CompanyState } from "app/companySlice";
+import { companiesByCountryAndUser } from "utils/companiesByCountryAndUser";
 
 export const companySelector = createSelector(
   (
@@ -34,13 +37,7 @@ export const companySelector = createSelector(
             CONTACTS.some(({ HAS_EMAIL }) => HAS_EMAIL === "N")
         );
       case ViewMode.custom:
-        companies =
-          selectType === "companyCountryList"
-            ? companiesByCountry(companies, list.customViewId!)
-            : companiesByUser(companies, list.customViewId!);
-        return list.customViewEntityType === "COMPANIES"
-          ? companies
-          : companies.filter(companyHasDiffRespOfItsRelatedEntity);
+        return getCompaniesForCustomView(companies, selectType, list);
       default:
         return companies;
     }
@@ -63,4 +60,21 @@ function companyNoCountryView(
   );
 }
 
+function getCompaniesForCustomView(
+  companies: CompanyState["companies"],
+  selectType: CommonState["selectType"],
+  list: ListSliceState
+) {
+  if (selectType === "companyCountryList") {
+    companies = list.customCountryAndUser
+      ? companiesByCountryAndUser(companies, list.customViewId!)
+      : companiesByCountry(companies, list.customViewId!);
+  } else {
+    companies = companiesByUser(companies, list.customViewId!);
+  }
+
+  return list.customViewEntityType === "COMPANIES"
+    ? companies
+    : companies.filter(companyHasDiffRespOfItsRelatedEntity);
+}
 export { companyNoCountryView };

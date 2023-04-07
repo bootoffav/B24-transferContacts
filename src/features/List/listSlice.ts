@@ -15,6 +15,7 @@ export interface ListSliceState {
   pageIndex: number;
   customViewEntityType?: "CONTACTS" | "LEADS" | "DEALS" | "COMPANIES";
   customViewId?: number;
+  customCountryAndUser?: true;
 }
 
 const initialState: ListSliceState = {
@@ -35,23 +36,31 @@ const listSlice = createSlice({
           viewMode: ListSliceState["viewMode"];
           customViewEntityType?: ListSliceState["customViewEntityType"];
           customViewId?: ListSliceState["customViewId"];
+          customCountryAndUser: ListSliceState["customCountryAndUser"];
         }>
       ) {
         state.viewMode = payload.viewMode;
         state.customViewEntityType = payload.customViewEntityType;
         state.customViewId = payload.customViewId;
+        if (payload.customCountryAndUser !== undefined) {
+          state.customCountryAndUser = payload.customCountryAndUser;
+        } else {
+          delete state.customCountryAndUser;
+        }
         state.pageIndex = 0;
       },
       prepare(
         viewMode: ListSliceState["viewMode"],
         customViewEntityType?,
-        customViewId?
+        customViewId?,
+        customCountryAndUser?
       ) {
         return {
           payload: {
             viewMode,
             customViewEntityType,
             customViewId,
+            customCountryAndUser,
           },
         };
       },

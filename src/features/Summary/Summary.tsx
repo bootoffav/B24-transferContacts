@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import { setViewMode, ViewMode } from "features/List/listSlice";
-import type { ListSliceState } from "features/List/listSlice";
 import { Transfer } from "types";
 import { useAppSelector } from "app/hooks";
 import { getUserNameById } from "utils/users";
@@ -9,6 +7,7 @@ import { store } from "app/store";
 import companiesByUser from "utils/companiesByUser";
 import CountrySplitEmployee from "./CountrySplitEmployee";
 import { Stage } from "app/commonSlice";
+import { customLinkHandler } from "./utils";
 
 export default function Summary() {
   const { selectType, stage } = useAppSelector(({ common }) => common);
@@ -49,15 +48,6 @@ function formSummaryBody() {
     common: { chosenId },
     options: { includeDeals, includeLeads },
   } = store.getState();
-
-  const customLinkHandler = (
-    customViewEntityType: ListSliceState["customViewEntityType"],
-    customViewUserId: ListSliceState["customViewId"]
-  ) => {
-    store.dispatch(
-      setViewMode(ViewMode.custom, customViewEntityType, customViewUserId)
-    );
-  };
 
   return chosenId.map((id) => {
     const { entity, companiesAmount, contactAmount, leadAmount, dealAmount } =

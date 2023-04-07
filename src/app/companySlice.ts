@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Company, Transfer, TransferCountry } from "../types";
 
-interface CompanyState {
+export interface CompanyState {
   totalAmount: number;
   processedAmount: number;
   companies: Company[];

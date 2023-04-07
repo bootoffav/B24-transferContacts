@@ -2,6 +2,8 @@ import { useAppSelector } from "app/hooks";
 import type { Company } from "types";
 import { getUserNameById } from "utils/users";
 import { store } from "app/store";
+import { customLinkHandler } from "./utils";
+import { Link } from "react-router-dom";
 
 type SplittedByEmployee = {
   [key: number]: Company[];
@@ -38,13 +40,13 @@ export default function CountrySplitEmployee() {
           <tr>
             <th>Manager</th>
             <th>Companies</th>
-            {/* <th>diff. responsible for contacts</th>
-            {includeLeads && <th>diff. responsible for leads</th>}
+            {/* <th>diff. responsible for contacts</th> */}
+            {/* {includeLeads && <th>diff. responsible for leads</th>}
             {includeDeals && <th>diff. responsible for deals</th>} */}
           </tr>
         </thead>
         <tbody>
-          {Object.entries(splitByEmployee).map(([emp, companies]) => {
+          {Object.entries(splitByEmployee).map(([id, companies]) => {
             // const {
             //   entity,
             //   companiesAmount,
@@ -53,11 +55,19 @@ export default function CountrySplitEmployee() {
             //   dealAmount,
             // } = getSummaryTableRow(+emp);
             return (
-              <tr>
-                <td>{getUserNameById(users, +emp)}</td>
-                <td>{companies.length}</td>
-                {/* <td>{contactAmount}</td>
-                {includeLeads && <td>leadAmount</td>}
+              <tr key={id}>
+                <td>{getUserNameById(users, +id)}</td>
+                <td onClick={() => customLinkHandler("COMPANIES", +id, true)}>
+                  {companies.length ? (
+                    <Link to="..">{companies.length}</Link>
+                  ) : (
+                    0
+                  )}
+                </td>
+                {/* <td onClick={() => customLinkHandler("CONTACTS", +id, true)}>
+                  <Link to="..">test</Link>
+                </td> */}
+                {/* {includeLeads && <td>leadAmount</td>}
                 {includeDeals && <td>dealAmount</td>} */}
               </tr>
             );
