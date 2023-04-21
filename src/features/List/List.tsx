@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
 import { useTable, usePagination } from "react-table";
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import type { TableDataStructure } from "../../types";
 import Navigation, { NaviProps } from "./Navigation";
 import ShowHideColumn from "./ShowHideColumn";
@@ -30,16 +30,11 @@ const List = () => {
     });
   });
 
-  const dispatch = useAppDispatch();
   const data: TableDataStructure = useMemo(
     () => formData(companies),
     [companies]
   );
-  const columns = useMemo(
-    () => formColumns(dispatch),
-    // eslint-disable-next-line
-    [dispatch, companies]
-  );
+  const columns = useMemo(() => formColumns(), []);
 
   const pageSize = 20;
   const tableInstance = useTable(

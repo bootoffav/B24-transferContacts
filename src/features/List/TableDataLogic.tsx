@@ -7,7 +7,6 @@ import type {
 } from "types";
 import type { Cell } from "react-table";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
-import { Dispatch } from "@reduxjs/toolkit";
 import { formLink, applyStyle } from "./utils";
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import { getUserNameById } from "utils/users";
@@ -52,13 +51,10 @@ function contactEmailCellRenderer({
   );
 }
 
-function contactCellRenderer(
-  {
-    value: contacts,
-    column: { id },
-  }: Cell<{}, TableDataStructure[number]["contact"]>,
-  dispatch: Dispatch
-) {
+function contactCellRenderer({
+  value: contacts,
+  column: { id },
+}: Cell<{}, TableDataStructure[number]["contact"]>) {
   return (
     <ul>
       {contacts.map((contact, index) => {
@@ -72,8 +68,8 @@ function contactCellRenderer(
             <span
               className="is-clickable"
               onClick={() => {
-                dispatch(setContactIdForEmails(contact[1]));
-                dispatch(hideModal(false));
+                store.dispatch(setContactIdForEmails(contact[1]));
+                store.dispatch(hideModal(false));
               }}
             >
               [cet]<sup>1</sup>
@@ -118,7 +114,7 @@ const formData = (companies: Company[]): TableDataStructure => {
   });
 };
 
-const formColumns = (dispatch: Dispatch) => {
+const formColumns = () => {
   function formOptionalColumnPair(oc: EntitiesToFetch[number]) {
     const capitalizedOc = oc.charAt(0).toUpperCase() + oc.substring(1);
 
@@ -163,7 +159,7 @@ const formColumns = (dispatch: Dispatch) => {
     {
       Header: "Contact",
       accessor: "contact",
-      Cell: (cell: Cell) => contactCellRenderer(cell, dispatch),
+      Cell: contactCellRenderer,
     },
     {
       Header: "Contact emails",
