@@ -203,7 +203,10 @@ function getSubRows({
             const [position, id] = v;
             return (
               <li key={index}>
-                <Position value={position} id={id as unknown as number} />
+                <Position
+                  positon={position}
+                  id={id as unknown as Contact["ID"]}
+                />
               </li>
             );
           } catch {}

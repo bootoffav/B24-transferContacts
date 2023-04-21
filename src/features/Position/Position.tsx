@@ -1,10 +1,12 @@
-import { changePosition } from "app/endpoint";
-import { useState, useEffect } from "react";
+import { changePosition as changePositionInB24 } from "app/endpoint";
+import { useState } from "react";
 import { Contact } from "types";
 import styles from "./Position.module.css";
+import { changeContactPosition as changePositionInStore } from "app/companySlice";
+import { useAppDispatch } from "app/hooks";
 
 interface PositionProps {
-  value: string;
+  positon: string;
   id: Contact["ID"];
 }
 
@@ -14,9 +16,10 @@ enum SaveResult {
   idle,
 }
 
-export default function Position({ value, id }: PositionProps) {
-  const [editMode, setEditMode] = useState(false);
-  const [position, setPosition] = useState(value);
+export default function Position(props: PositionProps) {
+  const dispatch = useAppDispatch();
+  const [isEditing, setIsEditing] = useState(false);
+  const [position, setPosition] = useState(props.positon);
   const [saved, setSaved] = useState(SaveResult.idle);
 
   const view = (
@@ -24,7 +27,7 @@ export default function Position({ value, id }: PositionProps) {
       <span
         className={`has-tooltip-arrow ${styles.position}`}
         data-tooltip="click to change"
-        onClick={() => setEditMode(true)}
+        onClick={() => setIsEditing(true)}
       >
         {position}
       </span>{" "}
@@ -49,35 +52,41 @@ export default function Position({ value, id }: PositionProps) {
     </>
   );
 
-  const onChange = ({ target }: React.SyntheticEvent) => {
-    setPosition((target as HTMLInputElement).value);
-  };
-
   const edit = (
     <input
-      onKeyUp={(e) => {
-        if (e.key === "Escape") {
-          setPosition(value);
-          setEditMode(false);
+      onKeyUp={({ key }) => {
+        switch (key) {
+          case "Escape":
+            setPosition(props.positon); // reset position
+            break;
+          case "Enter":
+            if (props.positon !== position) {
+              // fire update in Bitrix24
+              changePositionInB24(props.id, position)
+                .then(() => {
+                  // change position in local data
+                  dispatch(
+                    changePositionInStore({
+                      id: props.id,
+                      position,
+                    })
+                  );
+                  setSaved(SaveResult.success);
+                })
+                .catch(() => setSaved(SaveResult.fail));
+              setTimeout(() => setSaved(SaveResult.idle), 2000);
+            }
         }
-        e.key === "Enter" && setEditMode(false);
+        // remove editing input
+        (key === "Escape" || key === "Enter") && setIsEditing(false);
       }}
       autoFocus
-      onChange={onChange}
+      onChange={({ target }) => setPosition(target.value)}
       className="input is-small"
       type="text"
       value={position}
     />
   );
 
-  useEffect(() => {
-    if (!editMode && value !== position) {
-      changePosition(id, position)
-        .then(() => setSaved(SaveResult.success))
-        .catch(() => setSaved(SaveResult.fail));
-      setTimeout(() => setSaved(SaveResult.idle), 2000);
-    }
-  }, [editMode, value, position, id]);
-
-  return editMode ? edit : view;
+  return isEditing ? edit : view;
 }

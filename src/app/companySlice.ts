@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Company, Transfer, TransferCountry } from "../types";
+import { Company, Contact, Transfer, TransferCountry } from "../types";
+import { CONTACT_POSITION_FIELD } from "./CONSTANTS";
 
 export interface CompanyState {
   totalAmount: number;
@@ -24,6 +25,24 @@ export const companySlice = createSlice({
     setCompanies: (state, { payload }) => {
       state.companies = payload;
     },
+
+    changeContactPosition: (
+      state,
+      {
+        payload: { id, position },
+      }: PayloadAction<{
+        id: Contact["ID"];
+        position: Contact["UF_CRM_1634268517946"];
+      }>
+    ) => {
+      let contact: Contact | undefined;
+      state.companies.find(({ CONTACTS }) => {
+        contact = CONTACTS.find(({ ID }) => ID === id);
+        return !!contact;
+      });
+      contact && (contact[CONTACT_POSITION_FIELD] = position);
+    },
+
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;
     },
@@ -49,5 +68,6 @@ export const {
   setTotalAmount,
   setProcessedAmount,
   setContactsNoCountries,
+  changeContactPosition,
 } = companySlice.actions;
 export default companySlice;
