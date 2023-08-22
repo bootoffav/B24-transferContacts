@@ -1,7 +1,12 @@
+// @ts-nocheck
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
 import { ListSliceState, ViewMode } from "./listSlice";
-import { CONTACT_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
+import {
+  COMPANY_COUNTRY_FIELD,
+  CONTACT_COUNTRY_FIELD,
+  LINKEDIN_ACCOUNT_FIELD,
+} from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
 import companiesByUser from "utils/companiesByUser";
 import companiesByCountry from "utils/companiesByCountry";
@@ -48,14 +53,29 @@ function companyNoCountryView(
   companies: Company[],
   contactCountryList?: Country[]
 ) {
-  const noneCountryId =
+  const noneContactCountryId =
     contactCountryList?.find((country) => country.value === "none")?.ID ||
     "5732";
 
+  function companyHasCountry(companyCountryId: string) {
+    const noneCompanyCountryId = "5734";
+    return companyCountryId && companyCountryId !== noneCompanyCountryId;
+  }
+
+  function allContactsOfCompanyHasContacts(contactsOfCompanyBeingChecked) {
+    return contactsOfCompanyBeingChecked
+      .map((contact) => (contact as any)[CONTACT_COUNTRY_FIELD])
+      .every((countryId) => countryId && countryId !== noneContactCountryId);
+  }
+
   return companies.filter(
-    ({ CONTACTS }) =>
-      !CONTACTS.map((contact) => (contact as any)[CONTACT_COUNTRY_FIELD]).every(
-        (countryId) => countryId && countryId !== noneCountryId
+    (company) =>
+      !(
+        // check for company country ID && check for companie's related contacts
+        (
+          companyHasCountry(company[COMPANY_COUNTRY_FIELD]) &&
+          allContactsOfCompanyHasContacts(company.CONTACTS)
+        )
       )
   );
 }

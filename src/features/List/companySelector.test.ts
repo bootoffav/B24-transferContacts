@@ -5,10 +5,10 @@ import { ViewMode, setViewMode } from "./listSlice";
 import { store } from "app/store";
 
 const { dispatch, getState } = store;
-it("filter companies which has a contact without a country assigned", () => {
-  const amountOfCompaniesWithContactsNoCompanies =
+it("filter companies which does not have country or has a contact without country assigned", () => {
+  const amountOfCompaniesWithContactsNoCountries =
     companyNoCountryView(companies).length;
-  expect(amountOfCompaniesWithContactsNoCompanies).toBe(4);
+  expect(amountOfCompaniesWithContactsNoCountries).toBe(5);
 });
 
 describe("companySelector", () => {
