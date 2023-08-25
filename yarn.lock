@@ -13889,6 +13889,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "nanoid@npm:4.0.2"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 747c399cea4664dd0be1d0ec498ffd1ef8f1f5221676fc8b577e3f46f66d9afcddb9595d63d19a2e78d0bc6cc33984f65e66bf1682c850b9e26288883d96b53f
+  languageName: node
+  linkType: hard
+
 "nanomatch@npm:^1.2.9":
   version: 1.2.13
   resolution: "nanomatch@npm:1.2.13"
@@ -18854,6 +18863,7 @@ __metadata:
     bulma: ^0.9.4
     dayjs: ^1.11.9
     lodash: ^4.17.21
+    nanoid: ^4.0.2
     prop-types: ^15.8.1
     react: ^18.2.0
     react-dom: ^18.2.0

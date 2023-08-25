@@ -6,6 +6,7 @@ import type {
   EntitiesToFetch,
 } from "types";
 import type { Cell } from "react-table";
+import { nanoid } from "nanoid";
 import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { formLink, applyStyle } from "./utils";
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
@@ -151,7 +152,7 @@ const formColumns = () => {
       Cell: ({ value }: Cell) => (
         <ul>
           {(value as string[]).map((email) => (
-            <li key={email}>{email}</li>
+            <li key={nanoid()}>{email}</li>
           ))}
         </ul>
       ),
