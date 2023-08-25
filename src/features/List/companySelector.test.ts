@@ -1,4 +1,4 @@
-import { companyNoCountryView, companySelector } from "./companySelector";
+import { companiesHaveNoCountry, companySelector } from "./companySelector";
 import { companies } from "tests/mocks/companies";
 import { setCompanies } from "app/companySlice";
 import { ViewMode, setViewMode } from "./listSlice";
@@ -7,8 +7,8 @@ import { store } from "app/store";
 const { dispatch, getState } = store;
 it("filter companies which does not have country or has a contact without country assigned", () => {
   const amountOfCompaniesWithContactsNoCountries =
-    companyNoCountryView(companies).length;
-  expect(amountOfCompaniesWithContactsNoCountries).toBe(5);
+    companiesHaveNoCountry(companies).length;
+  expect(amountOfCompaniesWithContactsNoCountries).toBe(1);
 });
 
 describe("companySelector", () => {

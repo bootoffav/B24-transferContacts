@@ -1,16 +1,11 @@
-// @ts-nocheck
 import { createSelector } from "@reduxjs/toolkit";
-import { RootState } from "app/store";
+import { RootState, store } from "app/store";
 import { ListSliceState, ViewMode } from "./listSlice";
-import {
-  COMPANY_COUNTRY_FIELD,
-  CONTACT_COUNTRY_FIELD,
-  LINKEDIN_ACCOUNT_FIELD,
-} from "app/CONSTANTS";
+import { COMPANY_COUNTRY_FIELD, LINKEDIN_ACCOUNT_FIELD } from "app/CONSTANTS";
 import { companyHasDiffRespOfItsRelatedEntity } from "app/differentResponsibles";
 import companiesByUser from "utils/companiesByUser";
 import companiesByCountry from "utils/companiesByCountry";
-import { Company, Country } from "types";
+import { Company } from "types";
 import { CommonState } from "app/commonSlice";
 import type { CompanyState } from "app/companySlice";
 import { companiesByCountryAndUser } from "utils/companiesByCountryAndUser";
@@ -27,12 +22,14 @@ export const companySelector = createSelector(
     list,
     viewModeArg,
   }),
-  ({ companies, list, contactCountryList, viewModeArg, selectType }) => {
+  ({ companies, list, viewModeArg, selectType }) => {
     switch (viewModeArg || list.viewMode) {
       case ViewMode.diffs:
         return companies.filter(companyHasDiffRespOfItsRelatedEntity);
       case ViewMode.noCountries:
-        return companyNoCountryView(companies, contactCountryList);
+        return companiesHaveNoCountry(companies);
+      case ViewMode.noCountriesInContacts:
+        return companyNoCountryInContacts(companies);
       case ViewMode.withLinkedIn:
         return companies.filter((company) => company[LINKEDIN_ACCOUNT_FIELD]);
       case ViewMode.noEmail:
@@ -49,34 +46,18 @@ export const companySelector = createSelector(
   }
 );
 
-function companyNoCountryView(
-  companies: Company[],
-  contactCountryList?: Country[]
-) {
-  const noneContactCountryId =
-    contactCountryList?.find((country) => country.value === "none")?.ID ||
-    "5732";
+function companyNoCountryInContacts(companies: Company[]) {
+  const { listOfCompaniesWithNoCountryInContact } = store.getState().company;
+  return companies.filter(({ ID }) =>
+    listOfCompaniesWithNoCountryInContact.includes(ID)
+  );
+}
 
-  function companyHasCountry(companyCountryId: string) {
-    const noneCompanyCountryId = "5734";
-    return companyCountryId && companyCountryId !== noneCompanyCountryId;
-  }
-
-  function allContactsOfCompanyHasContacts(contactsOfCompanyBeingChecked) {
-    return contactsOfCompanyBeingChecked
-      .map((contact) => (contact as any)[CONTACT_COUNTRY_FIELD])
-      .every((countryId) => countryId && countryId !== noneContactCountryId);
-  }
-
+function companiesHaveNoCountry(companies: Company[]) {
   return companies.filter(
     (company) =>
-      !(
-        // check for company country ID && check for companie's related contacts
-        (
-          companyHasCountry(company[COMPANY_COUNTRY_FIELD]) &&
-          allContactsOfCompanyHasContacts(company.CONTACTS)
-        )
-      )
+      !company[COMPANY_COUNTRY_FIELD] ||
+      company[COMPANY_COUNTRY_FIELD] === "5734" //noneCompanyCountryId
   );
 }
 
@@ -97,4 +78,4 @@ function getCompaniesForCustomView(
     ? companies
     : companies.filter(companyHasDiffRespOfItsRelatedEntity);
 }
-export { companyNoCountryView };
+export { companiesHaveNoCountry };

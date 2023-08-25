@@ -6,6 +6,7 @@ import {
   setTotalAmount,
   setProcessedAmount,
   setContactsNoCountries,
+  setListOfCompaniesWithNoCountryInContact,
 } from "app/companySlice";
 import getDifferentResponsibles from "app/differentResponsibles";
 import getContactsNoCountries from "app/contactsNoCountries";
@@ -160,6 +161,13 @@ function pushChangesToStore(companies: Company[]) {
   const differentResponsibles = getDifferentResponsibles(companies);
   store.dispatch(setDifferentResponsibles(differentResponsibles));
 
-  const contactsNoCountry = getContactsNoCountries();
+  const [contactsNoCountry, listOfCompaniesWithNoCountryInContact] =
+    getContactsNoCountries();
+
   store.dispatch(setContactsNoCountries(contactsNoCountry));
+  store.dispatch(
+    setListOfCompaniesWithNoCountryInContact(
+      listOfCompaniesWithNoCountryInContact
+    )
+  );
 }
