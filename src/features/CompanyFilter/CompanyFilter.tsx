@@ -37,7 +37,7 @@ export default function CompanyFilter() {
   ];
 
   return (
-    <div className="column buttons has-addons">
+    <div className="column buttons has-addons is-4">
       {filterOptions.map(({ viewMode, label }) => (
         <button
           disabled={label === "Custom" && storeViewMode !== ViewMode.custom}
