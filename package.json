@@ -71,5 +71,9 @@
     "babel-plugin-named-exports-order": "^0.0.2",
     "prop-types": "^15.8.1",
     "webpack": "^5.89.0"
+  },
+  "volta": {
+    "node": "18.18.2",
+    "yarn": "3.4.1"
   }
 }
