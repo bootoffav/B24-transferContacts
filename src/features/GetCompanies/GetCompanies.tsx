@@ -6,6 +6,7 @@ import {
   setTotalAmount,
   setProcessedAmount,
   setContactsNoCountries,
+  setListOfCompaniesWithNoCountryInContact,
 } from "app/companySlice";
 import getDifferentResponsibles from "app/differentResponsibles";
 import getContactsNoCountries from "app/contactsNoCountries";
@@ -15,7 +16,7 @@ import { Company, Contact } from "../../types";
 import ControlButton from "./ControlButton";
 import { store } from "../../app/store";
 import { setPageIndex } from "features/List/listSlice";
-import { getOptionalEntitiesToFetch } from "app/helpers";
+import { delay, getOptionalEntitiesToFetch } from "app/helpers";
 
 export default function GetCompanies() {
   const dispatch = useAppDispatch();
@@ -85,6 +86,7 @@ async function* getCompaniesWithRelatedEntities(
       chunkOfCompaniesId,
       ["contact", ...getOptionalEntitiesToFetch()]
     );
+    await delay();
 
     const companiesWithContactsOptionalEntities = chunkOfCompanies.map(
       (company) => ({
@@ -160,6 +162,13 @@ function pushChangesToStore(companies: Company[]) {
   const differentResponsibles = getDifferentResponsibles(companies);
   store.dispatch(setDifferentResponsibles(differentResponsibles));
 
-  const contactsNoCountry = getContactsNoCountries();
+  const [contactsNoCountry, listOfCompaniesWithNoCountryInContact] =
+    getContactsNoCountries();
+
   store.dispatch(setContactsNoCountries(contactsNoCountry));
+  store.dispatch(
+    setListOfCompaniesWithNoCountryInContact(
+      listOfCompaniesWithNoCountryInContact
+    )
+  );
 }

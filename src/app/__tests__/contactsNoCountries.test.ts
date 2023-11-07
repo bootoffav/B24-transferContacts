@@ -11,7 +11,7 @@ const { dispatch, getState } = store;
 it("getContactsNoCountries", () => {
   dispatch(setCompanies(companies));
   dispatch(setCountryList([companyCountryList, contactCountryList]));
-  dispatch(setContactsNoCountries(getContactsNoCountries()));
+  dispatch(setContactsNoCountries(getContactsNoCountries()[0]));
   const { contactsNoCountries } = getState().company;
   expect(contactsNoCountries).toMatchObject({
     "603": ["33060", "26976", "29526", "26324"],

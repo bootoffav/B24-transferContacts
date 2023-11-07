@@ -64,7 +64,9 @@ export default function TransferArea() {
         <p>
           <Link
             to=""
-            onClick={() => dispatch(setViewMode(ViewMode.noCountries))}
+            onClick={() =>
+              dispatch(setViewMode(ViewMode.noCountriesInContacts))
+            }
           >
             {noCountriesAmount()}
           </Link>{" "}

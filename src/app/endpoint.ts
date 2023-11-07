@@ -224,6 +224,21 @@ async function changePosition(id: Contact["ID"], position = "test") {
   });
 }
 
+async function changeCompanyCountry(
+  companyId: Company["ID"],
+  countryId: string
+) {
+  return fetch(`${endpoint}${userId}/${webhookToken}/crm.company.update`, {
+    method: "POST",
+    body: stringify({
+      id: companyId,
+      fields: {
+        [COMPANY_COUNTRY_FIELD]: countryId,
+      },
+    }),
+  });
+}
+
 async function* transferEntity(
   differentResponsibles: Transfer,
   transferType: RootState["transferButton"]["transferEntityType"]
@@ -393,6 +408,7 @@ export {
   transferEntity,
   fetchCountries,
   changePosition,
+  changeCompanyCountry,
   updateContactEmails,
   transferCountry,
   batchFetch,

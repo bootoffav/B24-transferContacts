@@ -69,6 +69,10 @@ function getAmountToTransfer(
   return amount;
 }
 
+function delay(ms = 700) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 function getOptionalEntitiesToFetch(): EntitiesToFetch {
   const map = new Map<keyof OptionsState, EntitiesToFetch[number]>([
     ["includeLeads", "lead"],
@@ -84,4 +88,9 @@ function getOptionalEntitiesToFetch(): EntitiesToFetch {
   return entitiesToFetch;
 }
 
-export { getEntityTitle, getAmountToTransfer, getOptionalEntitiesToFetch };
+export {
+  delay,
+  getEntityTitle,
+  getAmountToTransfer,
+  getOptionalEntitiesToFetch,
+};

@@ -8,6 +8,7 @@ export interface CompanyState {
   companies: Company[];
   differentResponsibles: Transfer;
   contactsNoCountries: TransferCountry;
+  listOfCompaniesWithNoCountryInContact: Company["ID"][];
 }
 
 const initialState: CompanyState = {
@@ -16,6 +17,7 @@ const initialState: CompanyState = {
   companies: [],
   differentResponsibles: [],
   contactsNoCountries: [],
+  listOfCompaniesWithNoCountryInContact: [],
 };
 
 export const companySlice = createSlice({
@@ -43,6 +45,9 @@ export const companySlice = createSlice({
       contact && (contact[CONTACT_POSITION_FIELD] = position);
     },
 
+    setListOfCompaniesWithNoCountryInContact: (state, { payload }) => {
+      state.listOfCompaniesWithNoCountryInContact = payload;
+    },
     setDifferentResponsibles: (state, { payload }) => {
       state.differentResponsibles = payload;
     },
@@ -69,5 +74,6 @@ export const {
   setProcessedAmount,
   setContactsNoCountries,
   changeContactPosition,
+  setListOfCompaniesWithNoCountryInContact,
 } = companySlice.actions;
 export default companySlice;
