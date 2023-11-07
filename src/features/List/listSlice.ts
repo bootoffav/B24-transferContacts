@@ -4,6 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export const enum ViewMode {
   all = "all",
   noCountries = "noCountries",
+  noCountriesInContacts = "noCountriesInContacts",
   withLinkedIn = "withLinkedIn",
   diffs = "diffs",
   noEmail = "noEmail",

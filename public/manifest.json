@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "XMT - transfer contacts",
+  "name": "XMT - Transfer contacts to their respective responsibles according to company",
   "icons": [
     {
       "src": "favicon.ico",

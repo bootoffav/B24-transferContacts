@@ -8,7 +8,7 @@ const Export = () => {
   const companies = useAppSelector(companySelector);
 
   return (
-    <div className="column">
+    <div className="column is-2">
       <button
         className="button is-small is-info is-light is-pulled-right"
         onClick={() => {

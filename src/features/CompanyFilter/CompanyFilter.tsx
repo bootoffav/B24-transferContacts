@@ -37,41 +37,25 @@ export default function CompanyFilter() {
   ];
 
   return (
-    <div className="column buttons has-addons">
-      {filterOptions.map(({ viewMode, label }) => {
-        const buttonJSX = (
-          <button
-            disabled={label === "Custom" && storeViewMode !== ViewMode.custom}
-            key={viewMode}
-            className={`button is-light is-link${
-              storeViewMode === viewMode ? " is-active" : ""
-            }`}
-            onClick={() => {
-              dispatch(setViewMode(viewMode));
-            }}
-          >
-            {![viewMode, storeViewMode].includes(ViewMode.custom) && (
-              <Badge viewMode={viewMode} />
-            )}
-            {label}
-          </button>
-        );
-
-        return viewMode === ViewMode.noCountries ? (
-          <Tooltip key={viewMode}>{buttonJSX}</Tooltip>
-        ) : (
-          buttonJSX
-        );
-      })}
+    <div className="column buttons has-addons is-4">
+      {filterOptions.map(({ viewMode, label }) => (
+        <button
+          disabled={label === "Custom" && storeViewMode !== ViewMode.custom}
+          key={viewMode}
+          className={`button is-light is-link${
+            storeViewMode === viewMode ? " is-active" : ""
+          }`}
+          onClick={() => dispatch(setViewMode(viewMode))}
+        >
+          {![viewMode, storeViewMode].includes(ViewMode.custom) && (
+            <Badge viewMode={viewMode} />
+          )}
+          {label}
+        </button>
+      ))}
     </div>
   );
 }
-
-const Tooltip = ({ children }: React.PropsWithChildren) => (
-  <span data-tooltip={"no email in company or any its contact"}>
-    {children}
-  </span>
-);
 
 const Badge = ({ viewMode }: { viewMode: ListSliceState["viewMode"] }) => {
   const amount = useAppSelector(

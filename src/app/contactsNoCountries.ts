@@ -1,24 +1,27 @@
-import { Contact, TransferCountry } from "types";
+import { Company, Contact, TransferCountry } from "types";
 import { COMPANY_COUNTRY_FIELD, CONTACT_COUNTRY_FIELD } from "./CONSTANTS";
 import { store } from "./store";
 
-export default function getContactsNoCountries(): TransferCountry {
+export default function getContactsNoCountries(): [TransferCountry, number[]] {
   const { companies } = store.getState().company;
   const { companyCountryList, contactCountryList } = store.getState().common;
 
   const transferCountry: TransferCountry = {};
+  const companiesIdWithNoCountryInContact: Company["ID"][] = [];
 
   function addContactToTransferCountryList(
     companyCountry: string,
-    contact: Contact
+    contactId: Contact["ID"],
+    companyId: Company["ID"]
   ) {
     const contactCountryId = contactCountryList.find(
       ({ value }) => value === companyCountry
     )?.ID;
     if (contactCountryId) {
       transferCountry[contactCountryId] = transferCountry[contactCountryId]
-        ? [...transferCountry[contactCountryId], contact.ID]
-        : [contact.ID];
+        ? [...transferCountry[contactCountryId], contactId]
+        : [contactId];
+      companiesIdWithNoCountryInContact.push(companyId);
     }
   }
 
@@ -29,7 +32,11 @@ export default function getContactsNoCountries(): TransferCountry {
 
     for (const contact of company.CONTACTS) {
       if (contact[CONTACT_COUNTRY_FIELD] === null) {
-        addContactToTransferCountryList(companyCountry as string, contact);
+        addContactToTransferCountryList(
+          companyCountry as string,
+          contact.ID,
+          company.ID
+        );
       }
 
       const contactCountry = contactCountryList.find(
@@ -37,10 +44,14 @@ export default function getContactsNoCountries(): TransferCountry {
       )?.value;
 
       if (contactCountry === "none") {
-        addContactToTransferCountryList(companyCountry as string, contact);
+        addContactToTransferCountryList(
+          companyCountry as string,
+          contact.ID,
+          company.ID
+        );
       }
     }
   });
 
-  return transferCountry;
+  return [transferCountry, companiesIdWithNoCountryInContact];
 }
