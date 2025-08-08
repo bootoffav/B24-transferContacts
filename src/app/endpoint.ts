@@ -21,6 +21,7 @@ import {
   CONTACT_COUNTRY_FIELD,
   LINKEDIN_ACCOUNT_FIELD,
   CONTACT_POSITION_FIELD,
+  COMPANY_1CCODE_FIELD,
 } from "./CONSTANTS";
 
 const {
@@ -55,7 +56,13 @@ const fetchCompanies = async (
 
   let companies: Company[] = [];
   let start = 0;
-  const select = ["*", "EMAIL", LINKEDIN_ACCOUNT_FIELD, COMPANY_COUNTRY_FIELD];
+  const select = [
+    "*",
+    "EMAIL",
+    LINKEDIN_ACCOUNT_FIELD,
+    COMPANY_COUNTRY_FIELD,
+    COMPANY_1CCODE_FIELD,
+  ];
   while (start !== undefined) {
     const [result, next] = await fetch(
       `${endpoint}${userId}/${webhookToken}/crm.company.list`,
@@ -212,13 +219,18 @@ const fetchUsers = createAsyncThunk(
   }
 );
 
-async function changePosition(id: Contact["ID"], position = "test") {
-  return fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.update`, {
+async function changeField(
+  entity: "contact" | "company",
+  id: Contact["ID"] | Company["ID"],
+  field: typeof CONTACT_POSITION_FIELD | typeof COMPANY_1CCODE_FIELD,
+  value: string
+) {
+  return fetch(`${endpoint}${userId}/${webhookToken}/crm.${entity}.update`, {
     method: "POST",
     body: stringify({
       id,
       fields: {
-        [CONTACT_POSITION_FIELD]: position,
+        [field]: value,
       },
     }),
   });
@@ -407,7 +419,7 @@ export {
   fetchDepartments,
   transferEntity,
   fetchCountries,
-  changePosition,
+  changeField,
   changeCompanyCountry,
   updateContactEmails,
   transferCountry,

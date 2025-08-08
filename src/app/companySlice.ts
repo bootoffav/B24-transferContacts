@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Company, Contact, Transfer, TransferCountry } from "../types";
-import { CONTACT_POSITION_FIELD } from "./CONSTANTS";
+import { COMPANY_1CCODE_FIELD, CONTACT_POSITION_FIELD } from "./CONSTANTS";
 
 export interface CompanyState {
   totalAmount: number;
@@ -28,21 +28,30 @@ export const companySlice = createSlice({
       state.companies = payload;
     },
 
-    changeContactPosition: (
+    changeField: (
       state,
       {
-        payload: { id, position },
+        payload: { id, value, entity },
       }: PayloadAction<{
-        id: Contact["ID"];
-        position: Contact["UF_CRM_1634268517946"];
+        id: Contact["ID"] | Company["ID"];
+        value:
+          | Contact[typeof CONTACT_POSITION_FIELD]
+          | Company[typeof COMPANY_1CCODE_FIELD];
+        entity: "contact" | "company";
       }>
     ) => {
-      let contact: Contact | undefined;
-      state.companies.find(({ CONTACTS }) => {
-        contact = CONTACTS.find(({ ID }) => ID === id);
-        return !!contact;
-      });
-      contact && (contact[CONTACT_POSITION_FIELD] = position);
+      if (entity === "contact") {
+        let contact: Contact | undefined;
+        state.companies.find(({ CONTACTS }) => {
+          contact = CONTACTS.find(({ ID }) => ID === id);
+          return !!contact;
+        });
+        contact && (contact[CONTACT_POSITION_FIELD] = value);
+      }
+      if (entity === "company") {
+        let company = state.companies.find(({ ID }) => ID === id);
+        company && (company[COMPANY_1CCODE_FIELD] = value);
+      }
     },
 
     setListOfCompaniesWithNoCountryInContact: (state, { payload }) => {
@@ -73,7 +82,7 @@ export const {
   setTotalAmount,
   setProcessedAmount,
   setContactsNoCountries,
-  changeContactPosition,
+  changeField,
   setListOfCompaniesWithNoCountryInContact,
 } = companySlice.actions;
 export default companySlice;

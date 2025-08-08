@@ -11,12 +11,13 @@ import { emailMap } from "features/EmailFormChanger/EmailFormChanger";
 import { formLink, applyStyle } from "./utils";
 import { hideModal, setContactIdForEmails } from "app/commonSlice";
 import { getUserNameById } from "utils/users";
-import Position from "../Position/Position";
+import ChangeableField from "../ChangeableField/ChangeableField";
 import {
   emailCell,
   LINKEDIN_ACCOUNT_FIELD,
   CONTACT_POSITION_FIELD,
   CONTACT_COUNTRY_FIELD,
+  COMPANY_1CCODE_FIELD,
 } from "app/CONSTANTS";
 import { store } from "app/store";
 import { getOptionalEntitiesToFetch } from "app/helpers";
@@ -93,6 +94,7 @@ const formData = (companies: Company[]): TableDataStructure => {
     return {
       company: [company.TITLE, company.ID],
       companyEmails: company.EMAIL.map((email) => email.VALUE),
+      code1C: [[company[COMPANY_1CCODE_FIELD] ?? "--", company.ID]],
       responsibleForCompany,
       linkedin: company[LINKEDIN_ACCOUNT_FIELD],
       contact: company.CONTACTS.map(prepareContact),
@@ -158,6 +160,11 @@ const formColumns = () => {
       ),
     },
     {
+      Header: "1C Code",
+      accessor: "code1C",
+      Cell: getSubRows,
+    },
+    {
       Header: "Contact",
       accessor: "contact",
       Cell: contactCellRenderer,
@@ -201,12 +208,29 @@ function getSubRows({
       {value.map((v, index) => {
         if (id === "contactPosition") {
           try {
-            const [position, id] = v;
+            const [value, id] = v;
             return (
               <li key={index}>
-                <Position
-                  positon={position}
+                <ChangeableField
+                  entity="contact"
+                  value={value}
+                  field={CONTACT_POSITION_FIELD}
                   id={id as unknown as Contact["ID"]}
+                />
+              </li>
+            );
+          } catch {}
+        }
+        if (id === "code1C") {
+          try {
+            const [code1C, id] = v;
+            return (
+              <li key={index}>
+                <ChangeableField
+                  entity="company"
+                  value={code1C}
+                  field={COMPANY_1CCODE_FIELD}
+                  id={id as unknown as Company["ID"]}
                 />
               </li>
             );
