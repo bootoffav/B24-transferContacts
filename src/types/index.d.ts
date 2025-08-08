@@ -22,6 +22,7 @@ export interface Contact {
 }
 
 import {
+  COMPANY_1CCODE_FIELD,
   COMPANY_COUNTRY_FIELD,
   CONTACT_COUNTRY_FIELD,
   CONTACT_POSITION_FIELD,
@@ -49,6 +50,7 @@ export interface User {
 export interface Company {
   [LINKEDIN_ACCOUNT_FIELD]: string;
   [COMPANY_COUNTRY_FIELD]: `${number}`;
+  [COMPANY_1CCODE_FIELD]: string;
   TITLE: string;
   ASSIGNED_BY_ID: number;
   ID: number;

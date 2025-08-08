@@ -1,13 +1,16 @@
-import { changePosition as changePositionInB24 } from "app/endpoint";
+import { changeField } from "app/endpoint";
 import { useState } from "react";
 import { Contact } from "types";
-import styles from "./Position.module.css";
-import { changeContactPosition as changePositionInStore } from "app/companySlice";
+import styles from "./ChangeableField.module.css";
+import { changeField as changeFieldInStore } from "app/companySlice";
 import { useAppDispatch } from "app/hooks";
+import { CONTACT_POSITION_FIELD, COMPANY_1CCODE_FIELD } from "app/CONSTANTS";
 
-interface PositionProps {
-  positon: string;
+interface ChangeableFieldProps {
+  value: string;
   id: Contact["ID"];
+  entity: "contact" | "company";
+  field: typeof CONTACT_POSITION_FIELD | typeof COMPANY_1CCODE_FIELD;
 }
 
 enum SaveResult {
@@ -16,20 +19,20 @@ enum SaveResult {
   idle,
 }
 
-export default function Position(props: PositionProps) {
+export default function ChangeableField(props: ChangeableFieldProps) {
   const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
-  const [position, setPosition] = useState(props.positon);
+  const [value, setValue] = useState(props.value);
   const [saved, setSaved] = useState(SaveResult.idle);
 
   const view = (
     <>
       <span
-        className={`has-tooltip-arrow ${styles.position}`}
+        className={`has-tooltip-arrow ${styles.changeablefield}`}
         data-tooltip="click to change"
         onClick={() => setIsEditing(true)}
       >
-        {position}
+        {value}
       </span>{" "}
       {(() => {
         switch (saved) {
@@ -57,20 +60,22 @@ export default function Position(props: PositionProps) {
       onKeyUp={({ key }) => {
         switch (key) {
           case "Escape":
-            setPosition(props.positon); // reset position
+            setValue(props.value); // reset value
             break;
           case "Enter":
-            if (props.positon !== position) {
+            if (props.value !== value) {
               // fire update in Bitrix24
-              changePositionInB24(props.id, position)
+              changeField(props.entity, props.id, props.field, value)
                 .then(() => {
                   // change position in local data
                   dispatch(
-                    changePositionInStore({
+                    changeFieldInStore({
                       id: props.id,
-                      position,
+                      value,
+                      entity: props.entity,
                     })
                   );
+                  value || setValue("--");
                   setSaved(SaveResult.success);
                 })
                 .catch(() => setSaved(SaveResult.fail));
@@ -81,10 +86,10 @@ export default function Position(props: PositionProps) {
         (key === "Escape" || key === "Enter") && setIsEditing(false);
       }}
       autoFocus
-      onChange={({ target }) => setPosition(target.value)}
+      onChange={({ target }) => setValue(target.value)}
       className="input is-small"
       type="text"
-      value={position}
+      value={value}
     />
   );
 
