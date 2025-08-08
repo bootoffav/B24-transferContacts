@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import type {
   Contact,
   Company,
@@ -95,6 +96,7 @@ const formData = (companies: Company[]): TableDataStructure => {
       company: [company.TITLE, company.ID],
       companyEmails: company.EMAIL.map((email) => email.VALUE),
       code1C: [[company[COMPANY_1CCODE_FIELD] ?? "--", company.ID]],
+      createdOn: company.DATE_CREATE,
       responsibleForCompany,
       linkedin: company[LINKEDIN_ACCOUNT_FIELD],
       contact: company.CONTACTS.map(prepareContact),
@@ -163,6 +165,11 @@ const formColumns = () => {
       Header: "1C Code",
       accessor: "code1C",
       Cell: getSubRows,
+    },
+    {
+      Header: "Created on",
+      accessor: "createdOn",
+      Cell: ({ value }: Cell) => format(value, "dd.MM.yyyy"),
     },
     {
       Header: "Contact",

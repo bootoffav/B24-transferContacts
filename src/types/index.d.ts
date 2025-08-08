@@ -62,6 +62,7 @@ export interface Company {
     VALUE: string;
   }[];
   HAS_EMAIL: "Y" | "N";
+  DATE_CREATE: string;
 }
 
 export interface Lead {
