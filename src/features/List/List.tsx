@@ -96,8 +96,8 @@ const List = () => {
                   <th
                     {...column.getHeaderProps(
                       column.id === "createdOn"
-                        ? { className: "has-text-centered" }
-                        : column.getSortByToggleProps()
+                        ? column.getSortByToggleProps()
+                        : { className: "has-text-centered" }
                     )}
                   >
                     {column.render("Header")}{" "}
