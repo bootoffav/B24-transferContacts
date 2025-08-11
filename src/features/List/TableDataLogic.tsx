@@ -169,6 +169,7 @@ const formColumns = () => {
     {
       Header: "Created on",
       accessor: "createdOn",
+      sortType: "basic",
       Cell: ({ value }: Cell) => format(value, "dd.MM.yyyy"),
     },
     {

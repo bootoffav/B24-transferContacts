@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import EmailFormChanger from "features/EmailFormChanger/EmailFormChanger";
-import { useTable, usePagination } from "react-table";
+import { useTable, usePagination, useSortBy } from "react-table";
 import { useAppSelector } from "../../app/hooks";
 import type { TableDataStructure } from "../../types";
 import Navigation, { NaviProps } from "./Navigation";
@@ -44,12 +44,14 @@ const List = () => {
       data,
       manualPagination: false,
       autoResetHiddenColumns: false,
+      autoResetSortBy: false,
       initialState: {
         pageSize,
         pageIndex: useAppSelector(({ list }) => list.pageIndex),
         hiddenColumns: ["linkedin"],
       },
     },
+    useSortBy,
     usePagination
   );
 
@@ -89,23 +91,36 @@ const List = () => {
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th
-                  {...column.getHeaderProps({
-                    className: "has-text-centered",
-                  })}
-                >
-                  {column.render("Header")}{" "}
-                  {["contact", "company"].includes(column.id) && (
-                    <ShowHideColumn
-                      columnToOperate={
-                        column.id === "contact" ? "emails" : "linkedin"
-                      }
-                      thc={toggleHideColumn}
-                    />
-                  )}
-                </th>
-              ))}
+              {headerGroup.headers.map((column) => {
+                return (
+                  <th
+                    {...column.getHeaderProps(
+                      column.id === "createdOn"
+                        ? { className: "has-text-centered" }
+                        : column.getSortByToggleProps()
+                    )}
+                  >
+                    {column.render("Header")}{" "}
+                    {column.id === "createdOn" && (
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span>
+                    )}
+                    {["contact", "company"].includes(column.id) && (
+                      <ShowHideColumn
+                        columnToOperate={
+                          column.id === "contact" ? "emails" : "linkedin"
+                        }
+                        thc={toggleHideColumn}
+                      />
+                    )}
+                  </th>
+                );
+              })}
             </tr>
           ))}
         </thead>
