@@ -53,7 +53,7 @@ export default function GetCompanies() {
       //working on company related entities
       let companies: Company[] = [];
       for await (const chunkOfReadyCompanies of getCompaniesWithRelatedEntities(
-        rawCompanies
+        rawCompanies,
       )) {
         companies = [...companies, ...chunkOfReadyCompanies];
         dispatch(setProcessedAmount(chunkOfReadyCompanies.length));
@@ -76,7 +76,7 @@ function* getChunkOfCompanies(companies: Company[], chunkSize = 15) {
 }
 
 async function* getCompaniesWithRelatedEntities(
-  companies: Company[]
+  companies: Company[],
 ): AsyncGenerator<Company[]> {
   for (const chunkOfCompanies of getChunkOfCompanies(companies)) {
     // step to add DEALS that belong to contact, add them to company instead.
@@ -84,7 +84,7 @@ async function* getCompaniesWithRelatedEntities(
 
     const companiesContactsOptionalEntities: Company[] = await batchFetch(
       chunkOfCompaniesId,
-      ["contact", ...getOptionalEntitiesToFetch()]
+      ["contact", ...getOptionalEntitiesToFetch()],
     );
     await delay();
 
@@ -92,11 +92,11 @@ async function* getCompaniesWithRelatedEntities(
       (company) => ({
         ...company,
         ...companiesContactsOptionalEntities[company.ID],
-      })
+      }),
     );
 
     for (const chunkOfCompanies of getChunkOfCompanies(
-      companiesWithContactsOptionalEntities
+      companiesWithContactsOptionalEntities,
     )) {
       const companyContactsMap = new Map<Company["ID"], Contact["ID"][]>();
 
@@ -110,8 +110,9 @@ async function* getCompaniesWithRelatedEntities(
       const batchResult = await batchFetch(
         contactsIDs,
         getOptionalEntitiesToFetch(),
-        "contact"
+        "contact",
       );
+      await delay();
       Object.entries(batchResult).forEach(function ([
         contactId,
         { DEALS, LEADS },
@@ -129,18 +130,18 @@ async function* getCompaniesWithRelatedEntities(
         }
         // prone to error
         const idx = companiesWithContactsOptionalEntities.findIndex(
-          ({ ID }) => ID === companyId
+          ({ ID }) => ID === companyId,
         );
         if (DEALS) {
           companiesWithContactsOptionalEntities[idx].DEALS = unionBy(
             [...companiesWithContactsOptionalEntities[idx].DEALS, ...DEALS],
-            ({ ID }) => ID
+            ({ ID }) => ID,
           );
         }
         if (LEADS) {
           companiesWithContactsOptionalEntities[idx].LEADS = unionBy(
             [...companiesWithContactsOptionalEntities[idx].LEADS, ...LEADS],
-            ({ ID }) => ID
+            ({ ID }) => ID,
           );
         }
       });
@@ -168,7 +169,7 @@ function pushChangesToStore(companies: Company[]) {
   store.dispatch(setContactsNoCountries(contactsNoCountry));
   store.dispatch(
     setListOfCompaniesWithNoCountryInContact(
-      listOfCompaniesWithNoCountryInContact
-    )
+      listOfCompaniesWithNoCountryInContact,
+    ),
   );
 }

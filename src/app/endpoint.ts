@@ -32,7 +32,7 @@ const {
 
 const fetchCompanies = async (
   chosenId: number,
-  selectType: CommonState["selectType"]
+  selectType: CommonState["selectType"],
 ): Promise<Company[]> => {
   if (!chosenId) throw new Error("ID not specified");
 
@@ -73,7 +73,7 @@ const fetchCompanies = async (
           filter,
           start,
         }),
-      }
+      },
     )
       .then((r) => r.json())
       .then(({ result, next }) => [withDefaults(result), next]);
@@ -88,7 +88,7 @@ const fetchCompanies = async (
 async function batchFetch(
   companiesId: Company["ID"][],
   entityToFetch: (EntitiesToFetch[number] | "contact")[],
-  headEntity: "company" | "contact" = "company"
+  headEntity: "company" | "contact" = "company",
 ): Promise<any> {
   function formRequestBody() {
     return companiesId.reduce((acc, id) => {
@@ -111,7 +111,7 @@ async function batchFetch(
                     : ["*"],
               }),
           };
-        })
+        }),
       );
     }, {});
   }
@@ -154,7 +154,7 @@ async function batchFetch(
             "EMAIL"
           ];
           return contact;
-        }
+        },
       );
     }
   }
@@ -165,7 +165,7 @@ async function batchFetch(
 const fetchRelatedEntities = async (
   entityId: number,
   entityType: Extract<EntityType, "contact" | "deal" | "lead">,
-  headEntity: "company" | "contact" = "company"
+  headEntity: "company" | "contact" = "company",
 ): Promise<Contact[] | Deal[]> => {
   const select =
     entityType === "contact"
@@ -188,7 +188,7 @@ const fetchRelatedEntities = async (
             ];
             return contact;
           })
-        : result
+        : result,
     );
 };
 
@@ -205,7 +205,7 @@ const fetchUsers = createAsyncThunk(
           body: stringify({
             start,
           }),
-        }
+        },
       ).then((r): Promise<{ result: User[]; next: number }> => r.json());
       users = users.concat(usersChunk);
       start = next;
@@ -216,14 +216,14 @@ const fetchUsers = createAsyncThunk(
   {
     condition: (_, { getState }) =>
       Boolean((getState() as RootState).common.users.length === 0),
-  }
+  },
 );
 
 async function changeField(
   entity: "contact" | "company",
   id: Contact["ID"] | Company["ID"],
   field: typeof CONTACT_POSITION_FIELD | typeof COMPANY_1CCODE_FIELD,
-  value: string
+  value: string,
 ) {
   return fetch(`${endpoint}${userId}/${webhookToken}/crm.${entity}.update`, {
     method: "POST",
@@ -238,7 +238,7 @@ async function changeField(
 
 async function changeCompanyCountry(
   companyId: Company["ID"],
-  countryId: string
+  countryId: string,
 ) {
   return fetch(`${endpoint}${userId}/${webhookToken}/crm.company.update`, {
     method: "POST",
@@ -253,7 +253,7 @@ async function changeCompanyCountry(
 
 async function* transferEntity(
   differentResponsibles: Transfer,
-  transferType: RootState["transferButton"]["transferEntityType"]
+  transferType: RootState["transferButton"]["transferEntityType"],
 ) {
   // TO-DO: apply types
   const convertedTransferTypes =
@@ -278,7 +278,7 @@ async function* transferEntity(
               },
               params: { REGISTER_SONET_EVENT: "Y" },
             }),
-          }
+          },
         )
           .then((r) => r.json())
           .catch(console.log);
@@ -336,7 +336,7 @@ const fetchDepartments = createAsyncThunk(
       } = getState() as RootState;
       return Object.keys(departments).length === 0 && Boolean(users.length);
     },
-  }
+  },
 );
 
 const fetchCountries = createAsyncThunk(
@@ -358,13 +358,13 @@ const fetchCountries = createAsyncThunk(
     return await Promise.all([
       fetch(
         `${endpoint}${userId}/${webhookToken}/crm.company.userfield.get?` +
-          stringify({ ID: COMPANY_COUNTRY_FIELD_ID })
+          stringify({ ID: COMPANY_COUNTRY_FIELD_ID }),
       )
         .then((r) => r.json())
         .then(callback),
       fetch(
         `${endpoint}${userId}/${webhookToken}/crm.contact.userfield.get?` +
-          stringify({ ID: CONTACT_COUNTRY_FIELD_ID })
+          stringify({ ID: CONTACT_COUNTRY_FIELD_ID }),
       )
         .then((r) => r.json())
         .then(callback),
@@ -373,11 +373,11 @@ const fetchCountries = createAsyncThunk(
   {
     condition: (_, { getState }) =>
       Boolean((getState() as RootState).common.companyCountryList.length === 0),
-  }
+  },
 );
 
 async function fetchContactEmails(
-  contactId: number
+  contactId: number,
 ): Promise<Contact["EMAILS"]> {
   return fetch(`${endpoint}${userId}/${webhookToken}/crm.contact.list?`, {
     method: "POST",
@@ -395,7 +395,7 @@ async function fetchContactEmails(
 
 async function updateContactEmails(
   contactId: Contact["ID"],
-  emails: Contact["EMAILS"]
+  emails: Contact["EMAILS"],
 ) {
   return await fetch(
     `${endpoint}${userId}/${webhookToken}/crm.contact.update?`,
@@ -405,7 +405,7 @@ async function updateContactEmails(
         id: contactId,
         fields: { EMAIL: emails },
       }),
-    }
+    },
   )
     .then((r) => r.json())
     .then(({ result }) => result);
